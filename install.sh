@@ -48,15 +48,15 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
   
   echo -n "[TEARDOWN] Force stopping and removing all LucID containers... "
   if [ -d "${INSTALL_DIR}" ]; then
-    cd "${INSTALL_DIR}" 2>/dev/null && ${DOCKER_CMD} compose down -v --remove-orphans 2>/dev/null || true
+    cd "${INSTALL_DIR}" 2>/dev/null && ${DOCKER_CMD} compose down -v --remove-orphans >/dev/null 2>&1 || true
   fi
-  ${DOCKER_CMD} rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
-  docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
-  sudo docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
+  ${DOCKER_CMD} rm -f lucid-app lucid-caddy lucid-ddns >/dev/null 2>&1 || true
+  docker rm -f lucid-app lucid-caddy lucid-ddns >/dev/null 2>&1 || true
+  sudo docker rm -f lucid-app lucid-caddy lucid-ddns >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
-  ${DOCKER_CMD} rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest 2>/dev/null || true
+  ${DOCKER_CMD} rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Pruning unused Docker system caches and volumes... "
@@ -68,7 +68,9 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
   echo -e "${GREEN}[OK]${NC}"
   
   echo ""
-  echo -e "${GREEN}LucID containers, images, volumes, and directory completely wiped.${NC}"
+  echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
+  echo -e "${RED}  LucID environment has been completely uninstalled.${NC}"
+  echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   exit 0
 fi
 
