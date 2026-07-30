@@ -11,6 +11,22 @@
 
 ---
 
+## ⚡ 1-Line Instant Installation
+
+Run this single command on your Linux server or VPS to instantly audit ports, configure firewall, and launch LucID:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
+```
+
+To completely uninstall and wipe all containers, images, volumes, and state:
+
+```bash
+./install.sh --purge
+```
+
+---
+
 ## Why LucID Exists
 
 Most note applications force a tradeoff between data privacy and seamless access:
@@ -24,6 +40,7 @@ LucID resolves this by placing cryptography directly inside your browser. All no
 ## Key Features
 
 - **Built-in Client-Side E2EE**: Native Web Crypto API (`crypto.subtle`) encrypts data locally before network transmission.
+- **Automated Dynamic DNS Stack (`qmcgaw/ddns-updater:latest`)**: Automated DDNS IP syncing for free domains (DuckDNS, No-IP, Cloudflare) with zero-touch Caddy TLS provisioning.
 - **Native Markdown Formatting**: Full support for code blocks, tables, task lists (`- [ ]`), blockquotes, and GitHub-style alerts.
 - **Dual Split Views**: Toggle between Side-by-Side (Left/Right) and Top-Bottom editor split layouts.
 - **Explorer Tags & Folders**: Organized hierarchy with instant fuzzy search across notes and tags.
@@ -37,21 +54,65 @@ LucID resolves this by placing cryptography directly inside your browser. All no
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as User Browser
-    participant Memory as Transient RAM
-    participant Crypto as Web Crypto API
-    participant Caddy as Caddy TLS Reverse Proxy
-    participant Server as Express Backend
-    participant Storage as Store JSON
+    actor MobileUser as Remote Mobile / Laptop User
+    participant DDNS as DDNS Updater (qmcgaw/ddns-updater:latest)
+    participant Caddy as Caddy TLS Reverse Proxy (caddy:latest)
+    participant Server as Express Backend (assarelius/lucid:latest)
+    participant Storage as Store JSON (data/store.json)
 
-    User->>Memory: Enter Master Passphrase
-    Memory->>Crypto: Derive 256-bit Key via PBKDF2 (100k iterations)
-    Crypto-->>Memory: Return Encryption Key (Transient Only)
-    User->>Crypto: Encrypt Note Payload (AES-256-GCM)
-    Crypto-->>User: Encrypted Base64 Payload (ENC:...)
-    User->>Caddy: HTTPS TLS Encrypted Transmission (Port 443)
-    Caddy->>Server: HTTP Proxy /api/store (Ciphertext Only)
-    Server->>Storage: Persist Ciphertext to data/store.json
+    DDNS->>DDNS: Sync Public IP to Free DDNS Provider (DuckDNS / No-IP)
+    MobileUser->>Caddy: HTTPS TLS Encrypted Connection (Port 443)
+    Caddy->>Caddy: Auto Let's Encrypt TLS Provisioning
+    Caddy->>Server: Reverse Proxy /api/store (Ciphertext Only)
+    Server->>Storage: Persist Ciphertext Payload to data/store.json
+```
+
+---
+
+## Quick Start Guide: Free DDNS Setup (DuckDNS / No-IP / Cloudflare)
+
+To access LucID remotely from anywhere in the world over valid HTTPS without buying a domain:
+
+### 1. Create a Free Account & Domain on DuckDNS
+- Visit [duckdns.org](https://www.duckdns.org) and log in with GitHub/Google.
+- Choose any available subdomain name (e.g. `yourname-lucid`). Your domain will be `yourname-lucid.duckdns.org`.
+- Copy your DuckDNS **Token** from the top of the DuckDNS dashboard.
+
+### 2. Configure `./ddns-data/config.json`
+```json
+{
+  "settings": [
+    {
+      "provider": "duckdns",
+      "domain": "yourname-lucid.duckdns.org",
+      "token": "YOUR_DUCKDNS_TOKEN",
+      "ip_version": "ipv4"
+    }
+  ]
+}
+```
+
+### 3. Launch the LucID Stack
+```bash
+DOMAIN_NAME=yourname-lucid.duckdns.org docker compose up -d
+```
+
+*Note: The automated installer (`install.sh`) will interactively prompt for your subdomain and token, generating this file automatically.*
+
+---
+
+## Existing Reverse Proxy Setup (Caddy / Subpath Route)
+
+If you already operate your own host Caddy reverse proxy:
+
+```caddyfile
+yourdomain.com {
+    redir /lucid /lucid/ 308
+    handle /lucid/* {
+        uri strip_prefix /lucid
+        reverse_proxy 127.0.0.1:24002
+    }
+}
 ```
 
 ---
@@ -60,7 +121,7 @@ sequenceDiagram
 
 ### Option 1: Automated Setup Script
 
-Run the automated environment check, port verification, and setup script:
+Run the automated environment check, port verification, DDNS updater, and setup script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
@@ -74,9 +135,9 @@ To completely uninstall and wipe all containers, images, volumes, and temporary 
 
 ---
 
-### Option 2: Docker Compose (App + Official Caddy HTTPS Sidecar)
+### Option 2: Docker Compose (App + Caddy HTTPS + DDNS Updater)
 
-LucID includes an official `caddy:latest` HTTPS sidecar in its default `docker-compose.yml`:
+LucID includes `caddy:latest` and `qmcgaw/ddns-updater:latest` sidecars in its default `docker-compose.yml`:
 
 ```yaml
 services:
@@ -105,15 +166,18 @@ services:
     depends_on:
       - app
 
+  ddns-updater:
+    image: qmcgaw/ddns-updater:latest
+    container_name: lucid-ddns
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ddns-data:/updater/data
+
 volumes:
   caddy_data:
   caddy_config:
-```
-
-Start the stack:
-
-```bash
-docker compose up -d
 ```
 
 ---
