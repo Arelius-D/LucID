@@ -19,6 +19,14 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Determine Docker CLI wrapper (auto-detect sudo requirement)
+DOCKER_CMD="docker"
+if ! docker info >/dev/null 2>&1; then
+  if command -v sudo >/dev/null 2>&1 && sudo docker info >/dev/null 2>&1; then
+    DOCKER_CMD="sudo docker"
+  fi
+fi
+
 # Handle Purge / Teardown Flag
 if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
@@ -26,15 +34,15 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   echo ""
   echo -n "[TEARDOWN] Stopping and removing LucID containers... "
-  docker compose down -v 2>/dev/null || docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
+  ${DOCKER_CMD} compose down -v 2>/dev/null || ${DOCKER_CMD} rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
-  docker rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest 2>/dev/null || true
+  ${DOCKER_CMD} rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Pruning unused Docker system caches... "
-  docker system prune -af --volumes >/dev/null 2>&1 || true
+  ${DOCKER_CMD} system prune -af --volumes >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
 
   echo -n "[TEARDOWN] Cleaning local data, DDNS data, .env, and configuration files... "
@@ -51,10 +59,16 @@ echo -e "${BLUE}   LucID — E2EE Note-Taking Web Application Setup${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo ""
 
-# 1. Check Docker Installation
+# 1. Detect & Display Server Public IP
+DETECTED_IP=$(curl -fsSL https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}' || echo "127.0.0.1")
+echo -e "[NETWORK] Server Public IP: ${GREEN}${DETECTED_IP}${NC}"
+echo -e "[INFO] If using DuckDNS, ensure your domain points to ${GREEN}${DETECTED_IP}${NC} (or ddns-updater will sync it automatically)."
+echo ""
+
+# 2. Check Docker Installation
 echo -n "[CHECK] Verifying Docker installation... "
-if command -v docker >/dev/null 2>&1; then
-  DOCKER_VER=$(docker --version | cut -d ' ' -f3 | tr -d ',')
+if command -v docker >/dev/null 2>&1 || ${DOCKER_CMD} --version >/dev/null 2>&1; then
+  DOCKER_VER=$(${DOCKER_CMD} --version | cut -d ' ' -f3 | tr -d ',')
   echo -e "${GREEN}[OK] (${DOCKER_VER})${NC}"
 else
   echo -e "${RED}[FAILED]${NC}"
@@ -62,15 +76,18 @@ else
   exit 1
 fi
 
-# 2. Check Docker Compose Availability
+# 3. Check Docker Compose Availability
 echo -n "[CHECK] Verifying Docker Compose plugin/binary... "
-if docker compose version >/dev/null 2>&1;  then
-  COMPOSE_VER=$(docker compose version --short)
-  COMPOSE_CMD="docker compose"
+if ${DOCKER_CMD} compose version >/dev/null 2>&1;  then
+  COMPOSE_VER=$(${DOCKER_CMD} compose version --short)
+  COMPOSE_EXEC="${DOCKER_CMD} compose"
   echo -e "${GREEN}[OK] (docker compose ${COMPOSE_VER})${NC}"
 elif command -v docker-compose >/dev/null 2>&1; then
   COMPOSE_VER=$(docker-compose --version | cut -d ' ' -f3 | tr -d ',')
-  COMPOSE_CMD="docker-compose"
+  COMPOSE_EXEC="docker-compose"
+  if [ "${DOCKER_CMD}" = "sudo docker" ]; then
+    COMPOSE_EXEC="sudo docker-compose"
+  fi
   echo -e "${GREEN}[OK] (docker-compose ${COMPOSE_VER})${NC}"
 else
   echo -e "${RED}[FAILED]${NC}"
@@ -78,7 +95,7 @@ else
   exit 1
 fi
 
-# 3. Audit Network Ports (Default 24002 / 80 / 443 / 8000)
+# 4. Audit Network Ports (Default 24002 / 80 / 443 / 8000)
 PORT="${PORT:-24002}"
 echo "[AUDIT] Checking network port availability..."
 if command -v ss >/dev/null 2>&1; then
@@ -94,7 +111,7 @@ else
   echo -e "  - ${GREEN}[SKIPPED] (ss network utility not present)${NC}"
 fi
 
-# 4. Check & Configure UFW Firewall (if active)
+# 5. Check & Configure UFW Firewall (if active)
 echo "[FIREWALL] Auditing UFW firewall rules..."
 if command -v ufw >/dev/null 2>&1; then
   UFW_STATUS=$(sudo ufw status 2>/dev/null | grep -i "Status:" | awk '{print $2}' || echo "inactive")
@@ -111,7 +128,7 @@ else
   echo -e "  - ${GREEN}[SKIPPED] (ufw utility not installed)${NC}"
 fi
 
-# 5. Storage & DDNS Directory Verification
+# 6. Storage & DDNS Directory Verification
 DATA_DIR="./data"
 DDNS_DIR="./ddns-data"
 echo -n "[SETUP] Initializing storage directories (${DATA_DIR}, ${DDNS_DIR})... "
@@ -119,7 +136,7 @@ mkdir -p "${DATA_DIR}" "${DDNS_DIR}"
 chmod 755 "${DATA_DIR}" "${DDNS_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 6. Interactive / Environment DuckDNS DDNS Setup
+# 7. Interactive / Environment DuckDNS DDNS Setup
 if [ -f ".env" ]; then
   # Load existing .env if present
   set -a; source .env 2>/dev/null || true; set +a
@@ -143,9 +160,10 @@ EOF
 elif [ -t 0 ] && [ "$1" != "-y" ]; then
   echo ""
   echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
+  echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
   read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS
   if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
-    read -p "  - Enter DuckDNS Domain (e.g. lucid-notes.duckdns.org): " USER_DDNS_DOMAIN
+    read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN
     read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN
     if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
       cat << EOF > "${DDNS_DIR}/config.json"
@@ -164,19 +182,18 @@ EOF
       echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
       echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
       export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
-      echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME}${NC}"
+      echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME} -> ${DETECTED_IP}${NC}"
     fi
   fi
 fi
 
-# 7. Fallback Target Domain / Host Configuration
+# 8. Fallback Target Domain / Host Configuration
 if [ -z "${DOMAIN_NAME}" ]; then
-  DETECTED_IP=$(curl -fsSL https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}' || echo "localhost")
   export DOMAIN_NAME="${DETECTED_IP}"
   echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DOMAIN_NAME}${NC}"
 fi
 
-# 8. Fetch repository deployment files directly via git clone or curl fallback
+# 9. Fetch repository deployment files directly via git clone or curl fallback
 if command -v git >/dev/null 2>&1; then
   echo -n "[FETCH] Fetching repository deployment files via Git... "
   rm -rf ./temp_lucid_repo 2>/dev/null || true
@@ -195,7 +212,7 @@ else
   echo -e "${GREEN}[OK]${NC}"
 fi
 
-# 9. Exponential backoff container image puller
+# 10. Exponential backoff container image puller
 pull_with_backoff() {
   local img="$1"
   local attempt=1
@@ -205,7 +222,7 @@ pull_with_backoff() {
 
   echo -n "[PULL] Auditing image ${img}... "
   while [ $attempt -le $max_attempts ]; do
-    if docker pull "$img" >/dev/null 2>&1; then
+    if ${DOCKER_CMD} pull "$img" >/dev/null 2>&1; then
       echo -e "${GREEN}[OK]${NC}"
       pull_success=true
       break
@@ -229,14 +246,15 @@ pull_with_backoff "assarelius/lucid:latest"
 pull_with_backoff "caddy:latest"
 pull_with_backoff "qmcgaw/ddns-updater:latest"
 
-# 10. Launch Container Stack
+# 11. Launch Container Stack
 echo ""
-echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_CMD}...${NC}"
-${COMPOSE_CMD} up -d
+echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_EXEC}...${NC}"
+${COMPOSE_EXEC} up -d
 
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
+echo -e "${GREEN}  Server Public IP: ${DETECTED_IP}${NC}"
 echo -e "${GREEN}  Direct Web Access: http://${DOMAIN_NAME}:${PORT}${NC}"
 echo -e "${GREEN}  Caddy HTTPS Access: https://${DOMAIN_NAME}${NC}"
 echo -e "${GREEN}  DDNS Updater Web UI: http://${DOMAIN_NAME}:8000${NC}"
