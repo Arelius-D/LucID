@@ -2,11 +2,11 @@
     admin off
 }
 
-:80 {
+http:// {
     reverse_proxy app:3000
 }
 
-:443 {
+https:// {
     tls internal
     reverse_proxy app:3000
 }
