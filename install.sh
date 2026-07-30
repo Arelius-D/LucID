@@ -29,7 +29,7 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
-  docker rmi -f assarelius/lucid:latest caddyserver/caddy:alpine 2>/dev/null || true
+  docker rmi -f assarelius/lucid:latest caddy:latest 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Pruning unused Docker system caches... "
