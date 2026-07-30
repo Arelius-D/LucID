@@ -60,7 +60,14 @@ function writeData(data) {
   }
 }
 
+const pkg = require('./package.json');
+const APP_VERSION = process.env.VERSION || pkg.version || '1.0.0';
+
 // REST Endpoints
+app.get('/api/version', (req, res) => {
+  res.json({ version: APP_VERSION });
+});
+
 app.get('/api/store', (req, res) => {
   const data = readData();
   res.json(data);

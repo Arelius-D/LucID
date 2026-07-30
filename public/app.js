@@ -961,6 +961,53 @@ function initExplorerModeToggle() {
   updateExplorerUI(state.explorerMode);
 }
 
+// ─── SMART GITHUB ICON & UPDATE INDICATOR ──────────
+async function checkVersionAndUpdateIndicator() {
+  const githubLink = document.querySelector('.inspector-github-link');
+  if (!githubLink) return;
+
+  let currentVersion = '1.0.0';
+  try {
+    const res = await fetch(apiPath('api/version'));
+    if (res.ok) {
+      const data = await res.json();
+      if (data.version) currentVersion = data.version;
+    }
+  } catch (e) {
+    console.warn('Could not fetch local version:', e);
+  }
+
+  // Default up-to-date state
+  githubLink.title = `LucID v${currentVersion} (Up to date)`;
+
+  try {
+    const ghRes = await fetch('https://api.github.com/repos/Arelius-D/LucID/releases/latest');
+    if (ghRes.ok) {
+      const ghData = await ghRes.json();
+      const latestTag = (ghData.tag_name || '').replace(/^v/, '');
+      if (latestTag && compareVersions(latestTag, currentVersion) > 0) {
+        githubLink.classList.add('update-available');
+        githubLink.title = `LucID v${currentVersion} — Update Available! Click to view v${latestTag} on GitHub`;
+        githubLink.href = 'https://github.com/Arelius-D/LucID/releases/latest';
+      }
+    }
+  } catch (err) {
+    // Silent fallback if GitHub API rate limited or offline
+  }
+}
+
+function compareVersions(v1, v2) {
+  const p1 = v1.split('.').map(Number);
+  const p2 = v2.split('.').map(Number);
+  for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
+    const n1 = p1[i] || 0;
+    const n2 = p2[i] || 0;
+    if (n1 > n2) return 1;
+    if (n1 < n2) return -1;
+  }
+  return 0;
+}
+
 // ─── INITIALIZATION ────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
   marked.setOptions({
@@ -978,6 +1025,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initViewModeTabs();
   initThemeToggle();
   initExplorerModeToggle();
+  checkVersionAndUpdateIndicator();
 
   // Sidebar toggles with docked button in top-bar-left (left sidebar expanded by default)
   const sidebarLeft = document.getElementById('sidebar-left');
