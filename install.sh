@@ -6,8 +6,12 @@
 #  DNS resolution & DDNS health, sets permissions & deploys.
 #
 #  Usage:
-#    ./install.sh          # Standard installation
+#    ./install.sh          # Standard installation (inside ~/lucid)
 #    ./install.sh --purge  # Complete teardown & image/data wipe
+#
+#  1-Line Remote Commands:
+#    curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash -s -- --purge
 # ═══════════════════════════════════════════════════════════════
 
 set -e
@@ -36,7 +40,7 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 # Handle Purge / Teardown Flag
-if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
+if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "--remove" ] || [ "$1" = "-r" ]; then
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   echo -e "${RED}   LucID — Complete Environment Purge & Teardown${NC}"
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
@@ -44,7 +48,7 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   
   echo -n "[TEARDOWN] Force stopping and removing all LucID containers... "
   if [ -d "${INSTALL_DIR}" ]; then
-    cd "${INSTALL_DIR}" && ${DOCKER_CMD} compose down -v --remove-orphans 2>/dev/null || true
+    cd "${INSTALL_DIR}" 2>/dev/null && ${DOCKER_CMD} compose down -v --remove-orphans 2>/dev/null || true
   fi
   ${DOCKER_CMD} rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
   docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
@@ -233,24 +237,15 @@ if [ ! -f "${DDNS_DIR}/config.json" ]; then
 EOF
 fi
 
-# Ensure real user owns all generated files and directories
-if [ -n "$SUDO_USER" ]; then
-  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
-fi
-
-# 8. Fallback Target Domain / Host Configuration
-if [ -z "${DOMAIN_NAME}" ]; then
-  export DOMAIN_NAME="${DETECTED_IP}"
-  echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DETECTED_IP}${NC}"
-fi
-
-# 9. Fetch repository deployment files directly via git clone or curl fallback
+# 8. Fetch repository deployment files directly via git clone or curl fallback
 if command -v git >/dev/null 2>&1; then
   echo -n "[FETCH] Fetching repository deployment files via Git... "
   rm -rf ./temp_lucid_repo 2>/dev/null || true
   git clone --depth 1 https://github.com/Arelius-D/LucID.git ./temp_lucid_repo >/dev/null 2>&1
   cp ./temp_lucid_repo/docker-compose.yml ./docker-compose.yml
   cp ./temp_lucid_repo/Caddyfile ./Caddyfile
+  cp ./temp_lucid_repo/install.sh ./install.sh
+  chmod +x ./install.sh
   rm -rf ./temp_lucid_repo
   echo -e "${GREEN}[OK]${NC}"
 else
@@ -261,6 +256,15 @@ else
   echo -n "[FETCH] Downloading latest Caddyfile from main branch... "
   curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
   echo -e "${GREEN}[OK]${NC}"
+  echo -n "[FETCH] Downloading latest install.sh script... "
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh?v=${CACHE_BUSTER}" -o install.sh
+  chmod +x ./install.sh
+  echo -e "${GREEN}[OK]${NC}"
+fi
+
+# Ensure real user owns all generated files and directories
+if [ -n "$SUDO_USER" ]; then
+  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
 fi
 
 # 10. Exponential backoff container image puller
