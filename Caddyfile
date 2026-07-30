@@ -2,6 +2,11 @@
     admin off
 }
 
-{$DOMAIN_NAME:localhost} {
+:80 {
+    reverse_proxy app:3000
+}
+
+:443 {
+    tls internal
     reverse_proxy app:3000
 }
