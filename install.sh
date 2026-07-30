@@ -57,7 +57,7 @@ if command -v docker >/dev/null 2>&1; then
   echo -e "${GREEN}[OK] (${DOCKER_VER})${NC}"
 else
   echo -e "${RED}[FAILED]${NC}"
-  echo -e "${YELLOW}[ERROR] Docker is not installed. Please run NeXdocMan or install Docker first.${NC}"
+  echo -e "${YELLOW}[ERROR] Docker is not installed. Please install Docker before running LucID.${NC}"
   exit 1
 fi
 
@@ -123,7 +123,7 @@ if [ -z "${DOMAIN_NAME}" ]; then
   echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DOMAIN_NAME}${NC}"
 fi
 
-# 7. Fetch repository files directly via git clone to bypass raw CDN caching
+# 7. Fetch repository files directly via git clone or curl fallback
 if command -v git >/dev/null 2>&1; then
   echo -n "[FETCH] Fetching repository deployment files via Git... "
   rm -rf ./temp_lucid_repo 2>/dev/null || true
@@ -142,7 +142,40 @@ else
   echo -e "${GREEN}[OK]${NC}"
 fi
 
-# 8. Launch Container Stack
+# 8. Exponential backoff container image puller
+pull_with_backoff() {
+  local img="$1"
+  local attempt=1
+  local max_attempts=3
+  local delay=5
+  local pull_success=false
+
+  echo -n "[PULL] Auditing image ${img}... "
+  while [ $attempt -le $max_attempts ]; do
+    if docker pull "$img" >/dev/null 2>&1; then
+      echo -e "${GREEN}[OK]${NC}"
+      pull_success=true
+      break
+    else
+      if [ $attempt -lt $max_attempts ]; then
+        echo -e "${YELLOW}[RETRY in ${delay}s]${NC}"
+        sleep $delay
+        delay=$((delay * 2))
+      fi
+    fi
+    attempt=$((attempt + 1))
+  done
+
+  if [ "$pull_success" = false ]; then
+    echo -e "${RED}[FAILED] Unable to pull ${img} after ${max_attempts} attempts.${NC}"
+    exit 1
+  fi
+}
+
+pull_with_backoff "assarelius/lucid:latest"
+pull_with_backoff "caddy:latest"
+
+# 9. Launch Container Stack
 echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_CMD}...${NC}"
 ${COMPOSE_CMD} up -d
