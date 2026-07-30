@@ -13,33 +13,22 @@
 
 ## Why LucID Exists
 
-LucID is a privacy-first, self-hosted note application built for speed and complete data ownership. Client-side AES-256-GCM encryption ensures your master passphrase is never stored on disk or transmitted across the network. Most commercial and open-source note tools eventually lock features behind subscriptions. LucID is different: it is 100% free, fully open-source, and will never have paywalled features.
+Most note applications force a tradeoff between data privacy and seamless access:
+- **Cloud Note Services**: Store your unencrypted notes on third-party servers, creating data privacy and lock-in risks.
+- **Local Markdown Files**: Require desktop software, complex sync plugins, and lack built-in web access on mobile devices.
+
+LucID resolves this by placing cryptography directly inside your browser. All notes, titles, and tags are encrypted using client-side **AES-256-GCM** keys derived via **PBKDF2** (100,000 iterations). Your server stores exclusively encrypted Base64 payloads—it never sees your master passphrase or unencrypted notes.
 
 ---
 
 ## Key Features
 
-- **Client-Side End-to-End Encryption (E2EE)**: Powered by native Web Crypto API using AES-256-GCM and PBKDF2 key derivation (100,000 iterations). All titles, contents, and tags are encrypted locally in your browser.
-- **Native Markdown & Live Preview**: Full GFM Markdown support with syntax highlighting for code blocks, task lists, tables, and synchronized live rendering.
-- **Dual Split View Layout**: Switch between Side-by-Side (Left/Right) and Top-Bottom split views with draggable pane resizing.
-- **Organization & Expandable Tags**: Dual explorer supporting nested folder trees and expandable tag views with context menus.
-- **Dusk Ember & Warm Linen Themes**: Includes custom metallic dark mode and warm paper light mode.
-- **Micro Resource Footprint**: Built with zero heavy framework bloat, consuming under 25MB RAM and 0% CPU at idle.
-- **Cross-Platform Support**: Responsive layout designed for desktop browsers and mobile web applications.
-
----
-
-## Technical Stack & Container Architecture
-
-LucID is built with a minimal, dependency-light tech stack designed for speed, security, and long-term maintainability:
-
-| Component | Technology | Description |
-| :--- | :--- | :--- |
-| **Base Image** | `node:alpine` | Minimal Alpine Linux base image (~50MB footprint) |
-| **Backend** | Node.js Current / Express | Fast REST API & static file provider |
-| **Frontend** | Vanilla HTML5 / CSS3 / JS | Native LucID Design System (No framework overhead) |
-| **Cryptography** | Web Crypto API | `crypto.subtle` PBKDF2 key derivation & AES-256-GCM |
-| **Parser** | Marked.js & Highlight.js | GFM Markdown parsing & code syntax highlighting |
+- **Built-in Client-Side E2EE**: Native Web Crypto API (`crypto.subtle`) encrypts data locally before network transmission.
+- **Native Markdown Formatting**: Full support for code blocks, tables, task lists (`- [ ]`), blockquotes, and GitHub-style alerts.
+- **Dual Split Views**: Toggle between Side-by-Side (Left/Right) and Top-Bottom editor split layouts.
+- **Explorer Tags & Folders**: Organized hierarchy with instant fuzzy search across notes and tags.
+- **Dual Visual Themes**: Dusk Ember (Dark) and Warm Linen (Light) curated themes.
+- **Ultra-Lightweight Footprint**: Node.js Alpine base image utilizing minimal RAM resources.
 
 ---
 
@@ -49,22 +38,21 @@ LucID is built with a minimal, dependency-light tech stack designed for speed, s
 sequenceDiagram
     autonumber
     actor User as User Browser
-    participant KDF as Web Crypto (PBKDF2)
-    participant Engine as AES-256-GCM Engine
-    participant Server as Node/Express Backend
-    participant Storage as Disk (/data/store.json)
+    participant Memory as Transient RAM
+    participant Crypto as Web Crypto API
+    participant Caddy as Caddy TLS Reverse Proxy
+    participant Server as Express Backend
+    participant Storage as Store JSON
 
-    User->>KDF: Master Passphrase + Vault Salt
-    KDF-->>Engine: 256-bit Cryptographic Key (Derived in Memory)
-    User->>Engine: Plaintext Note Content & Title
-    Engine-->>User: Authenticated Ciphertext (ENC:IV:Base64)
-    User->>Server: HTTP POST /api/store (Ciphertext Payload Only)
-    Server->>Storage: Persist Ciphertext to store.json
+    User->>Memory: Enter Master Passphrase
+    Memory->>Crypto: Derive 256-bit Key via PBKDF2 (100k iterations)
+    Crypto-->>Memory: Return Encryption Key (Transient Only)
+    User->>Crypto: Encrypt Note Payload (AES-256-GCM)
+    Crypto-->>User: Encrypted Base64 Payload (ENC:...)
+    User->>Caddy: HTTPS TLS Encrypted Transmission (Port 443)
+    Caddy->>Server: HTTP Proxy /api/store (Ciphertext Only)
+    Server->>Storage: Persist Ciphertext to data/store.json
 ```
-
-- **Initialization Vector (IV)**: Every encryption operation generates a unique 96-bit cryptographically secure random IV via `crypto.getRandomValues`.
-- **Ciphertext Storage Format**: Encrypted payloads are formatted as `ENC:iv_base64:ciphertext_base64` before transmission.
-- **Backend Role**: The Node/Express server provides basic `GET /api/store` and `POST /api/store` REST endpoints to persist JSON payload blobs without reading or decrypting contents.
 
 ---
 
@@ -72,55 +60,78 @@ sequenceDiagram
 
 ### Option 1: Automated Setup Script
 
-Run the automated environment check and setup script directly:
+Run the automated environment check, port verification, and setup script:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
 ```
 
-Or clone the repository and run locally:
+To completely uninstall and wipe all containers, images, volumes, and temporary files:
 
 ```bash
-git clone https://github.com/Arelius-D/LucID.git
-cd LucID
-chmod +x install.sh && ./install.sh
+./install.sh --purge
 ```
 
-### Option 2: Docker Compose
+---
 
-Create a `docker-compose.yml` file:
+### Option 2: Docker Compose (App + Official Caddy HTTPS Sidecar)
+
+LucID includes an official `caddyserver/caddy:alpine` HTTPS sidecar in its default `docker-compose.yml`:
 
 ```yaml
 services:
-  lucid:
+  app:
     image: assarelius/lucid:latest
-    container_name: lucid
+    container_name: lucid-app
+    restart: unless-stopped
     ports:
-      - "8484:3000"
+      - "24002:3000"
     volumes:
       - ./data:/app/data
+
+  caddy:
+    image: caddyserver/caddy:alpine
+    container_name: lucid-caddy
     restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  caddy_data:
+  caddy_config:
 ```
 
-Start the service:
+Start the stack:
+
 ```bash
 docker compose up -d
 ```
+
+---
 
 ### Option 3: Docker CLI (`docker run`)
 
 ```bash
 docker run -d \
   --name lucid \
-  -p 8484:3000 \
+  -p 24002:3000 \
   -v $(pwd)/data:/app/data \
   --restart unless-stopped \
   assarelius/lucid:latest
 ```
 
-### Option 4: Manual Node.js Installation
+---
 
-Requirements: Node.js >= 20
+### Option 4: Manual Node.js Installation
 
 ```bash
 git clone https://github.com/Arelius-D/LucID.git
@@ -129,10 +140,8 @@ npm install --only=production
 npm start
 ```
 
-Access LucID in your web browser at `http://localhost:8484` (or `http://localhost:3000` for manual Node.js).
-
 ---
 
 ## License
 
-LucID is 100% Free and Open-Source Software licensed under the [MIT License](LICENSE).
+Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
