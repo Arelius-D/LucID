@@ -123,6 +123,9 @@ function showPromptModal(title, message, defaultValue = '') {
 
 // ─── E2EE CRYPTO ───────────────────────────────────
 async function deriveKey(passphrase) {
+  if (!window.crypto || !window.crypto.subtle) {
+    throw new Error('SECURE_CONTEXT_REQUIRED');
+  }
   const enc = new TextEncoder();
   const km = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
   const key = await crypto.subtle.deriveKey(
@@ -134,6 +137,7 @@ async function deriveKey(passphrase) {
   );
   return key;
 }
+
 
 async function restoreKeyFromSession() {
   const saved = sessionStorage.getItem('lucid-passphrase');
@@ -1128,7 +1132,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateE2EEUI();
       renderAll();
     } catch (err) {
-      lockError.textContent = 'Authentication error. Access denied.';
+      if (err && err.message === 'SECURE_CONTEXT_REQUIRED') {
+        lockError.textContent = 'Web Crypto E2EE requires HTTPS or localhost. Plain HTTP to an IP address blocks browser encryption.';
+      } else {
+        lockError.textContent = 'Authentication error. Access denied.';
+      }
       lockError.style.display = 'block';
       lockBtn.textContent = 'Unlock Vault';
       lockBtn.disabled = false;
