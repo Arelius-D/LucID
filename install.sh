@@ -54,6 +54,16 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
   docker rm -f lucid-app lucid-caddy lucid-ddns >/dev/null 2>&1 || true
   sudo docker rm -f lucid-app lucid-caddy lucid-ddns >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
+
+  echo -n "[TEARDOWN] Reverting firewall rules created specifically for LucID... "
+  if command -v ufw >/dev/null 2>&1; then
+    if [ -f "${INSTALL_DIR}/.ufw_rules" ]; then
+      while IFS= read -r rule; do
+        [ -n "${rule}" ] && sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
+      done < "${INSTALL_DIR}/.ufw_rules"
+    fi
+  fi
+  echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
   ${DOCKER_CMD} rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest >/dev/null 2>&1 || true
@@ -148,15 +158,19 @@ fi
 
 # 5. Check & Configure UFW Firewall (if active)
 echo "[FIREWALL] Auditing UFW firewall rules..."
+rm -f .ufw_rules 2>/dev/null || true
 if command -v ufw >/dev/null 2>&1; then
   UFW_STATUS=$(sudo ufw status 2>/dev/null | grep -i "Status:" | awk '{print $2}' || echo "inactive")
   echo "  - UFW Status: ${UFW_STATUS}"
   if [ "${UFW_STATUS}" = "active" ]; then
     echo "  - Ensuring firewall rules for ports ${PORT}/tcp, 80/tcp, 443/tcp, 8000/tcp..."
-    sudo ufw allow "${PORT}/tcp" >/dev/null 2>&1 || true
-    sudo ufw allow 80/tcp >/dev/null 2>&1 || true
-    sudo ufw allow 443/tcp >/dev/null 2>&1 || true
-    sudo ufw allow 8000/tcp >/dev/null 2>&1 || true
+    for rule in "${PORT}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
+      if ! sudo ufw status 2>/dev/null | grep -q "${rule}"; then
+        # Rule was NOT active before setup, so open it and record in .ufw_rules for precise teardown
+        sudo ufw allow "${rule}" >/dev/null 2>&1 || true
+        echo "${rule}" >> .ufw_rules
+      fi
+    done
     echo -e "  - Firewall Rules: ${GREEN}[ALLOWED]${NC}"
   fi
 else
