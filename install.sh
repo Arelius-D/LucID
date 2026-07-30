@@ -59,7 +59,10 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
   if command -v ufw >/dev/null 2>&1; then
     if [ -f "${INSTALL_DIR}/.ufw_rules" ]; then
       while IFS= read -r rule; do
-        [ -n "${rule}" ] && sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
+        # HARD SAFETY GUARD: NEVER TOUCH PORT 22 / SSH RULES
+        if [ -n "${rule}" ] && [[ ! "${rule}" =~ ^22(/|$) ]]; then
+          sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
+        fi
       done < "${INSTALL_DIR}/.ufw_rules"
     fi
   fi
@@ -165,10 +168,13 @@ if command -v ufw >/dev/null 2>&1; then
   if [ "${UFW_STATUS}" = "active" ]; then
     echo "  - Ensuring firewall rules for ports ${PORT}/tcp, 80/tcp, 443/tcp, 8000/tcp..."
     for rule in "${PORT}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
-      if ! sudo ufw status 2>/dev/null | grep -q "${rule}"; then
-        # Rule was NOT active before setup, so open it and record in .ufw_rules for precise teardown
-        sudo ufw allow "${rule}" >/dev/null 2>&1 || true
-        echo "${rule}" >> .ufw_rules
+      # SAFETY GUARD: Never touch port 22
+      if [[ ! "${rule}" =~ ^22(/|$) ]]; then
+        if ! sudo ufw status 2>/dev/null | grep -q "${rule}"; then
+          # Rule was NOT active before setup, so open it and record in .ufw_rules for precise teardown
+          sudo ufw allow "${rule}" >/dev/null 2>&1 || true
+          echo "${rule}" >> .ufw_rules
+        fi
       fi
     done
     echo -e "  - Firewall Rules: ${GREEN}[ALLOWED]${NC}"
