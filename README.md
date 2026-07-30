@@ -13,7 +13,7 @@
 
 ## ⚡ 1-Line Instant Installation
 
-Run this single command on your Linux server or VPS to instantly audit ports, configure firewall, and launch LucID:
+Run this single command on your Linux Host, Server, or VPS to instantly audit ports, configure firewall, set up DuckDNS, and launch LucID inside a clean `~/lucid` directory:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
@@ -24,6 +24,40 @@ To completely uninstall and wipe all containers, images, volumes, and state:
 ```bash
 ./install.sh --purge
 ```
+
+---
+
+## 🐳 Prerequisites (Docker Setup)
+
+LucID requires Docker & Docker Compose. If your Host, Server, or VPS does not have Docker installed yet, you can automatically install Docker & Docker Compose using [NeXdocMan](https://github.com/Arelius-D/NeXdocMan):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arelius-D/NeXdocMan/main/nexdocman.sh | sudo bash -s -- -i -y
+```
+
+---
+
+## Quick Onboarding Guide: Free Remote Access (DuckDNS)
+
+To access LucID remotely from anywhere in the world over valid HTTPS without buying a domain:
+
+### Step 1: Create a Free Account & Domain on DuckDNS
+1. Go to [duckdns.org](https://www.duckdns.org) and sign in with GitHub or Google.
+2. Under **subdomain**, type a name for your host (e.g. `lucid-selfhosted`) and click **add domain**.
+   - Your free domain is: **`lucid-selfhosted.duckdns.org`**
+3. Copy your **token** from the top of the DuckDNS dashboard.
+
+### Step 2: Run the Automated Installer
+Paste the 1-line installer on your host machine / VPS terminal:
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
+```
+- Enter `y` when prompted for DuckDNS.
+- Enter your domain (`lucid-selfhosted.duckdns.org`) and token.
+- The installer automatically detects your public IP and configures `ddns-updater` to keep DuckDNS synced automatically.
+
+### Step 3: Open LucID in Your Browser
+Open **`https://lucid-selfhosted.duckdns.org`** on your mobile phone or laptop. Set your master passphrase and start writing encrypted notes!
 
 ---
 
@@ -69,38 +103,6 @@ sequenceDiagram
 
 ---
 
-## Quick Start Guide: Free DDNS Setup (DuckDNS / No-IP / Cloudflare)
-
-To access LucID remotely from anywhere in the world over valid HTTPS without buying a domain:
-
-### 1. Create a Free Account & Domain on DuckDNS
-- Visit [duckdns.org](https://www.duckdns.org) and log in with GitHub/Google.
-- Choose any available subdomain name (e.g. `yourname-lucid`). Your domain will be `yourname-lucid.duckdns.org`.
-- Copy your DuckDNS **Token** from the top of the DuckDNS dashboard.
-
-### 2. Configure `./ddns-data/config.json`
-```json
-{
-  "settings": [
-    {
-      "provider": "duckdns",
-      "domain": "yourname-lucid.duckdns.org",
-      "token": "YOUR_DUCKDNS_TOKEN",
-      "ip_version": "ipv4"
-    }
-  ]
-}
-```
-
-### 3. Launch the LucID Stack
-```bash
-DOMAIN_NAME=yourname-lucid.duckdns.org docker compose up -d
-```
-
-*Note: The automated installer (`install.sh`) will interactively prompt for your subdomain and token, generating this file automatically.*
-
----
-
 ## Existing Reverse Proxy Setup (Caddy / Subpath Route)
 
 If you already operate your own host Caddy reverse proxy:
@@ -121,16 +123,8 @@ yourdomain.com {
 
 ### Option 1: Automated Setup Script
 
-Run the automated environment check, port verification, DDNS updater, and setup script:
-
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
-```
-
-To completely uninstall and wipe all containers, images, volumes, and temporary files:
-
-```bash
-./install.sh --purge
 ```
 
 ---
