@@ -1,5 +1,5 @@
 {
-  "name": "note-vault",
+  "name": "lucid",
   "version": "1.0.0",
   "description": "100% Free, E2EE, 3-Pane Web Note-Taking Application",
   "main": "server.js",

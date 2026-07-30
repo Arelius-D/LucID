@@ -1136,6 +1136,40 @@ body {
   line-height: 1.5;
 }
 
+/* ─── INSPECTOR FOOTER GITHUB LINK ───────────────── */
+.inspector-footer {
+  margin-top: auto;
+  padding: 0.625rem 0.875rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1px solid var(--border);
+}
+.inspector-github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  color: var(--text-muted);
+  transition: color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+.inspector-github-link:hover {
+  color: var(--accent);
+  background-color: var(--surface-hover);
+  transform: translateY(-1px);
+}
+.inspector-github-link.update-available {
+  color: var(--accent) !important;
+  animation: pulse-update 2s infinite ease-in-out;
+}
+@keyframes pulse-update {
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px var(--accent)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 6px var(--accent)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 2px var(--accent)); }
+}
+
 /* ─── RESPONSIVE BREAKPOINTS ─────────────────────── */
 @media (max-width: 60rem) {
   .right-pane { display: none; }
