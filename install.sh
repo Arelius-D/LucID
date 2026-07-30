@@ -3,7 +3,7 @@
 #  LucID — Environment Check & Installation Script
 #  Checks Docker & Docker Compose prerequisites, audits ports,
 #  configures UFW firewall, prompts for DuckDNS DDNS, sets storage
-#  permissions & deploys.
+#  permissions & deploys inside a clean ~/lucid directory.
 #
 #  Usage:
 #    ./install.sh          # Standard installation
@@ -18,6 +18,13 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+
+# Ensure installation runs inside a dedicated ~/lucid directory
+INSTALL_DIR="${LUCID_DIR:-$HOME/lucid}"
+if [ "$(pwd)" != "${INSTALL_DIR}" ]; then
+  mkdir -p "${INSTALL_DIR}"
+  cd "${INSTALL_DIR}"
+fi
 
 # Determine Docker CLI wrapper (auto-detect sudo requirement)
 DOCKER_CMD="docker"
@@ -50,19 +57,20 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   echo -e "${GREEN}[OK]${NC}"
   
   echo ""
-  echo -e "${GREEN}LucID environment completely purged. No residual state remaining.${NC}"
+  echo -e "${GREEN}LucID environment completely purged from ${INSTALL_DIR}.${NC}"
   exit 0
 fi
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}   LucID — E2EE Note-Taking Web Application Setup${NC}"
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
+echo -e "[DIR] Operating Directory: ${GREEN}${INSTALL_DIR}${NC}"
 echo ""
 
 # 1. Detect & Display Server Public IP
 DETECTED_IP=$(curl -fsSL https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}' || echo "127.0.0.1")
 echo -e "[NETWORK] Server Public IP: ${GREEN}${DETECTED_IP}${NC}"
-echo -e "[INFO] If using DuckDNS, ensure your domain points to ${GREEN}${DETECTED_IP}${NC} (or ddns-updater will sync it automatically)."
+echo -e "[INFO] Ensure DuckDNS points to ${GREEN}${DETECTED_IP}${NC} (or ddns-updater will sync it automatically)."
 echo ""
 
 # 2. Check Docker Installation
@@ -142,11 +150,6 @@ if [ -f ".env" ]; then
   set -a; source .env 2>/dev/null || true; set +a
 fi
 
-IS_INTERACTIVE=false
-if [ -c /dev/tty ]; then
-  IS_INTERACTIVE=true
-fi
-
 if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
   echo -e "[DDNS] Using existing DuckDNS configuration for domain: ${GREEN}${DUCKDNS_DOMAIN}${NC}"
   cat << EOF > "${DDNS_DIR}/config.json"
@@ -162,16 +165,19 @@ if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
 }
 EOF
   export DOMAIN_NAME="${DUCKDNS_DOMAIN}"
-elif [ "$IS_INTERACTIVE" = true ] && [ "$1" != "-y" ]; then
-  echo ""
-  echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
-  echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
-  read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS </dev/tty || true
-  if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
-    read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN </dev/tty || true
-    read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN </dev/tty || true
-    if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
-      cat << EOF > "${DDNS_DIR}/config.json"
+else
+  # Force reading interactive prompts from /dev/tty if available
+  TTY_DEV="/dev/tty"
+  if [ -c "$TTY_DEV" ]; then
+    echo ""
+    echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
+    echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
+    read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS < "$TTY_DEV" || true
+    if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
+      read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN < "$TTY_DEV" || true
+      read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN < "$TTY_DEV" || true
+      if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
+        cat << EOF > "${DDNS_DIR}/config.json"
 {
     "settings": [
         {
@@ -183,11 +189,12 @@ elif [ "$IS_INTERACTIVE" = true ] && [ "$1" != "-y" ]; then
     ]
 }
 EOF
-      echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" >> .env
-      echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
-      echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
-      export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
-      echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME} -> ${DETECTED_IP}${NC}"
+        echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" >> .env
+        echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
+        echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
+        export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
+        echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME} -> ${DETECTED_IP}${NC}"
+      fi
     fi
   fi
 fi
@@ -259,6 +266,7 @@ ${COMPOSE_EXEC} up -d
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
+echo -e "${GREEN}  Installed Directory: ${INSTALL_DIR}${NC}"
 echo -e "${GREEN}  Server Public IP: ${DETECTED_IP}${NC}"
 echo -e "${GREEN}  Direct Web Access: http://${DOMAIN_NAME}:${PORT}${NC}"
 echo -e "${GREEN}  Caddy HTTPS Access: https://${DOMAIN_NAME}${NC}"
