@@ -1,0 +1,11 @@
+services:
+  app:
+    image: lucid:latest
+    container_name: lucid
+    build: .
+    ports:
+      - "24002:3000"
+    volumes:
+      - ./data:/app/data
+      - ./public:/app/public
+    restart: unless-stopped
