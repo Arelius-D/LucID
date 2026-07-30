@@ -192,13 +192,19 @@ chmod 755 "${DATA_DIR}" "${DDNS_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
 # 7. Interactive / Environment DuckDNS DDNS Setup
+ENV_DUCK_DOMAIN="${DUCKDNS_DOMAIN}"
+ENV_DUCK_TOKEN="${DUCKDNS_TOKEN}"
+
 if [ -f ".env" ]; then
   # Load existing .env if present
   set -a; source .env 2>/dev/null || true; set +a
 fi
 
+DUCKDNS_DOMAIN="${ENV_DUCK_DOMAIN:-${DUCKDNS_DOMAIN}}"
+DUCKDNS_TOKEN="${ENV_DUCK_TOKEN:-${DUCKDNS_TOKEN}}"
+
 if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
-  echo -e "[DDNS] Using existing DuckDNS configuration for domain: ${GREEN}${DUCKDNS_DOMAIN}${NC}"
+  echo -e "[DDNS] Using DuckDNS configuration for domain: ${GREEN}${DUCKDNS_DOMAIN}${NC}"
   cat << EOF > "${DDNS_DIR}/config.json"
 {
     "settings": [
@@ -211,6 +217,9 @@ if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
     ]
 }
 EOF
+  echo "DUCKDNS_DOMAIN=${DUCKDNS_DOMAIN}" > .env
+  echo "DUCKDNS_TOKEN=${DUCKDNS_TOKEN}" >> .env
+  echo "DOMAIN_NAME=${DUCKDNS_DOMAIN}" >> .env
   export DOMAIN_NAME="${DUCKDNS_DOMAIN}"
 else
   # Force reading interactive prompts from /dev/tty if available
@@ -240,7 +249,7 @@ else
     ]
 }
 EOF
-        echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" >> .env
+        echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" > .env
         echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
         echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
         export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
