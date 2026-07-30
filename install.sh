@@ -19,8 +19,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Ensure installation runs inside a dedicated ~/lucid directory
-INSTALL_DIR="${LUCID_DIR:-$HOME/lucid}"
+# Determine actual user home directory when run under sudo
+REAL_USER="${SUDO_USER:-$USER}"
+REAL_HOME=$(eval echo "~${REAL_USER}")
+INSTALL_DIR="${LUCID_DIR:-${REAL_HOME}/lucid}"
+
 if [ "$(pwd)" != "${INSTALL_DIR}" ]; then
   mkdir -p "${INSTALL_DIR}"
   cd "${INSTALL_DIR}"
@@ -80,7 +83,10 @@ if command -v docker >/dev/null 2>&1 || ${DOCKER_CMD} --version >/dev/null 2>&1;
   echo -e "${GREEN}[OK] (${DOCKER_VER})${NC}"
 else
   echo -e "${RED}[FAILED]${NC}"
-  echo -e "${YELLOW}[ERROR] Docker is not installed. Please install Docker before running LucID.${NC}"
+  echo -e "${YELLOW}[ERROR] Docker is not installed on this system.${NC}"
+  echo -e "  - For automated zero-touch Docker & Docker Compose setup, run:"
+  echo -e "    ${GREEN}curl -fsSL https://raw.githubusercontent.com/Arelius-D/NeXdocMan/main/nexdocman.sh | sudo bash -s -- -i -y${NC}"
+  echo -e "  - Or visit: https://github.com/Arelius-D/NeXdocMan"
   exit 1
 fi
 
@@ -100,6 +106,7 @@ elif command -v docker-compose >/dev/null 2>&1; then
 else
   echo -e "${RED}[FAILED]${NC}"
   echo -e "${YELLOW}[ERROR] Docker Compose plugin or binary is not found.${NC}"
+  echo -e "  - Run NeXdocMan automated setup: ${GREEN}curl -fsSL https://raw.githubusercontent.com/Arelius-D/NeXdocMan/main/nexdocman.sh | sudo bash -s -- -i -y${NC}"
   exit 1
 fi
 
