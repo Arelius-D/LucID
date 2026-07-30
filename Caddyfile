@@ -6,7 +6,7 @@
     redir https://{host}{uri} permanent
 }
 
-:443 {
+{$DOMAIN_NAME:localhost} {
     tls internal
     reverse_proxy app:3000
 }
