@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk-ember">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>LucID</title>
+  <link rel="icon" type="image/png" href="assets/branding/favicon.png">
+  <!-- Clean Custom 2026 Design System -->
+  <link rel="stylesheet" href="styles.css?v=latest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+  <div id="app" class="app-container">
+
+    <!-- LEFT SIDEBAR (EXPANDED BY DEFAULT AS CORRECTED) -->
+    <nav id="sidebar-left" class="sidebar left-pane">
+      <header class="brand-header">
+        <strong class="brand-logo">
+          <img src="assets/branding/logo.png" class="brand-logo-img" alt="LucID">
+          LucID
+        </strong>
+        <button id="btn-toggle-left" class="icon-btn" title="Collapse sidebar">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM13.26 15.53L9.74 12l3.52-3.53"/></svg>
+        </button>
+      </header>
+
+      <div class="sidebar-body">
+        <!-- STREAMLINED EXPLORER TOOLBAR ROW -->
+        <div class="tree-header-row">
+          <div class="explorer-mode-pill">
+            <button id="btn-mode-folders" class="explorer-pill-btn active" title="Folders View">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
+              Folders
+            </button>
+            <button id="btn-mode-tags" class="explorer-pill-btn" title="Tags View">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>
+              Tags
+            </button>
+          </div>
+
+          <div class="explorer-actions-pill">
+            <button id="btn-new-note" class="icon-btn action-pill-btn" title="New Note">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.56 18v-5M12 15.5H7M8 2v3M16 2v3M15.81 3.42c3.34.12 5.03 1.35 5.13 6.05l.13 6.17c.08 4.12-.87 6.19-5.87 6.3l-6 .12c-5 .1-6.04-1.94-6.12-6.05l-.14-6.18c-.1-4.7 1.55-6 4.87-6.25l8-.16z"/></svg>
+            </button>
+            <button id="btn-new-folder" class="icon-btn action-pill-btn" title="New Folder">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
+            </button>
+            <button id="btn-toggle-search" class="icon-btn action-pill-btn" title="Search Notes & Tags">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5H20M14 8H17M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH INPUT (EXPANDS DIRECTLY BELOW EXPLORER HEADER ROW) -->
+        <div id="search-wrapper" class="search-wrapper hidden">
+          <input type="search" id="search-input" class="search-input" placeholder="Search notes & tags… (Esc to close)">
+        </div>
+
+        <div id="folder-tree" class="folder-tree"></div>
+        <div id="tag-tree" class="tag-tree hidden"></div>
+      </div>
+
+      <!-- SIDEBAR FOOTER CONTAINING E2EE STATUS, SYNC INDICATOR & LOCK BUTTON -->
+      <footer class="sidebar-footer">
+        <div class="e2ee-card" id="e2ee-card">
+          <div class="e2ee-row">
+            <span class="status-dot active" id="e2ee-dot"></span>
+            <span id="e2ee-text">E2EE Active · AES-256-GCM</span>
+          </div>
+          <div class="footer-actions-row">
+            <div id="save-indicator" class="sync-status-badge" title="Synced to vault">
+              <svg class="icon-svg check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>
+              <span>Synced</span>
+            </div>
+            <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 11.12c0 4.89-3.55 9.47-8.4 10.81-.33.09-.69.09-1.02 0-4.85-1.34-8.4-5.92-8.4-10.81V6.73c0-.82.62-1.75 1.39-2.06l5.57-2.28c1.25-.51 2.66-.51 3.91 0l5.57 2.28c.76.31 1.39 1.24 1.39 2.06l-.01 4.39z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>
+              <span>Lock</span>
+            </button>
+          </div>
+        </div>
+      </footer>
+    </nav>
+
+    <!-- LEFT RESIZER -->
+    <div id="resizer-left" class="sidebar-resizer" title="Drag to resize sidebar"></div>
+
+    <!-- CENTER PANE -->
+    <main id="main-editor" class="center-pane">
+      <!-- CLEAN TOP BAR -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <!-- CLEAN DOCKED EXPAND SIDEBAR BUTTON IN TOP BAR -->
+          <button id="btn-expand-left" class="icon-btn docked-expand-btn hidden" title="Expand Sidebar">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM10.74 15.53L14.26 12l-3.52-3.53"/></svg>
+          </button>
+
+          <!-- VIEW MODE TABS WITH DYNAMIC ICONSAX SVGS -->
+          <div class="view-tabs">
+            <button id="tab-mode-editor" class="view-tab active" title="Editor Only">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.26 3.6L5.05 12.29c-.31.33-.61.97-.67 1.41l-.37 3.22c-.13 1.17.7 1.98 1.86 1.81l3.2-.46c.44-.06 1.07-.38 1.38-.7l8.21-8.69c1.42-1.5 2.06-3.21-.09-5.24-2.14-2.01-3.83-1.32-5.31.16z"/><path d="M11.89 5.05l5.06 4.77"/></svg>
+              <span>Editor</span>
+            </button>
+            <button id="tab-mode-split" class="view-tab" title="Toggle Split Orientation (Side-by-Side ↔ Top-Bottom)">
+              <span class="split-tab-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H3v18h7V3zM21 3h-7v18h7V3z"/></svg></span>
+              <span>Split</span>
+            </button>
+            <button id="tab-mode-preview" class="view-tab" title="Preview Only">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.58 12c0 1.98-1.6 3.58-3.58 3.58S8.42 13.98 8.42 12s1.6-3.58 3.58-3.58 3.58 1.6 3.58 3.58z"/><path d="M12 20.27c3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-2.29-3.6-5.58-5.68-9.11-5.68-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19 2.29 3.6 5.58 5.68 9.11 5.68z"/></svg>
+              <span>Preview</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="top-bar-right">
+          <!-- SEAMLESS GLOWING SUN / MOON THEME TOGGLE BUTTON -->
+          <button id="btn-theme-toggle" class="theme-glow-btn" title="Toggle Theme">
+            <span id="theme-toggle-icon"></span>
+          </button>
+
+          <button id="btn-toggle-right" class="icon-btn" title="Toggle Inspector Pane">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM12 8v5"/><path stroke-width="2" d="M11.995 16h.009"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- AUTO-FIT EDITOR/PREVIEW PANE -->
+      <div id="editor-split" class="editor-split mode-editor">
+        <div class="editor-pane">
+          <textarea id="markdown-textarea" spellcheck="true" placeholder="Start writing in Markdown…"></textarea>
+        </div>
+        <div class="split-handle" id="split-handle"><div class="handle-line"></div></div>
+        <div class="preview-pane">
+          <div id="markdown-preview" class="preview-content"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- RIGHT RESIZER -->
+    <div id="resizer-right" class="sidebar-resizer" title="Drag to resize inspector"></div>
+
+    <!-- RIGHT SIDEBAR (COLLAPSED BY DEFAULT AS REQUESTED) -->
+    <aside id="sidebar-right" class="sidebar right-pane collapsed">
+      <section>
+        <h6>TABLE OF CONTENTS</h6>
+        <div id="toc-container" class="toc-list"><small class="empty-state">No headings</small></div>
+      </section>
+      <section>
+        <div class="tags-header">
+          <h6>TAGS</h6>
+          <button id="btn-add-tag" class="btn-tag-add" title="Add Tag">+</button>
+        </div>
+        <div id="tags-container" class="tags-list"></div>
+      </section>
+      <section>
+        <h6>METRICS</h6>
+        <div class="metrics-grid">
+          <div class="metric"><strong id="val-words">0</strong><small>Words</small></div>
+          <div class="metric"><strong id="val-chars">0</strong><small>Chars</small></div>
+          <div class="metric"><strong id="val-lines">0</strong><small>Lines</small></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- RIGHT-CLICK TREE CONTEXT MENU -->
+  <div id="tree-context-menu" class="context-menu hidden"></div>
+
+  <!-- IN-APP PROMPT MODAL -->
+  <div id="modal-prompt" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-icon">
+        <svg class="modal-prompt-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
+      </div>
+      <h3 id="modal-prompt-title">New Folder</h3>
+      <p id="modal-prompt-msg">Enter a name for the new folder:</p>
+      <input type="text" id="modal-prompt-input" class="modal-input" placeholder="Folder Name" autofocus>
+      <div class="modal-actions">
+        <button id="modal-prompt-btn-cancel" class="btn-modal-secondary">Cancel</button>
+        <button id="modal-prompt-btn-submit" class="btn-modal-primary">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IN-APP CONFIRMATION MODAL -->
+  <div id="modal-confirm" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-icon">
+        <svg class="modal-warning-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.17 14.83l5.66-5.66M14.83 14.83L9.17 9.17M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/></svg>
+      </div>
+      <h3 id="modal-confirm-title">Confirm Action</h3>
+      <p id="modal-confirm-msg">Are you sure you want to proceed?</p>
+      <div class="modal-actions">
+        <button id="modal-btn-cancel" class="btn-modal-secondary">Cancel</button>
+        <button id="modal-btn-danger" class="btn-modal-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCK SCREEN -->
+  <div id="lock-screen" class="lock-screen">
+    <div class="lock-card">
+      <div class="lock-icon">
+        <img src="assets/branding/logo.png" class="lock-logo-img" alt="LucID">
+      </div>
+      <h2>LucID</h2>
+      <p>End-to-End Encrypted Notes</p>
+      <p class="lock-sub">Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.</p>
+      <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" autofocus>
+      <div id="lock-error" class="lock-error" style="display:none"></div>
+      <button id="lock-unlock-btn" class="lock-btn">Unlock Vault</button>
+      <small class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
+    </div>
+  </div>
+
+  <script src="app.js?v=latest"></script>
+</body>
+</html>
