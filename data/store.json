@@ -15,15 +15,16 @@
     {
       "id": "n-welcome-1",
       "folderId": "f-welcome",
-      "title": "ENC:JktMU7saPgTbuWN+Bl9guOTJFn1YRHC2aEHmJWCHwMcaj5pcUPAnI/LZ7mWDVcscog==",
-      "content": "ENC:JO0XzFKv8LX/kAWELCjPR5pDgOJUftoTC0I/76TDhAkBC0rPWDRo6qPuK5eicXSvg44cHOLby7IcTYibpqiBxxxNqhagNcxgzAbr93zEbkJEcVwuIk8i68g7+CsuzG1WJOHwm8lJ2AguDg25Ifa4V6/p2MiCDnVbzfM+gJrd5Yok1SOuLPIL62T6EZCLCVawpEiBJvcUgVghglGmxIvI1uCLRv9Gz/EaE7uREM5/byUDXYnlpeh2gWva5/VAekSA6r9AXws4iYTWeyo9TtyGfQzjjS4i6vKd+5HogjeWbsEMpWW7jul9ELKLbkq3JD9PFZ0kVC+WP7PeArkag5joS1ZI4Ci934cQlVl9AbvLt2zwP6z6WzqrWErLmobgTuVlT36ellsxA28UpIIRBoTM8xwcBYiR6jat9vXIFgDVBe5oJMnCLmN4HzGlnt+AQMeZp82iIsDmLvKCqOtbP9wdDQjjlpVc99h7m1iZF0ZQlmpQLXxF1P/SNqS9+I4F+DqtntHNRr32XflOsOQsYNZrUWebW7OUq17D39y3zRu/bjN6DPwJRKkfP0ZdZDWUxCowv5uEVbPjgHQfC758NKzSV2WrMdbZepHqbGy2DBjTiv041170KmTF1zYlZcJUcLydkLpcsC82pG7X9Rml4/hlvvQgYAwLTPHaHwSE9dMfuqHUbPY8dmHnyLJHOgM0RP4vCsqDbSyBoJphLun++mLBBzKdGG26zD0x8VDkO2khl1wRox53dnraLR0D3DIDvph8oN0SQUJXf66GdHbcOf38xv3XJv4MQeGMpPaAeI8NQ1LXQIzViL3uUSFONkVr3pZ6LGTGQU0Dkw==",
-      "isEncrypted": true,
+      "title": "Welcome to LucID",
+      "content": "# Welcome to LucID\n\nLucID is a modern, privacy-focused note-taking application featuring client-side **AES-256-GCM End-to-End Encryption (E2EE)**.\n\n## Key Capabilities\n- 🔒 **Client-Side E2EE**: Your master passphrase encrypts all note titles and contents locally in your browser before storage.\n- ↕️↔️ **Dual Split View**: Easily toggle between Side-by-Side (Left/Right) and Top-Bottom split views.\n- ☀️🌙 **Theme Engine**: Dusk Ember (Dark) and Warm Linen (Light) themes.\n- 📁🏷️ **Folders & Tags**: Expandable hierarchy with instant search.\n\nTo lock your vault and encrypt your notes, click the **Lock Vault** button in the bottom left footer and set your master passphrase.",
+      "isEncrypted": false,
       "tags": [
         "welcome",
         "lucid"
       ],
       "createdAt": "2026-07-30T12:00:00.000Z",
-      "updatedAt": "2026-07-30T11:02:12.680Z"
+      "updatedAt": "2026-07-30T12:00:00.000Z"
     }
-  ]
+  ],
+  "authVerifier": null
 }
