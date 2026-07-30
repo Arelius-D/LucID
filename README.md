@@ -1,38 +1,35 @@
 <div align="center">
   <img src="public/assets/branding/logo.png" alt="LucID Logo" width="120" height="120" style="border-radius: 1rem; box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.3);" />
   <h1>LucID</h1>
-  <p><strong>100% Free & Open-Source Client-Side End-to-End Encrypted (E2EE) Note-Taking Web Application</strong></p>
+  <p><strong>Ultra-lightweight Self-Hosted & Open-Source Note Application featuring Client-Side AES-256-GCM End-to-End Encryption (E2EE), Native Markdown Formatting, and Zero Subscriptions.</strong></p>
 
   [![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](LICENSE)
-  [![Docker Hub Image](https://img.shields.io/badge/Docker_Hub-areliusd%2Flucid%3Alatest-blue.svg)](https://hub.docker.com/r/areliusd/lucid)
+  [![Docker Hub Image](https://img.shields.io/badge/Docker_Hub-assarelius%2Flucid%3Alatest-blue.svg)](https://hub.docker.com/r/assarelius/lucid)
   [![GHCR Image](https://img.shields.io/badge/GHCR-ghcr.io%2Farelius--d%2Flucid%3Alatest-purple.svg)](https://github.com/Arelius-D/LucID/pkgs/container/lucid)
-  [![Client-Side E2EE](https://img.shields.io/badge/Encryption-AES--256--GCM-emerald.svg)](#-security--architecture)
+  [![Client-Side E2EE](https://img.shields.io/badge/Encryption-AES--256--GCM-emerald.svg)](#security--architecture)
 </div>
 
 ---
 
-## 💡 Why LucID Exists
+## Why LucID Exists
 
-LucID was built from scratch to break free from proprietary note-taking platforms that enforce subscription paywalls, gate core features behind paid tiers, track user data on third-party servers, or consume hundreds of megabytes of RAM.
-
-LucID provides a **privacy-first, ultra-lightweight, zero-subscription** note-taking experience with native client-side encryption and cross-platform responsive support across Desktop and Mobile Web browsers.
+LucID is a privacy-first, self-hosted note application built for speed and complete data ownership. Client-side AES-256-GCM encryption ensures your master passphrase is never stored on disk or transmitted across the network. Most commercial and open-source note tools eventually lock features behind subscriptions. LucID is different: it is 100% free, fully open-source, and will never have paywalled features.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- 🔒 **Client-Side E2EE (AES-256-GCM)**: All note titles, content, and tags are encrypted locally inside your web browser using Web Crypto API PBKDF2 (100,000 iterations) + AES-GCM 256-bit encryption before reaching the server.
-- ↕️↔️ **Dual Split View**: Smoothly toggle between Side-by-Side (Left/Right) and Top-Bottom split views with live synchronized Markdown preview.
-- ☀️🌙 **Theme Engine**:
-  - **Dusk Ember** (Matte metallic steel & gold dark mode)
-  - **Warm Linen** (Warm paper light mode)
-- 📁🏷️ **Explorer with Expandable Tag Tree**: Organize via nested folder trees or expandable tag views with right-click context menus.
-- ⚡ **Ultra-Low Resource Footprint**: Memory usage under ~25MB RAM, ~0% idle CPU, zero heavy framework overhead.
-- 📱 **Cross-Platform & Mobile PWA**: Responsive user interface tailored for Desktop (macOS, Linux, Windows) and Mobile (iOS, Android).
+- **Client-Side End-to-End Encryption (E2EE)**: Powered by native Web Crypto API using AES-256-GCM and PBKDF2 key derivation (100,000 iterations). All titles, contents, and tags are encrypted locally in your browser.
+- **Native Markdown & Live Preview**: Full GFM Markdown support with syntax highlighting for code blocks, task lists, tables, and synchronized live rendering.
+- **Dual Split View Layout**: Switch between Side-by-Side (Left/Right) and Top-Bottom split views with draggable pane resizing.
+- **Organization & Expandable Tags**: Dual explorer supporting nested folder trees and expandable tag views with context menus.
+- **Dusk Ember & Warm Linen Themes**: Includes custom metallic dark mode and warm paper light mode.
+- **Micro Resource Footprint**: Built with zero heavy framework bloat, consuming under 25MB RAM and 0% CPU at idle.
+- **Cross-Platform Support**: Responsive layout designed for desktop browsers and mobile web applications.
 
 ---
 
-## 🏗️ Technical Stack & Container Architecture
+## Technical Stack & Container Architecture
 
 LucID is built with a minimal, dependency-light tech stack designed for speed, security, and long-term maintainability:
 
@@ -46,29 +43,32 @@ LucID is built with a minimal, dependency-light tech stack designed for speed, s
 
 ---
 
-## 🛡️ Security & Architecture
+## Security & Architecture
 
-```
-┌────────────────────────────────────────────────────────┐
-│                   BROWSER CLIENT                       │
-│  User Passphrase ──> PBKDF2 Key Derivation              │
-│  Plaintext Markdown ──> AES-256-GCM Encryption         │
-└──────────────────────────┬─────────────────────────────┘
-                           │ (Ciphertext Only: ENC:base64...)
-                           ▼
-┌────────────────────────────────────────────────────────┐
-│                    EXPRESS BACKEND                     │
-│  Stores Ciphertext Payload in /data/store.json         │
-└──────────────────────────┬─────────────────────────────┘
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as User Browser
+    participant KDF as Web Crypto (PBKDF2)
+    participant Engine as AES-256-GCM Engine
+    participant Server as Node/Express Backend
+    participant Storage as Disk (/data/store.json)
+
+    User->>KDF: Master Passphrase + Vault Salt
+    KDF-->>Engine: 256-bit Cryptographic Key (Derived in Memory)
+    User->>Engine: Plaintext Note Content & Title
+    Engine-->>User: Authenticated Ciphertext (ENC:IV:Base64)
+    User->>Server: HTTP POST /api/store (Ciphertext Payload Only)
+    Server->>Storage: Persist Ciphertext to store.json
 ```
 
-Your master passphrase never leaves your browser. If an unauthorized party gains access to the server disk, they only see AES-256-GCM ciphertext strings.
+- **Initialization Vector (IV)**: Every encryption operation generates a unique 96-bit cryptographically secure random IV via `crypto.getRandomValues`.
+- **Ciphertext Storage Format**: Encrypted payloads are formatted as `ENC:iv_base64:ciphertext_base64` before transmission.
+- **Backend Role**: The Node/Express server provides basic `GET /api/store` and `POST /api/store` REST endpoints to persist JSON payload blobs without reading or decrypting contents.
 
 ---
 
-## 🚀 Deployment Options
-
-LucID is published on **Docker Hub** (`areliusd/lucid:latest`) and **GitHub Container Registry** (`ghcr.io/arelius-d/lucid:latest`) for multi-architecture deployments (`amd64` and `arm64`).
+## Deployment Options
 
 ### Option 1: Docker Compose (Recommended)
 
@@ -77,7 +77,7 @@ Create a `docker-compose.yml` file:
 ```yaml
 services:
   lucid:
-    image: areliusd/lucid:latest
+    image: assarelius/lucid:latest
     container_name: lucid
     ports:
       - "8484:3000"
@@ -93,15 +93,13 @@ docker compose up -d
 
 ### Option 2: Docker CLI (`docker run`)
 
-Run LucID as a standalone container directly from Docker Hub:
-
 ```bash
 docker run -d \
   --name lucid \
   -p 8484:3000 \
   -v $(pwd)/data:/app/data \
   --restart unless-stopped \
-  areliusd/lucid:latest
+  assarelius/lucid:latest
 ```
 
 ### Option 3: Manual Node.js Installation
@@ -119,6 +117,6 @@ Access LucID in your web browser at `http://localhost:8484` (or `http://localhos
 
 ---
 
-## 📜 License
+## License
 
-LucID is 100% Free and Open-Source Software licensed under the **MIT License**.
+LucID is 100% Free and Open-Source Software licensed under the [MIT License](LICENSE).
