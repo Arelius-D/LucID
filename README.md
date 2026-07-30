@@ -79,7 +79,40 @@ LucID resolves this by placing cryptography directly inside your browser. All no
 - **Dual Split Views**: Toggle between Side-by-Side (Left/Right) and Top-Bottom editor split layouts.
 - **Explorer Tags & Folders**: Organized hierarchy with instant fuzzy search across notes and tags.
 - **Dual Visual Themes**: Dusk Ember (Dark) and Warm Linen (Light) curated themes.
-- **Ultra-Lightweight Footprint**: Node.js Alpine base image utilizing minimal RAM resources.
+
+---
+
+## 📊 Empirical Production System Footprint (Measured Live on Linux Host)
+
+Below are the exact empirical CPU, cgroup RAM, Host RSS RAM, and Disk storage metrics measured directly from a live production Linux host (`204.168.166.7`):
+
+### 1. Active Container Memory & CPU Usage
+
+| Component | CPU % | cgroup RAM | Host Process RSS RAM | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **18.59 MiB** | **74.71 MB** | `Up (healthy)` |
+| Caddy Reverse Proxy (`caddy:latest`) | **0.00%** | **11.35 MiB** | **47.02 MB** | `Up (healthy)` |
+| Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.00%** | **5.07 MiB** | **16.05 MB** | `Up (healthy)` |
+| **Total Active Container Stack** | **0.00%** | **~35.01 MiB** | **~137.78 MB** | **All Healthy** |
+
+### 2. Infrastructure Overhead
+
+| Process / Daemon | Host Process RSS RAM | Role |
+| :--- | :--- | :--- |
+| `dockerd` | **101.12 MB** | Docker Engine System Daemon |
+| `containerd` | **94.31 MB** | Container Runtime Daemon |
+| `docker-proxy` | **42.00 MB** | Network Port Forwarding Proxy |
+| `containerd-shim-runc-v2` | **34.12 MB** | Container Process Shims |
+
+### 3. Disk Footprint Breakdown
+
+| Asset | Size | Category |
+| :--- | :--- | :--- |
+| Application Deployment Directory | **36 KB** | Configuration & Local Storage |
+| Application Container Image (`assarelius/lucid:latest`) | **276 MB** | Docker Container Image |
+| Caddy Reverse Proxy Image (`caddy:latest`) | **88.7 MB** | Docker Container Image |
+| Dynamic DNS Updater Image (`qmcgaw/ddns-updater:latest`) | **19.4 MB** | Docker Container Image |
+| TLS Certificate & ACME Config Cache | **< 10 KB** | Named Docker Volumes |
 
 ---
 
@@ -112,7 +145,7 @@ yourdomain.com {
     redir /lucid /lucid/ 308
     handle /lucid/* {
         uri strip_prefix /lucid
-        reverse_proxy 127.0.0.1:24002
+        reverse_proxy 127.0.0.1:58243
     }
 }
 ```
@@ -140,7 +173,7 @@ services:
     container_name: lucid-app
     restart: unless-stopped
     ports:
-      - "24002:3000"
+      - "58243:3000"
     volumes:
       - ./data:/app/data
 
@@ -181,7 +214,7 @@ volumes:
 ```bash
 docker run -d \
   --name lucid \
-  -p 24002:3000 \
+  -p 58243:3000 \
   -v $(pwd)/data:/app/data \
   --restart unless-stopped \
   assarelius/lucid:latest

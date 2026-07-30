@@ -4,7 +4,7 @@ services:
     container_name: lucid-app
     restart: unless-stopped
     ports:
-      - "24002:3000"
+      - "58243:3000"
     volumes:
       - ./data:/app/data
 
