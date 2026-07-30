@@ -64,6 +64,13 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
           sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
         fi
       done < "${INSTALL_DIR}/.ufw_rules"
+    else
+      # Fallback teardown for default LucID stack ports (never touching Port 22)
+      for rule in "${PORT:-24002}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
+        if [[ ! "${rule}" =~ ^22(/|$) ]]; then
+          sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
+        fi
+      done
     fi
   fi
   echo -e "${GREEN}[OK]${NC}"
@@ -170,11 +177,8 @@ if command -v ufw >/dev/null 2>&1; then
     for rule in "${PORT}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
       # SAFETY GUARD: Never touch port 22
       if [[ ! "${rule}" =~ ^22(/|$) ]]; then
-        if ! sudo ufw status 2>/dev/null | grep -q "${rule}"; then
-          # Rule was NOT active before setup, so open it and record in .ufw_rules for precise teardown
-          sudo ufw allow "${rule}" >/dev/null 2>&1 || true
-          echo "${rule}" >> .ufw_rules
-        fi
+        sudo ufw allow "${rule}" >/dev/null 2>&1 || true
+        echo "${rule}" >> .ufw_rules
       fi
     done
     echo -e "  - Firewall Rules: ${GREEN}[ALLOWED]${NC}"
