@@ -17,6 +17,9 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Determine actual user home directory when run under sudo
@@ -83,7 +86,7 @@ echo ""
 
 # 1. Detect & Display Server Public IP
 DETECTED_IP=$(curl -fsSL https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}' || echo "127.0.0.1")
-echo -e "[NETWORK] Server Public IP: ${GREEN}${DETECTED_IP}${NC}"
+echo -e "[NETWORK] Host Public IP: ${GREEN}${DETECTED_IP}${NC}"
 echo -e "[INFO] Ensure DuckDNS points to ${GREEN}${DETECTED_IP}${NC} (or ddns-updater will sync it automatically)."
 echo ""
 
@@ -299,10 +302,11 @@ echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_EXEC}...${NC}"
 ${COMPOSE_EXEC} up -d
 
-# Fix permissions again post-container launch
+# Fix permissions again post-container launch (ensure data files are readable by host user)
 if [ -n "$SUDO_USER" ]; then
   chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
 fi
+chmod 666 ./data/store.json 2>/dev/null || true
 
 # 12. Post-Deploy Health Check & DNS Resolution Audit
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
@@ -327,13 +331,17 @@ if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
 fi
 
 echo ""
-echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
-echo -e "${GREEN}  Installed Directory: ${INSTALL_DIR}${NC}"
-echo -e "${GREEN}  Server Public IP: ${DETECTED_IP}${NC}"
+echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════${NC}"
+echo -e "${GREEN}  LucID Production E2EE Web Application is Online!${NC}"
+echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════${NC}"
+echo ""
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
-  echo -e "${GREEN}  DuckDNS HTTPS Access: https://${DOMAIN_NAME}${NC}"
+  echo -e "  ${BOLD}${MAGENTA}🔒 PRIMARY PRODUCTION URL (Caddy + Let's Encrypt TLS):${NC}"
+  echo -e "     👉 ${CYAN}${BOLD}https://${DOMAIN_NAME}${NC}"
+  echo ""
 fi
-echo -e "${GREEN}  Direct Web Access: http://${DOMAIN_NAME}:${PORT}${NC}"
-echo -e "${GREEN}  DDNS Updater Web UI: http://${DOMAIN_NAME}:8000${NC}"
-echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
+echo -e "  📁 Installed Directory:   ${GREEN}${INSTALL_DIR}${NC}"
+echo -e "  🔌 Server Public IP:       ${GREEN}${DETECTED_IP}${NC}"
+echo -e "  🌐 Direct Web Access:      http://${DOMAIN_NAME}:${PORT}"
+echo -e "  🔄 DDNS Updater Web UI:    http://${DOMAIN_NAME}:8000"
+echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════${NC}"
