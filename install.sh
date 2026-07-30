@@ -2,7 +2,7 @@
 # ═══════════════════════════════════════════════════════════════
 #  LucID — Environment Check & Installation Script
 #  Checks Docker & Docker Compose prerequisites, verifies ports,
-#  sets up storage permissions, and launches the container.
+#  configures UFW firewall, sets storage permissions & deploys.
 # ═══════════════════════════════════════════════════════════════
 
 set -e
@@ -59,21 +59,33 @@ else
   echo -e "${GREEN}[SKIPPED] (ss utility not present)${NC}"
 fi
 
-# 4. Storage Directory Verification
+# 4. Check & Configure UFW Firewall (if active)
+if command -v ufw >/dev/null 2>&1 && sudo ufw status 2>/dev/null | grep -q "Status: active"; then
+  echo -n "[FIREWALL] Verifying UFW rule for port ${PORT}/tcp... "
+  if sudo ufw status | grep -q "${PORT}/tcp"; then
+    echo -e "${GREEN}[ALLOWED]${NC}"
+  else
+    echo -e "${YELLOW}[ALLOWING] Adding UFW rule for port ${PORT}/tcp...${NC}"
+    sudo ufw allow "${PORT}/tcp" >/dev/null 2>&1 || true
+    echo -e "${GREEN}[OK]${NC}"
+  fi
+fi
+
+# 5. Storage Directory Verification
 DATA_DIR="./data"
 echo -n "[SETUP] Initializing local storage directory (${DATA_DIR})... "
 mkdir -p "${DATA_DIR}"
 chmod 755 "${DATA_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 5. Ensure docker-compose.yml is present
+# 6. Ensure docker-compose.yml is present
 if [ ! -f "docker-compose.yml" ]; then
   echo -n "[FETCH] Downloading docker-compose.yml from main branch... "
   curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml -o docker-compose.yml
   echo -e "${GREEN}[OK]${NC}"
 fi
 
-# 6. Launch Container
+# 7. Launch Container
 echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID container using ${COMPOSE_CMD}...${NC}"
 ${COMPOSE_CMD} up -d
@@ -81,5 +93,5 @@ ${COMPOSE_CMD} up -d
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
-echo -e "${GREEN}  Local Access: http://localhost:${PORT}${NC}"
+echo -e "${GREEN}  Access URL: http://localhost:${PORT}${NC}"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
