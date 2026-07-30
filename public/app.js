@@ -1086,20 +1086,59 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderAll();
   });
 
+function updateLockScreenUI() {
+  const lockTitle = document.getElementById('lock-title');
+  const lockSubDesc = document.getElementById('lock-sub-desc');
+  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
+  const lockBtn = document.getElementById('lock-unlock-btn');
+
+  if (!state.authVerifier) {
+    if (lockTitle) lockTitle.textContent = 'Initialize LucID Vault';
+    if (lockSubDesc) lockSubDesc.innerHTML = 'Create your master passphrase to initialize your vault. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
+    if (lockConfirmInput) lockConfirmInput.classList.remove('hidden');
+    if (lockBtn) lockBtn.textContent = 'Create Vault';
+  } else {
+    if (lockTitle) lockTitle.textContent = 'LucID';
+    if (lockSubDesc) lockSubDesc.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
+    if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
+    if (lockBtn) lockBtn.textContent = 'Unlock Vault';
+  }
+}
+
   // MANDATORY E2EE LOCK SCREEN & CRYPTOGRAPHIC PASSPHRASE VALIDATION
   const lockScreen = document.getElementById('lock-screen');
   const lockInput = document.getElementById('lock-passphrase');
+  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
   const lockBtn = document.getElementById('lock-unlock-btn');
   const lockError = document.getElementById('lock-error');
 
+  updateLockScreenUI();
+
   async function unlockVault() {
-    const pass = lockInput.value;
+    const pass = lockInput ? lockInput.value : '';
+    const confirmPass = lockConfirmInput ? lockConfirmInput.value : '';
+
     if (!pass) {
       lockError.textContent = 'Please enter a passphrase.';
       lockError.style.display = 'block';
       return;
     }
-    lockBtn.textContent = 'Verifying Passphrase…';
+
+    // Validation for Initial Vault Creation Setup
+    if (!state.authVerifier) {
+      if (!confirmPass) {
+        lockError.textContent = 'Please confirm your master passphrase.';
+        lockError.style.display = 'block';
+        return;
+      }
+      if (pass !== confirmPass) {
+        lockError.textContent = 'Passphrases do not match. Please try again.';
+        lockError.style.display = 'block';
+        return;
+      }
+    }
+
+    lockBtn.textContent = !state.authVerifier ? 'Creating Vault…' : 'Verifying Passphrase…';
     lockBtn.disabled = true;
     lockError.style.display = 'none';
 
@@ -1138,13 +1177,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         lockError.textContent = 'Authentication error. Access denied.';
       }
       lockError.style.display = 'block';
-      lockBtn.textContent = 'Unlock Vault';
+      lockBtn.textContent = !state.authVerifier ? 'Create Vault' : 'Unlock Vault';
       lockBtn.disabled = false;
     }
   }
 
   if (lockInput) {
     lockInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockVault(); });
+  }
+
+  if (lockConfirmInput) {
+    lockConfirmInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockVault(); });
   }
 
   if (lockBtn) lockBtn.addEventListener('click', unlockVault);
