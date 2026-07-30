@@ -1086,19 +1086,27 @@ body {
   color: var(--text-muted);
   margin-bottom: 1.25rem;
 }
+.lock-inputs-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
 .lock-input {
   width: 100%;
-  display: block;
   padding: 0.625rem 0.875rem;
+  margin-bottom: 0;
   font-size: 1rem;
-  background: var(--bg-base);
+  font-family: inherit;
+  background: var(--bg-input);
   color: var(--text-primary);
   border: 1px solid var(--border);
   border-radius: 0.5rem;
   outline: none;
-  margin-bottom: 0.75rem;
   text-align: center;
   letter-spacing: 0.15rem;
+  transition: border-color 0.15s ease;
 }
 .lock-input:focus { border-color: var(--accent); }
 .lock-error {

@@ -165,6 +165,13 @@
           <div class="metric"><strong id="val-lines">0</strong><small>Lines</small></div>
         </div>
       </section>
+      <footer class="inspector-footer">
+        <a href="https://github.com/Arelius-D/LucID" target="_blank" rel="noopener noreferrer" class="inspector-github-link" title="View LucID Repository on GitHub">
+          <svg class="icon-svg github-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+      </footer>
     </aside>
   </div>
 
@@ -208,10 +215,12 @@
       <div class="lock-icon">
         <img src="assets/branding/logo.png" class="lock-logo-img" alt="LucID">
       </div>
-      <h2>LucID</h2>
-      <p>End-to-End Encrypted Notes</p>
-      <p class="lock-sub">Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.</p>
-      <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" autofocus>
+      <h2 id="lock-title">LucID</h2>
+      <p id="lock-sub-desc" class="lock-sub">Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.</p>
+      <div class="lock-inputs-group">
+        <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" autofocus>
+        <input type="password" id="lock-passphrase-confirm" class="lock-input hidden" placeholder="Confirm master passphrase">
+      </div>
       <div id="lock-error" class="lock-error" style="display:none"></div>
       <button id="lock-unlock-btn" class="lock-btn">Unlock Vault</button>
       <small class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
