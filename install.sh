@@ -250,6 +250,13 @@ EOF
   fi
 fi
 
+# Fallback: Ensure DOMAIN_NAME is ALWAYS populated (defaults to DETECTED_IP if DuckDNS is not configured)
+if [ -z "${DOMAIN_NAME}" ]; then
+  export DOMAIN_NAME="${DETECTED_IP}"
+  echo "DOMAIN_NAME=${DETECTED_IP}" >> .env
+  echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DETECTED_IP}${NC}"
+fi
+
 # Fallback: Ensure ddns-data/config.json is ALWAYS a valid JSON file so ddns-updater never crash-loops
 if [ ! -f "${DDNS_DIR}/config.json" ]; then
   cat << 'EOF' > "${DDNS_DIR}/config.json"
