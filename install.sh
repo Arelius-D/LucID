@@ -123,15 +123,24 @@ if [ -z "${DOMAIN_NAME}" ]; then
   echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DOMAIN_NAME}${NC}"
 fi
 
-# 7. Fetch latest docker-compose.yml and Caddyfile (always overwrite to guarantee latest release)
-CACHE_BUSTER=$(date +%s)
-echo -n "[FETCH] Downloading latest docker-compose.yml from main branch... "
-curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
-echo -e "${GREEN}[OK]${NC}"
-
-echo -n "[FETCH] Downloading latest Caddyfile from main branch... "
-curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
-echo -e "${GREEN}[OK]${NC}"
+# 7. Fetch repository files directly via git clone to bypass raw CDN caching
+if command -v git >/dev/null 2>&1; then
+  echo -n "[FETCH] Fetching repository deployment files via Git... "
+  rm -rf ./temp_lucid_repo 2>/dev/null || true
+  git clone --depth 1 https://github.com/Arelius-D/LucID.git ./temp_lucid_repo >/dev/null 2>&1
+  cp ./temp_lucid_repo/docker-compose.yml ./docker-compose.yml
+  cp ./temp_lucid_repo/Caddyfile ./Caddyfile
+  rm -rf ./temp_lucid_repo
+  echo -e "${GREEN}[OK]${NC}"
+else
+  CACHE_BUSTER=$(date +%s)
+  echo -n "[FETCH] Downloading latest docker-compose.yml from main branch... "
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
+  echo -e "${GREEN}[OK]${NC}"
+  echo -n "[FETCH] Downloading latest Caddyfile from main branch... "
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
+  echo -e "${GREEN}[OK]${NC}"
+fi
 
 # 8. Launch Container Stack
 echo ""
