@@ -1,9 +1,29 @@
 services:
   app:
     image: assarelius/lucid:latest
-    container_name: lucid
+    container_name: lucid-app
+    restart: unless-stopped
     ports:
       - "24002:3000"
     volumes:
       - ./data:/app/data
+
+  caddy:
+    image: caddyserver/caddy:alpine
+    container_name: lucid-caddy
     restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  caddy_data:
+  caddy_config:

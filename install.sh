@@ -3,6 +3,10 @@
 #  LucID — Environment Check & Installation Script
 #  Checks Docker & Docker Compose prerequisites, verifies ports,
 #  configures UFW firewall, sets storage permissions & deploys.
+#
+#  Usage:
+#    ./install.sh          # Standard installation
+#    ./install.sh --purge  # Complete teardown & image/data wipe
 # ═══════════════════════════════════════════════════════════════
 
 set -e
@@ -13,6 +17,33 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+
+# Handle Purge / Teardown Flag
+if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
+  echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
+  echo -e "${RED}   LucID — Complete Environment Purge & Teardown${NC}"
+  echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
+  echo ""
+  echo -n "[TEARDOWN] Stopping and removing LucID containers... "
+  docker compose down -v 2>/dev/null || docker rm -f lucid-app lucid-caddy 2>/dev/null || true
+  echo -e "${GREEN}[OK]${NC}"
+  
+  echo -n "[TEARDOWN] Removing LucID Docker images... "
+  docker rmi -f assarelius/lucid:latest caddyserver/caddy:alpine 2>/dev/null || true
+  echo -e "${GREEN}[OK]${NC}"
+  
+  echo -n "[TEARDOWN] Pruning unused Docker system caches... "
+  docker system prune -af --volumes >/dev/null 2>&1 || true
+  echo -e "${GREEN}[OK]${NC}"
+
+  echo -n "[TEARDOWN] Cleaning local data and configuration files... "
+  rm -rf ./data Caddyfile docker-compose.yml 2>/dev/null || true
+  echo -e "${GREEN}[OK]${NC}"
+  
+  echo ""
+  echo -e "${GREEN}LucID environment completely purged. No residual state remaining.${NC}"
+  exit 0
+fi
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${BLUE}   LucID — E2EE Note-Taking Web Application Setup${NC}"
@@ -26,7 +57,7 @@ if command -v docker >/dev/null 2>&1; then
   echo -e "${GREEN}[OK] (${DOCKER_VER})${NC}"
 else
   echo -e "${RED}[FAILED]${NC}"
-  echo -e "${YELLOW}[ERROR] Docker is not installed. Please install Docker before running LucID.${NC}"
+  echo -e "${YELLOW}[ERROR] Docker is not installed. Please run NeXdocMan or install Docker first.${NC}"
   exit 1
 fi
 
@@ -46,12 +77,12 @@ else
   exit 1
 fi
 
-# 3. Check Port Availability (Default 24002 / Configurable)
+# 3. Check Port Availability (Default 24002 / 80 / 443)
 PORT="${PORT:-24002}"
 echo -n "[CHECK] Checking port ${PORT} availability... "
 if command -v ss >/dev/null 2>&1; then
   if ss -tulpn | grep -q ":${PORT} "; then
-    echo -e "${YELLOW}[IN USE] (Port ${PORT} is currently active)${NC}"
+    echo -e "${YELLOW}[IN USE] (Port ${PORT} active)${NC}"
   else
     echo -e "${GREEN}[FREE]${NC}"
   fi
@@ -61,14 +92,11 @@ fi
 
 # 4. Check & Configure UFW Firewall (if active)
 if command -v ufw >/dev/null 2>&1 && sudo ufw status 2>/dev/null | grep -q "Status: active"; then
-  echo -n "[FIREWALL] Verifying UFW rule for port ${PORT}/tcp... "
-  if sudo ufw status | grep -q "${PORT}/tcp"; then
-    echo -e "${GREEN}[ALLOWED]${NC}"
-  else
-    echo -e "${YELLOW}[ALLOWING] Adding UFW rule for port ${PORT}/tcp...${NC}"
-    sudo ufw allow "${PORT}/tcp" >/dev/null 2>&1 || true
-    echo -e "${GREEN}[OK]${NC}"
-  fi
+  echo -n "[FIREWALL] Verifying UFW rules for LucID... "
+  sudo ufw allow "${PORT}/tcp" >/dev/null 2>&1 || true
+  sudo ufw allow 80/tcp >/dev/null 2>&1 || true
+  sudo ufw allow 443/tcp >/dev/null 2>&1 || true
+  echo -e "${GREEN}[OK] (Ports ${PORT}, 80, 443 allowed)${NC}"
 fi
 
 # 5. Storage Directory Verification
@@ -78,20 +106,27 @@ mkdir -p "${DATA_DIR}"
 chmod 755 "${DATA_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 6. Ensure docker-compose.yml is present
+# 6. Ensure docker-compose.yml and Caddyfile are present
 if [ ! -f "docker-compose.yml" ]; then
   echo -n "[FETCH] Downloading docker-compose.yml from main branch... "
   curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml -o docker-compose.yml
   echo -e "${GREEN}[OK]${NC}"
 fi
 
-# 7. Launch Container
+if [ ! -f "Caddyfile" ]; then
+  echo -n "[FETCH] Downloading Caddyfile from main branch... "
+  curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile -o Caddyfile
+  echo -e "${GREEN}[OK]${NC}"
+fi
+
+# 7. Launch Container Stack
 echo ""
-echo -e "${BLUE}[DEPLOY] Launching LucID container using ${COMPOSE_CMD}...${NC}"
+echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_CMD}...${NC}"
 ${COMPOSE_CMD} up -d
 
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
-echo -e "${GREEN}  Access URL: http://localhost:${PORT}${NC}"
+echo -e "${GREEN}  Direct Web Access: http://localhost:${PORT}${NC}"
+echo -e "${GREEN}  Caddy HTTPS Access: https://localhost (or configured domain)${NC}"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"

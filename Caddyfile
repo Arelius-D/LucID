@@ -1,0 +1,7 @@
+{
+    admin off
+}
+
+{$DOMAIN_NAME:localhost} {
+    reverse_proxy app:3000
+}
