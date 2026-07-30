@@ -29,6 +29,11 @@ if [ "$(pwd)" != "${INSTALL_DIR}" ]; then
   cd "${INSTALL_DIR}"
 fi
 
+# Fix directory ownership for real user
+if [ -n "$SUDO_USER" ]; then
+  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
+fi
+
 # Determine Docker CLI wrapper (auto-detect sudo requirement)
 DOCKER_CMD="docker"
 if ! docker info >/dev/null 2>&1; then
@@ -175,7 +180,7 @@ EOF
 else
   # Force reading interactive prompts from /dev/tty if available
   TTY_DEV="/dev/tty"
-  if [ -c "$TTY_DEV" ]; then
+  if [ -c "$TTY_DEV" ] && [ "$1" != "-y" ]; then
     echo ""
     echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
     echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
@@ -208,6 +213,20 @@ EOF
       fi
     fi
   fi
+fi
+
+# Fallback: Ensure ddns-data/config.json is ALWAYS a valid JSON file so ddns-updater never crash-loops
+if [ ! -f "${DDNS_DIR}/config.json" ]; then
+  cat << 'EOF' > "${DDNS_DIR}/config.json"
+{
+  "settings": []
+}
+EOF
+fi
+
+# Ensure real user owns all generated files and directories
+if [ -n "$SUDO_USER" ]; then
+  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
 fi
 
 # 8. Fallback Target Domain / Host Configuration
@@ -273,6 +292,11 @@ pull_with_backoff "qmcgaw/ddns-updater:latest"
 echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_EXEC}...${NC}"
 ${COMPOSE_EXEC} up -d
+
+# Fix permissions again post-container launch
+if [ -n "$SUDO_USER" ]; then
+  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
+fi
 
 # 12. Post-Deploy Health Check & DNS Resolution Audit
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
