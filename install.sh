@@ -106,19 +106,15 @@ mkdir -p "${DATA_DIR}"
 chmod 755 "${DATA_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 6. Ensure docker-compose.yml and Caddyfile are present (with cache buster)
+# 6. Fetch latest docker-compose.yml and Caddyfile (always overwrite to guarantee latest release)
 CACHE_BUSTER=$(date +%s)
-if [ ! -f "docker-compose.yml" ]; then
-  echo -n "[FETCH] Downloading docker-compose.yml from main branch... "
-  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
-  echo -e "${GREEN}[OK]${NC}"
-fi
+echo -n "[FETCH] Downloading latest docker-compose.yml from main branch... "
+curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
+echo -e "${GREEN}[OK]${NC}"
 
-if [ ! -f "Caddyfile" ]; then
-  echo -n "[FETCH] Downloading Caddyfile from main branch... "
-  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
-  echo -e "${GREEN}[OK]${NC}"
-fi
+echo -n "[FETCH] Downloading latest Caddyfile from main branch... "
+curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
+echo -e "${GREEN}[OK]${NC}"
 
 # 7. Launch Container Stack
 echo ""
