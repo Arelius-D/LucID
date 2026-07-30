@@ -24,6 +24,15 @@ services:
     depends_on:
       - app
 
+  ddns-updater:
+    image: qmcgaw/ddns-updater:latest
+    container_name: lucid-ddns
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ddns-data:/updater/data
+
 volumes:
   caddy_data:
   caddy_config:

@@ -2,11 +2,6 @@
     admin off
 }
 
-:80 {
-    redir https://{host}{uri} permanent
-}
-
 {$DOMAIN_NAME:localhost} {
-    tls internal
     reverse_proxy app:3000
 }

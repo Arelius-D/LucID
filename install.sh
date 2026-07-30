@@ -2,7 +2,8 @@
 # ═══════════════════════════════════════════════════════════════
 #  LucID — Environment Check & Installation Script
 #  Checks Docker & Docker Compose prerequisites, audits ports,
-#  configures UFW firewall, sets storage permissions & deploys.
+#  configures UFW firewall, prompts for DuckDNS DDNS, sets storage
+#  permissions & deploys.
 #
 #  Usage:
 #    ./install.sh          # Standard installation
@@ -25,19 +26,19 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   echo ""
   echo -n "[TEARDOWN] Stopping and removing LucID containers... "
-  docker compose down -v 2>/dev/null || docker rm -f lucid-app lucid-caddy 2>/dev/null || true
+  docker compose down -v 2>/dev/null || docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
-  docker rmi -f assarelius/lucid:latest caddy:latest 2>/dev/null || true
+  docker rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Pruning unused Docker system caches... "
   docker system prune -af --volumes >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
 
-  echo -n "[TEARDOWN] Cleaning local data and configuration files... "
-  rm -rf ./data Caddyfile docker-compose.yml 2>/dev/null || true
+  echo -n "[TEARDOWN] Cleaning local data, DDNS data, .env, and configuration files... "
+  rm -rf ./data ./ddns-data .env Caddyfile docker-compose.yml 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo ""
@@ -77,11 +78,11 @@ else
   exit 1
 fi
 
-# 3. Audit Network Ports (Default 24002 / 80 / 443)
+# 3. Audit Network Ports (Default 24002 / 80 / 443 / 8000)
 PORT="${PORT:-24002}"
 echo "[AUDIT] Checking network port availability..."
 if command -v ss >/dev/null 2>&1; then
-  for p in "${PORT}" 80 443; do
+  for p in "${PORT}" 80 443 8000; do
     echo -n "  - Checking port ${p}/tcp... "
     if ss -tulpn | grep -q ":${p} "; then
       echo -e "${YELLOW}[IN USE / ACTIVE]${NC}"
@@ -99,31 +100,83 @@ if command -v ufw >/dev/null 2>&1; then
   UFW_STATUS=$(sudo ufw status 2>/dev/null | grep -i "Status:" | awk '{print $2}' || echo "inactive")
   echo "  - UFW Status: ${UFW_STATUS}"
   if [ "${UFW_STATUS}" = "active" ]; then
-    echo "  - Ensuring firewall rules for ports ${PORT}/tcp, 80/tcp, 443/tcp..."
+    echo "  - Ensuring firewall rules for ports ${PORT}/tcp, 80/tcp, 443/tcp, 8000/tcp..."
     sudo ufw allow "${PORT}/tcp" >/dev/null 2>&1 || true
     sudo ufw allow 80/tcp >/dev/null 2>&1 || true
     sudo ufw allow 443/tcp >/dev/null 2>&1 || true
+    sudo ufw allow 8000/tcp >/dev/null 2>&1 || true
     echo -e "  - Firewall Rules: ${GREEN}[ALLOWED]${NC}"
   fi
 else
   echo -e "  - ${GREEN}[SKIPPED] (ufw utility not installed)${NC}"
 fi
 
-# 5. Storage Directory Verification
+# 5. Storage & DDNS Directory Verification
 DATA_DIR="./data"
-echo -n "[SETUP] Initializing local storage directory (${DATA_DIR})... "
-mkdir -p "${DATA_DIR}"
-chmod 755 "${DATA_DIR}"
+DDNS_DIR="./ddns-data"
+echo -n "[SETUP] Initializing storage directories (${DATA_DIR}, ${DDNS_DIR})... "
+mkdir -p "${DATA_DIR}" "${DDNS_DIR}"
+chmod 755 "${DATA_DIR}" "${DDNS_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 6. Detect Public/Host IP for Caddy SNI domain binding if DOMAIN_NAME is not set
+# 6. Interactive / Environment DuckDNS DDNS Setup
+if [ -f ".env" ]; then
+  # Load existing .env if present
+  set -a; source .env 2>/dev/null || true; set +a
+fi
+
+if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
+  echo -e "[DDNS] Using existing DuckDNS configuration for domain: ${GREEN}${DUCKDNS_DOMAIN}${NC}"
+  cat << EOF > "${DDNS_DIR}/config.json"
+{
+    "settings": [
+        {
+            "provider": "duckdns",
+            "domain": "${DUCKDNS_DOMAIN}",
+            "token": "${DUCKDNS_TOKEN}",
+            "ip_version": "ipv4"
+        }
+    ]
+}
+EOF
+  export DOMAIN_NAME="${DUCKDNS_DOMAIN}"
+elif [ -t 0 ] && [ "$1" != "-y" ]; then
+  echo ""
+  echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
+  read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS
+  if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
+    read -p "  - Enter DuckDNS Domain (e.g. lucid-notes.duckdns.org): " USER_DDNS_DOMAIN
+    read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN
+    if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
+      cat << EOF > "${DDNS_DIR}/config.json"
+{
+    "settings": [
+        {
+            "provider": "duckdns",
+            "domain": "${USER_DDNS_DOMAIN}",
+            "token": "${USER_DDNS_TOKEN}",
+            "ip_version": "ipv4"
+        }
+    ]
+}
+EOF
+      echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" >> .env
+      echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
+      echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
+      export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
+      echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME}${NC}"
+    fi
+  fi
+fi
+
+# 7. Fallback Target Domain / Host Configuration
 if [ -z "${DOMAIN_NAME}" ]; then
   DETECTED_IP=$(curl -fsSL https://api.ipify.org 2>/dev/null || hostname -I | awk '{print $1}' || echo "localhost")
   export DOMAIN_NAME="${DETECTED_IP}"
   echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DOMAIN_NAME}${NC}"
 fi
 
-# 7. Fetch repository files directly via git clone or curl fallback
+# 8. Fetch repository deployment files directly via git clone or curl fallback
 if command -v git >/dev/null 2>&1; then
   echo -n "[FETCH] Fetching repository deployment files via Git... "
   rm -rf ./temp_lucid_repo 2>/dev/null || true
@@ -142,7 +195,7 @@ else
   echo -e "${GREEN}[OK]${NC}"
 fi
 
-# 8. Exponential backoff container image puller
+# 9. Exponential backoff container image puller
 pull_with_backoff() {
   local img="$1"
   local attempt=1
@@ -174,8 +227,9 @@ pull_with_backoff() {
 
 pull_with_backoff "assarelius/lucid:latest"
 pull_with_backoff "caddy:latest"
+pull_with_backoff "qmcgaw/ddns-updater:latest"
 
-# 9. Launch Container Stack
+# 10. Launch Container Stack
 echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_CMD}...${NC}"
 ${COMPOSE_CMD} up -d
@@ -185,4 +239,5 @@ echo -e "${GREEN}═════════════════════
 echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
 echo -e "${GREEN}  Direct Web Access: http://${DOMAIN_NAME}:${PORT}${NC}"
 echo -e "${GREEN}  Caddy HTTPS Access: https://${DOMAIN_NAME}${NC}"
+echo -e "${GREEN}  DDNS Updater Web UI: http://${DOMAIN_NAME}:8000${NC}"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
