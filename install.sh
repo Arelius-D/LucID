@@ -142,6 +142,11 @@ if [ -f ".env" ]; then
   set -a; source .env 2>/dev/null || true; set +a
 fi
 
+IS_INTERACTIVE=false
+if [ -c /dev/tty ]; then
+  IS_INTERACTIVE=true
+fi
+
 if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
   echo -e "[DDNS] Using existing DuckDNS configuration for domain: ${GREEN}${DUCKDNS_DOMAIN}${NC}"
   cat << EOF > "${DDNS_DIR}/config.json"
@@ -157,14 +162,14 @@ if [ -n "${DUCKDNS_TOKEN}" ] && [ -n "${DUCKDNS_DOMAIN}" ]; then
 }
 EOF
   export DOMAIN_NAME="${DUCKDNS_DOMAIN}"
-elif [ -t 0 ] && [ "$1" != "-y" ]; then
+elif [ "$IS_INTERACTIVE" = true ] && [ "$1" != "-y" ]; then
   echo ""
   echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
   echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
-  read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS
+  read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS </dev/tty || true
   if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
-    read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN
-    read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN
+    read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN </dev/tty || true
+    read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN </dev/tty || true
     if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
       cat << EOF > "${DDNS_DIR}/config.json"
 {
