@@ -360,7 +360,7 @@ if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
   echo -n "[AUDIT] Auditing DNS resolution for domain ${DOMAIN_NAME}... "
   RESOLVED_IP=""
   if command -v nslookup >/dev/null 2>&1; then
-    RESOLVED_IP=$(nslookup "${DOMAIN_NAME}" 2>/dev/null | grep -A 1 "Name:" | grep "Address:" | awk '{print $1}' || true)
+    RESOLVED_IP=$(nslookup "${DOMAIN_NAME}" 2>/dev/null | grep -A 1 "Name:" | grep "Address:" | awk '{print $2}' || true)
   elif command -v getent >/dev/null 2>&1; then
     RESOLVED_IP=$(getent ahosts "${DOMAIN_NAME}" 2>/dev/null | head -n1 | awk '{print $1}' || true)
   fi
