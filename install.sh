@@ -8,7 +8,7 @@
 set -e
 
 # Color definitions
-RED='\031[0;31m'
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
@@ -66,10 +66,17 @@ mkdir -p "${DATA_DIR}"
 chmod 755 "${DATA_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 5. Launch Container
+# 5. Ensure docker-compose.yml is present
+if [ ! -f "docker-compose.yml" ]; then
+  echo -n "[FETCH] Downloading docker-compose.yml from main branch... "
+  curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml -o docker-compose.yml
+  echo -e "${GREEN}[OK]${NC}"
+fi
+
+# 6. Launch Container
 echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID container using ${COMPOSE_CMD}...${NC}"
-${COMPOSE_CMD} up -d --build
+${COMPOSE_CMD} up -d
 
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
