@@ -70,7 +70,23 @@ sequenceDiagram
 
 ## Deployment Options
 
-### Option 1: Docker Compose (Recommended)
+### Option 1: Automated Setup Script
+
+Run the automated environment check and setup script directly:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
+```
+
+Or clone the repository and run locally:
+
+```bash
+git clone https://github.com/Arelius-D/LucID.git
+cd LucID
+chmod +x install.sh && ./install.sh
+```
+
+### Option 2: Docker Compose
 
 Create a `docker-compose.yml` file:
 
@@ -91,7 +107,7 @@ Start the service:
 docker compose up -d
 ```
 
-### Option 2: Docker CLI (`docker run`)
+### Option 3: Docker CLI (`docker run`)
 
 ```bash
 docker run -d \
@@ -102,7 +118,7 @@ docker run -d \
   assarelius/lucid:latest
 ```
 
-### Option 3: Manual Node.js Installation
+### Option 4: Manual Node.js Installation
 
 Requirements: Node.js >= 20
 
