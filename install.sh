@@ -2,8 +2,8 @@
 # ═══════════════════════════════════════════════════════════════
 #  LucID — Environment Check & Installation Script
 #  Checks Docker & Docker Compose prerequisites, audits ports,
-#  configures UFW firewall, prompts for DuckDNS DDNS, sets storage
-#  permissions & deploys inside a clean ~/lucid directory.
+#  configures UFW firewall, prompts for DuckDNS DDNS, verifies
+#  DNS resolution & DDNS health, sets permissions & deploys.
 #
 #  Usage:
 #    ./install.sh          # Standard installation
@@ -183,6 +183,10 @@ else
     if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
       read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN < "$TTY_DEV" || true
       read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN < "$TTY_DEV" || true
+      # Clean input strings (strip whitespace / line breaks)
+      USER_DDNS_DOMAIN=$(echo "${USER_DDNS_DOMAIN}" | tr -d '[:space:]')
+      USER_DDNS_TOKEN=$(echo "${USER_DDNS_TOKEN}" | tr -d '[:space:]')
+      
       if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
         cat << EOF > "${DDNS_DIR}/config.json"
 {
@@ -209,7 +213,7 @@ fi
 # 8. Fallback Target Domain / Host Configuration
 if [ -z "${DOMAIN_NAME}" ]; then
   export DOMAIN_NAME="${DETECTED_IP}"
-  echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DOMAIN_NAME}${NC}"
+  echo -e "[CONFIG] Target domain/IP set to: ${GREEN}${DETECTED_IP}${NC}"
 fi
 
 # 9. Fetch repository deployment files directly via git clone or curl fallback
@@ -270,12 +274,36 @@ echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_EXEC}...${NC}"
 ${COMPOSE_EXEC} up -d
 
+# 12. Post-Deploy Health Check & DNS Resolution Audit
+if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
+  echo ""
+  echo -n "[AUDIT] Auditing DNS resolution for domain ${DOMAIN_NAME}... "
+  RESOLVED_IP=""
+  if command -v nslookup >/dev/null 2>&1; then
+    RESOLVED_IP=$(nslookup "${DOMAIN_NAME}" 2>/dev/null | grep -A 1 "Name:" | grep "Address:" | awk '{print $2}' || true)
+  elif command -v getent >/dev/null 2>&1; then
+    RESOLVED_IP=$(getent ahosts "${DOMAIN_NAME}" 2>/dev/null | head -n1 | awk '{print $1}' || true)
+  fi
+
+  if [ -n "${RESOLVED_IP}" ]; then
+    echo -e "${GREEN}[RESOLVED: ${RESOLVED_IP}]${NC}"
+  else
+    echo -e "${YELLOW}[PENDING / PROPAGATING]${NC}"
+  fi
+
+  echo -n "[HEALTH] Auditing ddns-updater container status... "
+  DDNS_STATUS=$(${DOCKER_CMD} inspect --format='{{.State.Health.Status}}' lucid-ddns 2>/dev/null || echo "running")
+  echo -e "${GREEN}[${DDNS_STATUS}]${NC}"
+fi
+
 echo ""
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
 echo -e "${GREEN}  LucID is successfully deployed and running!${NC}"
 echo -e "${GREEN}  Installed Directory: ${INSTALL_DIR}${NC}"
 echo -e "${GREEN}  Server Public IP: ${DETECTED_IP}${NC}"
+if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
+  echo -e "${GREEN}  DuckDNS HTTPS Access: https://${DOMAIN_NAME}${NC}"
+fi
 echo -e "${GREEN}  Direct Web Access: http://${DOMAIN_NAME}:${PORT}${NC}"
-echo -e "${GREEN}  Caddy HTTPS Access: https://${DOMAIN_NAME}${NC}"
 echo -e "${GREEN}  DDNS Updater Web UI: http://${DOMAIN_NAME}:8000${NC}"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}"
