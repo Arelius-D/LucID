@@ -76,7 +76,7 @@ To completely uninstall and wipe all containers, images, volumes, and temporary 
 
 ### Option 2: Docker Compose (App + Official Caddy HTTPS Sidecar)
 
-LucID includes an official `caddyserver/caddy:alpine` HTTPS sidecar in its default `docker-compose.yml`:
+LucID includes an official `caddy:latest` HTTPS sidecar in its default `docker-compose.yml`:
 
 ```yaml
 services:
@@ -90,7 +90,7 @@ services:
       - ./data:/app/data
 
   caddy:
-    image: caddyserver/caddy:alpine
+    image: caddy:latest
     container_name: lucid-caddy
     restart: unless-stopped
     ports:

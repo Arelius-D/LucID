@@ -9,7 +9,7 @@ services:
       - ./data:/app/data
 
   caddy:
-    image: caddyserver/caddy:latest
+    image: caddy:latest
     container_name: lucid-caddy
     restart: unless-stopped
     ports:
