@@ -66,7 +66,7 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
       done < "${INSTALL_DIR}/.ufw_rules"
     else
       # Fallback teardown for default LucID stack ports (never touching Port 22)
-      for rule in "${PORT:-24002}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
+      for rule in "${PORT:-58243}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
         if [[ ! "${rule}" =~ ^22(/|$) ]]; then
           sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
         fi
@@ -150,8 +150,8 @@ else
   exit 1
 fi
 
-# 4. Audit Network Ports (Default 24002 / 80 / 443 / 8000)
-PORT="${PORT:-24002}"
+# 4. Audit Network Ports (Default 58243 / 80 / 443 / 8000)
+PORT="${PORT:-58243}"
 echo "[AUDIT] Checking network port availability..."
 if command -v ss >/dev/null 2>&1; then
   for p in "${PORT}" 80 443 8000; do
@@ -360,7 +360,7 @@ if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
   echo -n "[AUDIT] Auditing DNS resolution for domain ${DOMAIN_NAME}... "
   RESOLVED_IP=""
   if command -v nslookup >/dev/null 2>&1; then
-    RESOLVED_IP=$(nslookup "${DOMAIN_NAME}" 2>/dev/null | grep -A 1 "Name:" | grep "Address:" | awk '{print $2}' || true)
+    RESOLVED_IP=$(nslookup "${DOMAIN_NAME}" 2>/dev/null | grep -A 1 "Name:" | grep "Address:" | awk '{print $1}' || true)
   elif command -v getent >/dev/null 2>&1; then
     RESOLVED_IP=$(getent ahosts "${DOMAIN_NAME}" 2>/dev/null | head -n1 | awk '{print $1}' || true)
   fi
