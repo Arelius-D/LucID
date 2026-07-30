@@ -106,16 +106,17 @@ mkdir -p "${DATA_DIR}"
 chmod 755 "${DATA_DIR}"
 echo -e "${GREEN}[OK]${NC}"
 
-# 6. Ensure docker-compose.yml and Caddyfile are present
+# 6. Ensure docker-compose.yml and Caddyfile are present (with cache buster)
+CACHE_BUSTER=$(date +%s)
 if [ ! -f "docker-compose.yml" ]; then
   echo -n "[FETCH] Downloading docker-compose.yml from main branch... "
-  curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml -o docker-compose.yml
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
   echo -e "${GREEN}[OK]${NC}"
 fi
 
 if [ ! -f "Caddyfile" ]; then
   echo -n "[FETCH] Downloading Caddyfile from main branch... "
-  curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile -o Caddyfile
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
   echo -e "${GREEN}[OK]${NC}"
 fi
 
