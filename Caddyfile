@@ -2,11 +2,7 @@
     admin off
 }
 
-http://{$DOMAIN_NAME:localhost} {
-    reverse_proxy app:3000
-}
-
-https://{$DOMAIN_NAME:localhost} {
+{$DOMAIN_NAME:localhost} {
     tls internal
     reverse_proxy app:3000
 }
