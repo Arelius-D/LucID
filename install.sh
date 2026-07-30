@@ -24,16 +24,6 @@ REAL_USER="${SUDO_USER:-$USER}"
 REAL_HOME=$(eval echo "~${REAL_USER}")
 INSTALL_DIR="${LUCID_DIR:-${REAL_HOME}/lucid}"
 
-if [ "$(pwd)" != "${INSTALL_DIR}" ]; then
-  mkdir -p "${INSTALL_DIR}"
-  cd "${INSTALL_DIR}"
-fi
-
-# Fix directory ownership for real user
-if [ -n "$SUDO_USER" ]; then
-  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
-fi
-
 # Determine Docker CLI wrapper (auto-detect sudo requirement)
 DOCKER_CMD="docker"
 if ! docker info >/dev/null 2>&1; then
@@ -48,25 +38,41 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ]; then
   echo -e "${RED}   LucID — Complete Environment Purge & Teardown${NC}"
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   echo ""
-  echo -n "[TEARDOWN] Stopping and removing LucID containers... "
-  ${DOCKER_CMD} compose down -v 2>/dev/null || ${DOCKER_CMD} rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
+  
+  echo -n "[TEARDOWN] Force stopping and removing all LucID containers... "
+  if [ -d "${INSTALL_DIR}" ]; then
+    cd "${INSTALL_DIR}" && ${DOCKER_CMD} compose down -v --remove-orphans 2>/dev/null || true
+  fi
+  ${DOCKER_CMD} rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
+  docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
+  sudo docker rm -f lucid-app lucid-caddy lucid-ddns 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
   ${DOCKER_CMD} rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
-  echo -n "[TEARDOWN] Pruning unused Docker system caches... "
+  echo -n "[TEARDOWN] Pruning unused Docker system caches and volumes... "
   ${DOCKER_CMD} system prune -af --volumes >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
 
-  echo -n "[TEARDOWN] Cleaning local data, DDNS data, .env, and configuration files... "
-  rm -rf ./data ./ddns-data .env Caddyfile docker-compose.yml 2>/dev/null || true
+  echo -n "[TEARDOWN] Cleaning local directory (${INSTALL_DIR})... "
+  rm -rf "${INSTALL_DIR}" 2>/dev/null || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo ""
-  echo -e "${GREEN}LucID environment completely purged from ${INSTALL_DIR}.${NC}"
+  echo -e "${GREEN}LucID containers, images, volumes, and directory completely wiped.${NC}"
   exit 0
+fi
+
+if [ "$(pwd)" != "${INSTALL_DIR}" ]; then
+  mkdir -p "${INSTALL_DIR}"
+  cd "${INSTALL_DIR}"
+fi
+
+# Fix directory ownership for real user
+if [ -n "$SUDO_USER" ]; then
+  chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
 fi
 
 echo -e "${BLUE}═══════════════════════════════════════════════════════════${NC}"
