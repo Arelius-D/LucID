@@ -244,6 +244,8 @@ npm start
 
 ### Phase 1: Core E2EE Stack & Infrastructure (Completed)
 - [x] Client-side AES-256-GCM End-to-End Encryption with PBKDF2 (100,000 iterations).
+- [x] Real-time passphrase match validation, JetBrains Mono font, and prefix-aware mismatch detection.
+- [x] Smart GitHub version release update indicator API & floating cursor tooltip.
 - [x] Automated Dynamic DNS stack integration ([DDNS Updater](https://github.com/qdm12/ddns-updater)).
 - [x] Zero-touch Let's Encrypt TLS reverse proxy ([Caddy](https://github.com/caddyserver/caddy)).
 - [x] Zero-touch automated installer & complete purge teardown utility (`./install.sh --purge`) for wiping container stack, images, volumes, data, and UFW firewall rules.
