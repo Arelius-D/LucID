@@ -756,7 +756,7 @@ function initSidebarResizers() {
     });
     window.addEventListener('mousemove', e => {
       if (!dragging) return;
-      const newWidth = Math.max(180, Math.min(480, e.clientX));
+      const newWidth = Math.max(284, Math.min(480, e.clientX));
       leftPane.style.width = newWidth + 'px';
       localStorage.setItem('lucid-left-width', newWidth);
     });

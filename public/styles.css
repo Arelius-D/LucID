@@ -317,7 +317,7 @@ body {
 
 .left-pane {
   width: 18rem;
-  min-width: 14.5rem;
+  min-width: 17.75rem !important; /* FIXED: Enforces 284px minimum width so both header pill containers fit 100% */
   max-width: 30rem;
   flex-shrink: 0;
 }
