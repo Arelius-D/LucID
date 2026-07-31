@@ -1128,6 +1128,11 @@ body {
   box-shadow: 0 0 0 3.5px var(--success-glow) !important;
   background: rgba(16, 185, 129, 0.05);
 }
+.lock-input.is-mismatch {
+  border-color: var(--danger) !important;
+  box-shadow: 0 0 0 3.5px rgba(255, 107, 107, 0.3) !important;
+  background: rgba(255, 107, 107, 0.05);
+}
 .lock-error {
   font-size: 0.8125rem;
   color: var(--danger);
@@ -1149,9 +1154,15 @@ body {
   margin-bottom: 1.25rem;
   transition: all 0.2s ease;
 }
-.lock-btn:hover {
+.lock-btn:hover:not(:disabled) {
   opacity: 0.92;
   transform: translateY(-1px);
+}
+.lock-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 .lock-btn.is-ready {
   background: var(--success) !important;
