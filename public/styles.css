@@ -24,6 +24,8 @@
   --shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.35);
   --danger: #ff6b6b;
   --save-ok: #e5a93b;
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.35);
   --scrollbar-track: #1c1f26;
   --scrollbar-thumb: #2d3340;
 }
@@ -47,6 +49,8 @@
   --shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.06);
   --danger: #c0392b;
   --save-ok: #9e8a67;
+  --success: #10b981;
+  --success-glow: rgba(16, 185, 129, 0.35);
   --scrollbar-track: #fdf7e4;
   --scrollbar-thumb: #ded0b6;
 }
@@ -1095,20 +1099,35 @@ body {
 }
 .lock-input {
   width: 100%;
-  padding: 0.625rem 0.875rem;
+  padding: 0.6875rem 0.875rem;
   margin-bottom: 0;
   font-size: 1rem;
-  font-family: inherit;
+  font-family: 'JetBrains Mono', 'Inter', monospace;
   background: var(--bg-input);
   color: var(--text-primary);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 0.5rem;
   outline: none;
   text-align: center;
-  letter-spacing: 0.15rem;
-  transition: border-color 0.15s ease;
+  letter-spacing: 0.125rem;
+  transition: all 0.2s ease;
 }
-.lock-input:focus { border-color: var(--accent); }
+.lock-input::placeholder {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: normal;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+.lock-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(229, 169, 59, 0.15);
+}
+.lock-input.is-matched {
+  border-color: var(--success) !important;
+  box-shadow: 0 0 0 3.5px var(--success-glow) !important;
+  background: rgba(16, 185, 129, 0.05);
+}
 .lock-error {
   font-size: 0.8125rem;
   color: var(--danger);
@@ -1118,18 +1137,27 @@ body {
 .lock-btn {
   width: 100%;
   display: block;
-  padding: 0.625rem 1rem;
+  padding: 0.6875rem 1rem;
   font-size: 0.9375rem;
   font-weight: 600;
+  font-family: inherit;
   background: var(--accent);
   color: var(--bg-base);
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
   margin-bottom: 1.25rem;
-  transition: opacity 0.15s;
+  transition: all 0.2s ease;
 }
-.lock-btn:hover { opacity: 0.9; }
+.lock-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+.lock-btn.is-ready {
+  background: var(--success) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0.25rem 1rem var(--success-glow) !important;
+}
 .lock-footer {
   font-size: 0.6875rem;
   color: var(--text-muted);
