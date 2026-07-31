@@ -1239,11 +1239,37 @@ function updateLockScreenUI() {
     }
   }
 
+  function checkPassphraseMatch() {
+    if (state.authVerifier) return;
+    const v1 = lockInput ? lockInput.value : '';
+    const v2 = lockConfirmInput ? lockConfirmInput.value : '';
+
+    if (lockError) lockError.style.display = 'none';
+
+    if (v1 && v2 && v1 === v2) {
+      if (lockInput) lockInput.classList.add('is-matched');
+      if (lockConfirmInput) lockConfirmInput.classList.add('is-matched');
+      if (lockBtn) {
+        lockBtn.classList.add('is-ready');
+        lockBtn.textContent = 'Continue to Vault';
+      }
+    } else {
+      if (lockInput) lockInput.classList.remove('is-matched');
+      if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched');
+      if (lockBtn) {
+        lockBtn.classList.remove('is-ready');
+        lockBtn.textContent = 'Create Vault';
+      }
+    }
+  }
+
   if (lockInput) {
+    lockInput.addEventListener('input', checkPassphraseMatch);
     lockInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockVault(); });
   }
 
   if (lockConfirmInput) {
+    lockConfirmInput.addEventListener('input', checkPassphraseMatch);
     lockConfirmInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockVault(); });
   }
 
