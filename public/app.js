@@ -1184,8 +1184,8 @@ function updateLockScreenUI() {
 
     if (lockError) lockError.style.display = 'none';
 
-    // 1. Both empty -> Reset to neutral disabled state
-    if (!v1 && !v2) {
+    // 1. Either empty -> Neutral disabled state
+    if (!v1 || !v2) {
       if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
       if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
       if (lockBtn) {
@@ -1197,7 +1197,7 @@ function updateLockScreenUI() {
     }
 
     // 2. Exact 100% Match -> Both glow Emerald Green, Button becomes "Continue" & enabled!
-    if (v1 && v2 && v1 === v2) {
+    if (v1 === v2) {
       if (lockInput) {
         lockInput.classList.add('is-matched');
         lockInput.classList.remove('is-mismatch');
@@ -1214,8 +1214,8 @@ function updateLockScreenUI() {
       return;
     }
 
-    // 3. User is still typing Field 2 (Length is shorter than Field 1) -> Stay calm, no red error yet!
-    if (v1 && v2 && v2.length < v1.length) {
+    // 3. User is typing a valid prefix of Field 1 (e.g. v1="1234", v2="12") -> Stay calm, no red error yet!
+    if (v1.startsWith(v2)) {
       if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
       if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
       if (lockBtn) {
@@ -1226,31 +1226,19 @@ function updateLockScreenUI() {
       return;
     }
 
-    // 4. Field 2 reached or exceeded Field 1 length & still does not match -> Show RED Mismatch Glow!
-    if (v1 && v2 && v2.length >= v1.length && v1 !== v2) {
-      if (lockInput) {
-        lockInput.classList.remove('is-matched');
-        lockInput.classList.add('is-mismatch');
-      }
-      if (lockConfirmInput) {
-        lockConfirmInput.classList.remove('is-matched');
-        lockConfirmInput.classList.add('is-mismatch');
-      }
-      if (lockError) {
-        lockError.textContent = 'Passphrases do not match. Please try again.';
-        lockError.style.display = 'block';
-      }
-      if (lockBtn) {
-        lockBtn.classList.remove('is-ready');
-        lockBtn.textContent = 'Next';
-        lockBtn.disabled = true;
-      }
-      return;
+    // 4. v2 does NOT start with v1 (e.g. v1="1234", v2="1231" or "x") -> INSTANT RED MISMATCH GLOW!
+    if (lockInput) {
+      lockInput.classList.remove('is-matched');
+      lockInput.classList.add('is-mismatch');
     }
-
-    // Fallback neutral
-    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
-    if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
+    if (lockConfirmInput) {
+      lockConfirmInput.classList.remove('is-matched');
+      lockConfirmInput.classList.add('is-mismatch');
+    }
+    if (lockError) {
+      lockError.textContent = 'Passphrases do not match. Please try again.';
+      lockError.style.display = 'block';
+    }
     if (lockBtn) {
       lockBtn.classList.remove('is-ready');
       lockBtn.textContent = 'Next';
@@ -1323,30 +1311,6 @@ function updateLockScreenUI() {
       lockError.style.display = 'block';
       lockBtn.textContent = !state.authVerifier ? 'Next' : 'Unlock Vault';
       lockBtn.disabled = !state.authVerifier;
-    }
-  }
-
-  function checkPassphraseMatch() {
-    if (state.authVerifier) return;
-    const v1 = lockInput ? lockInput.value : '';
-    const v2 = lockConfirmInput ? lockConfirmInput.value : '';
-
-    if (lockError) lockError.style.display = 'none';
-
-    if (v1 && v2 && v1 === v2) {
-      if (lockInput) lockInput.classList.add('is-matched');
-      if (lockConfirmInput) lockConfirmInput.classList.add('is-matched');
-      if (lockBtn) {
-        lockBtn.classList.add('is-ready');
-        lockBtn.textContent = 'Continue to Vault';
-      }
-    } else {
-      if (lockInput) lockInput.classList.remove('is-matched');
-      if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched');
-      if (lockBtn) {
-        lockBtn.classList.remove('is-ready');
-        lockBtn.textContent = 'Create Vault';
-      }
     }
   }
 
