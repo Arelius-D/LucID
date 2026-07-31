@@ -977,8 +977,15 @@ async function checkVersionAndUpdateIndicator() {
     console.warn('Could not fetch local version:', e);
   }
 
-  // Default up-to-date state
-  githubLink.title = `LucID v${currentVersion} (Up to date)`;
+  // Detect build environment
+  const isDevBuild = window.location.hostname === 'localhost' || window.location.port === '58243';
+  const buildTag = isDevBuild ? 'dev build' : 'production';
+
+  // Set custom tooltip text (positioned ABOVE icon via CSS)
+  const upToDateMsg = `LucID v${currentVersion} (${buildTag}) Up to date`;
+  githubLink.setAttribute('data-tooltip', upToDateMsg);
+  githubLink.setAttribute('aria-label', upToDateMsg);
+  githubLink.removeAttribute('title');
 
   try {
     const ghRes = await fetch('https://api.github.com/repos/Arelius-D/LucID/releases/latest');
@@ -987,7 +994,9 @@ async function checkVersionAndUpdateIndicator() {
       const latestTag = (ghData.tag_name || '').replace(/^v/, '');
       if (latestTag && compareVersions(latestTag, currentVersion) > 0) {
         githubLink.classList.add('update-available');
-        githubLink.title = `LucID v${currentVersion} — Update Available! Click to view v${latestTag} on GitHub`;
+        const updateMsg = `LucID v${currentVersion} (${buildTag}) • Update Available (v${latestTag})`;
+        githubLink.setAttribute('data-tooltip', updateMsg);
+        githubLink.setAttribute('aria-label', updateMsg);
         githubLink.href = 'https://github.com/Arelius-D/LucID/releases/latest';
       }
     }
