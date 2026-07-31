@@ -244,6 +244,11 @@ npm start
 
 ### Phase 1: Core E2EE Stack & Infrastructure (Completed)
 - [x] Client-side AES-256-GCM End-to-End Encryption with PBKDF2 (100,000 iterations).
+- [x] Full OKLCH tokenized design system (rem sizing, WCAG contrast compliance, zero `!important` hacks).
+- [x] Idle Auto-Lock Engine (soft timeout Off/5/15/30 min + 60-min hard ceiling).
+- [x] Lock Screen UX (Iconsax Linear show/hide passphrase reveal eye, live Caps Lock detection, "Vault locked" status cue).
+- [x] UI State Persistence (tree open/collapse state saved across sessions, default top/bottom split view).
+- [x] Symmetrical Panel Toggles (right inspector collapse/expand matches left sidebar).
 - [x] Real-time passphrase match validation, JetBrains Mono font, and prefix-aware mismatch detection.
 - [x] Smart GitHub version release update indicator API & floating cursor tooltip.
 - [x] Automated Dynamic DNS stack integration ([DDNS Updater](https://github.com/qdm12/ddns-updater)).
@@ -279,6 +284,8 @@ Collaborations, bug fixes, and feature enhancements are warmly welcome! If you'd
 ## Acknowledgments
 
 LucID harnesses the power of excellent open-source projects:
+- [Node.js](https://nodejs.org/) for high-performance server runtime execution.
+- [Iconsax Linear](https://iconsax.io/) (`blade-iconsax`) for clean vector UI icons.
 - [Caddy](https://github.com/caddyserver/caddy) for zero-touch Let's Encrypt TLS certificate provisioning.
 - [DDNS Updater](https://github.com/qdm12/ddns-updater) by [@qmcgaw](https://github.com/qmcgaw) for automated multi-provider dynamic DNS IP syncing.
 - [Express.js](https://github.com/expressjs/express) for lightweight Node.js HTTP backend services.
