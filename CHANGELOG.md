@@ -6,6 +6,25 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [1.4.1] - 2026-07-31
+### Added
+- Idle Auto-Lock: Automatic vault lock on inactivity — user-selectable timeout (Off / 5 / 15 / 30 min, default 5) with a fixed 60-minute hard ceiling; footer timer picker persisted to localStorage. Reuses the existing lock flow (no new cryptography).
+- Show/Hide Passphrase Toggle: Iconsax Linear eye / eye-slash control to reveal or mask the master passphrase on the unlock screen.
+- Caps Lock Indicator & "Vault Locked" Cue: Live "Caps Lock is on" heads-up while typing, plus a padlock status pill so the unlock screen reads as a security gate.
+- UI State Persistence: Tree folder/tag open-collapse state saved across sessions; first-run default view set to top/bottom split with preview on.
+- Symmetrical Panel Toggles & Keyboard Navigation: Right inspector collapse/expand now mirrors the left sidebar; full roving-tabindex tree navigation with tree/treeitem ARIA roles.
+### Changed
+- OKLCH Tokenized Design System: All colors moved to hsl/oklch tokens with every hardcoded hex/rgba and `!important` removed, relational rem sizing throughout, and unified spacing / type / radius / motion / z-index scales; both Dusk Ember and Warm Linen themes brought to WCAG AA contrast.
+- Rendered Markdown Preview: Full element styling (headings, lists, code, tables, blockquotes, task lists) with theme-aware highlight.js code blocks.
+- GitHub Version/Update Indicator: Moved from the inspector into the left sidebar footer and switched from the custom cursor tooltip to a native browser tooltip.
+- Fit-and-Finish: Center top-bar blended into one continuous surface; inspector metrics grid reflows responsively instead of clipping; header glyphs optically aligned; modals, context menu, and lock screen snapped onto the token scales.
+### Fixed and Refined
+- Confirm-Passphrase Field Hiding: The confirm field now correctly hides on the unlock screen for returning users (added the missing `.lock-input.hidden` rule).
+- Lock-Screen Init Regression: Removed a duplicate `updateLockScreenUI` and hoisted a single top-level definition, fixing a `fetchStore` ReferenceError that surfaced as a footer "Sync error".
+- Theme-Aware State Feedback: Passphrase match/mismatch glow and the E2EE status dot now derive from theme tokens (gold success / red danger) instead of off-theme fixed colors.
+- Lock Screen Copy: "Initialize LucID Vault" → "Initialize LucID"; "Unlock Vault" → "Unlock".
+
+---
 ## [1.1.0] - 2026-07-31
 
 ### Added
