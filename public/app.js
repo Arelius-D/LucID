@@ -8,6 +8,7 @@
 
 // ─── INLINE ICONSAX SVG MAP ─────────────────────────
 const ICONS = {
+  chevron: `<svg class="icon-svg tree-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
   folderClosed: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/><path d="M8 2h9c2 0 3 1 3 3v1.38"/></svg>`,
   folderOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.67 14.3l-.4 5c-.15 1.53-.27 2.7-2.98 2.7H5.71C3 22 2.88 20.83 2.73 19.3l-.4-5c-.08-.83.18-1.6.65-2.19l.02-.02C3.55 11.42 4.38 11 5.31 11h13.38c.93 0 1.75.42 2.29 1.07.01.01.02.02.02.03.49.59.76 1.36.67 2.2z"/><path d="M3.5 11.43V6.28c0-3.4.85-4.25 4.25-4.25h1.27c1.27 0 1.56.38 2.04 1.02l1.27 1.7c.32.42.51.68 1.36.68h2.55c3.4 0 4.25.85 4.25 4.25v1.79M9.43 17h5.14"/></svg>`,
   folderCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.81 15.73l-3.54-3.54M13.77 12.23l-3.54 3.54"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`,
@@ -48,6 +49,7 @@ const state = {
   saveTimeout: null,
   openFolderIds: new Set(),
   openTagNames: new Set(),
+  treeFocusId: null,
   dragNoteId: null,
   viewMode: 'editor', // 'editor', 'split-vertical', 'split-horizontal', 'preview'
   explorerMode: 'folders', // 'folders' or 'tags'
@@ -189,7 +191,18 @@ async function fetchStore() {
     if (data.notes && data.notes.length) state.notes = data.notes;
     state.authVerifier = data.authVerifier || null;
 
-    state.folders.forEach(f => state.openFolderIds.add(f.id));
+    // Restore saved tree open/collapse state; first run (no saved state) defaults to all folders open.
+    const savedOpenFolders = localStorage.getItem('lucid-open-folders');
+    if (savedOpenFolders !== null) {
+      try { state.openFolderIds = new Set(JSON.parse(savedOpenFolders)); }
+      catch (e) { state.folders.forEach(f => state.openFolderIds.add(f.id)); }
+    } else {
+      state.folders.forEach(f => state.openFolderIds.add(f.id));
+    }
+    const savedOpenTags = localStorage.getItem('lucid-open-tags');
+    if (savedOpenTags !== null) {
+      try { state.openTagNames = new Set(JSON.parse(savedOpenTags)); } catch (e) {}
+    }
 
     if (state.notes.length > 0) {
       state.activeNoteId = state.notes[0].id;
@@ -202,6 +215,44 @@ async function fetchStore() {
     console.warn('fetchStore failed:', err);
     showSave('Error loading', 'error');
   }
+}
+
+// Top-level so both fetchStore() and the DOMContentLoaded init can call it.
+function updateLockScreenUI() {
+  const lockTitle = document.getElementById('lock-title');
+  const lockSubDesc = document.getElementById('lock-sub-desc');
+  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
+  const lockBtn = document.getElementById('lock-unlock-btn');
+  const lockStatus = document.getElementById('lock-status');
+
+  if (!state.authVerifier) {
+    // first-time setup: not "locked" yet, so hide the locked cue
+    if (lockStatus) lockStatus.classList.add('hidden');
+    if (lockTitle) lockTitle.textContent = 'Initialize LucID';
+    if (lockSubDesc) lockSubDesc.innerHTML = 'Create your master passphrase to initialize your vault. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
+    if (lockConfirmInput) lockConfirmInput.classList.remove('hidden');
+    if (lockBtn) {
+      lockBtn.textContent = 'Next';
+      lockBtn.disabled = true;
+    }
+  } else {
+    if (lockStatus) lockStatus.classList.remove('hidden');
+    if (lockTitle) lockTitle.textContent = 'LucID';
+    if (lockSubDesc) lockSubDesc.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
+    if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
+    if (lockBtn) {
+      lockBtn.textContent = 'Unlock';
+      lockBtn.disabled = false;
+    }
+  }
+}
+
+// Persist tree open/collapse to localStorage (non-sensitive UI pref).
+function saveTreeState() {
+  try {
+    localStorage.setItem('lucid-open-folders', JSON.stringify([...state.openFolderIds]));
+    localStorage.setItem('lucid-open-tags', JSON.stringify([...state.openTagNames]));
+  } catch (e) {}
 }
 
 async function saveStore() {
@@ -282,18 +333,6 @@ function showSave(text, cls) {
   }
 }
 
-function updateLockScreenUI() {
-  const lockSub = document.querySelector('.lock-sub');
-  const lockBtn = document.getElementById('lock-unlock-btn');
-  if (!state.authVerifier) {
-    if (lockSub) lockSub.innerHTML = '<strong>First-Time Setup</strong>: Choose your master passphrase. This exact passphrase will be required to unlock your encrypted notes in the future.';
-    if (lockBtn) lockBtn.textContent = 'Set Passphrase & Lock Vault';
-  } else {
-    if (lockSub) lockSub.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
-    if (lockBtn) lockBtn.textContent = 'Unlock Vault';
-  }
-}
-
 // ─── RENDERERS ─────────────────────────────────────
 function renderAll() {
   const folderTree = document.getElementById('folder-tree');
@@ -318,6 +357,8 @@ function renderTree() {
   const container = document.getElementById('folder-tree');
   if (!container) return;
   container.innerHTML = '';
+  container.setAttribute('role', 'tree');
+  container.setAttribute('aria-label', 'Folders');
   const q = state.searchQuery.toLowerCase();
 
   state.folders.forEach(folder => {
@@ -338,14 +379,19 @@ function renderTree() {
 
     const header = document.createElement('div');
     header.className = 'tree-folder-header' + (isActive ? ' active' : '') + (isOpen ? ' open' : '');
-    
+    header.setAttribute('role', 'treeitem');
+    header.setAttribute('aria-expanded', String(isOpen));
+    header.tabIndex = -1;
+    header.dataset.treeId = 'folder:' + folder.id;
+
     const folderIconHtml = isOpen ? ICONS.folderOpen : ICONS.folderClosed;
-    header.innerHTML = `${folderIconHtml} <span>${escapeHtml(folder.name)}</span><span class="count-badge">${folderNotes.length}</span>`;
+    header.innerHTML = `${ICONS.chevron}${folderIconHtml} <span>${escapeHtml(folder.name)}</span><span class="count-badge">${folderNotes.length}</span>`;
 
     header.addEventListener('click', () => {
       state.activeFolderId = folder.id;
       if (state.openFolderIds.has(folder.id)) state.openFolderIds.delete(folder.id);
       else state.openFolderIds.add(folder.id);
+      saveTreeState();
       renderTree();
     });
 
@@ -364,11 +410,16 @@ function renderTree() {
 
     const notesContainer = document.createElement('div');
     notesContainer.className = 'tree-notes' + (isOpen ? '' : ' collapsed');
-    notesContainer.style.maxHeight = isOpen ? (folderNotes.length * 36 + 12) + 'px' : '0';
+    notesContainer.setAttribute('role', 'group');
+    notesContainer.style.maxHeight = isOpen ? ((folderNotes.length * 36 + 12) / 16) + 'rem' : '0';
 
     folderNotes.forEach(note => {
       const noteEl = document.createElement('div');
       noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
+      noteEl.setAttribute('role', 'treeitem');
+      noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
+      noteEl.tabIndex = -1;
+      noteEl.dataset.treeId = 'note:' + note.id;
 
       let displayTitle = state.decryptedTitleCache.get(note.id);
       if (!displayTitle || displayTitle.startsWith('ENC:')) {
@@ -401,6 +452,7 @@ function renderTree() {
     wrapper.appendChild(notesContainer);
     container.appendChild(wrapper);
   });
+  updateTreeRoving(container);
 }
 
 // ─── EXPANDABLE NESTED TAG TREE IN TAG VIEW ──────
@@ -408,6 +460,8 @@ function renderTagTree() {
   const container = document.getElementById('tag-tree');
   if (!container) return;
   container.innerHTML = '';
+  container.setAttribute('role', 'tree');
+  container.setAttribute('aria-label', 'Tags');
   const q = state.searchQuery.toLowerCase();
 
   const tagMap = new Map();
@@ -434,12 +488,17 @@ function renderTagTree() {
     wrapper.className = 'tree-folder';
 
     const header = document.createElement('div');
-    header.className = 'tree-folder-header' + (isOpen ? ' open active' : '');
-    header.innerHTML = `${ICONS.tag} <span>#${escapeHtml(tag)}</span><span class="count-badge">${tagNotes.length}</span>`;
+    header.className = 'tree-folder-header' + (isOpen ? ' open' : '');
+    header.setAttribute('role', 'treeitem');
+    header.setAttribute('aria-expanded', String(isOpen));
+    header.tabIndex = -1;
+    header.dataset.treeId = 'tag:' + tag;
+    header.innerHTML = `${ICONS.chevron}${ICONS.tag} <span>#${escapeHtml(tag)}</span><span class="count-badge">${tagNotes.length}</span>`;
 
     header.addEventListener('click', () => {
       if (state.openTagNames.has(tag)) state.openTagNames.delete(tag);
       else state.openTagNames.add(tag);
+      saveTreeState();
       renderTagTree();
     });
 
@@ -455,11 +514,16 @@ function renderTagTree() {
 
     const notesContainer = document.createElement('div');
     notesContainer.className = 'tree-notes' + (isOpen ? '' : ' collapsed');
-    notesContainer.style.maxHeight = isOpen ? (tagNotes.length * 36 + 12) + 'px' : '0';
+    notesContainer.setAttribute('role', 'group');
+    notesContainer.style.maxHeight = isOpen ? ((tagNotes.length * 36 + 12) / 16) + 'rem' : '0';
 
     tagNotes.forEach(note => {
       const noteEl = document.createElement('div');
       noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
+      noteEl.setAttribute('role', 'treeitem');
+      noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
+      noteEl.tabIndex = -1;
+      noteEl.dataset.treeId = 'note:' + note.id;
 
       let displayTitle = state.decryptedTitleCache.get(note.id);
       if (!displayTitle || displayTitle.startsWith('ENC:')) {
@@ -490,6 +554,63 @@ function renderTagTree() {
 
     wrapper.appendChild(notesContainer);
     container.appendChild(wrapper);
+  });
+  updateTreeRoving(container);
+}
+
+// ─── TREE KEYBOARD NAVIGATION + ARIA ROVING TABINDEX ───────────────
+function isTreeItemVisible(el) {
+  return !!el && el.offsetParent !== null && !el.closest('.tree-notes.collapsed');
+}
+function updateTreeRoving(container) {
+  const all = [...container.querySelectorAll('[role="treeitem"]')];
+  const items = all.filter(isTreeItemVisible);
+  if (!items.length) return;
+  all.forEach(i => { i.tabIndex = -1; });
+  let cur = state.treeFocusId ? items.find(i => i.dataset.treeId === state.treeFocusId) : null;
+  if (!cur) cur = container.querySelector('.tree-note.active');
+  if (!cur || !isTreeItemVisible(cur)) cur = items[0];
+  cur.tabIndex = 0;
+}
+function refocusTree(container) {
+  const all = [...container.querySelectorAll('[role="treeitem"]')];
+  let el = state.treeFocusId ? all.find(i => i.dataset.treeId === state.treeFocusId && isTreeItemVisible(i)) : null;
+  if (!el) el = all.find(i => i.tabIndex === 0 && isTreeItemVisible(i));
+  if (el) { all.forEach(i => i.tabIndex = -1); el.tabIndex = 0; el.focus(); }
+}
+function initTreeKeyboard() {
+  ['folder-tree', 'tag-tree'].forEach(id => {
+    const container = document.getElementById(id);
+    if (!container) return;
+    container.addEventListener('keydown', e => {
+      const items = [...container.querySelectorAll('[role="treeitem"]')].filter(isTreeItemVisible);
+      const cur = document.activeElement;
+      const idx = items.indexOf(cur);
+      if (idx < 0) return;
+      const isFolder = cur.classList.contains('tree-folder-header');
+      const move = el => { if (!el) return; items.forEach(i => i.tabIndex = -1); el.tabIndex = 0; el.focus(); state.treeFocusId = el.dataset.treeId; };
+      const activate = () => { state.treeFocusId = cur.dataset.treeId; cur.click(); requestAnimationFrame(() => refocusTree(container)); };
+      switch (e.key) {
+        case 'ArrowDown': e.preventDefault(); move(items[Math.min(idx + 1, items.length - 1)]); break;
+        case 'ArrowUp':   e.preventDefault(); move(items[Math.max(idx - 1, 0)]); break;
+        case 'Home':      e.preventDefault(); move(items[0]); break;
+        case 'End':       e.preventDefault(); move(items[items.length - 1]); break;
+        case 'Enter':
+        case ' ':         e.preventDefault(); activate(); break;
+        case 'ArrowRight':
+          if (isFolder) {
+            e.preventDefault();
+            if (cur.getAttribute('aria-expanded') === 'false') activate();
+            else move(items[idx + 1]);
+          }
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          if (isFolder && cur.getAttribute('aria-expanded') === 'true') activate();
+          else { for (let j = idx - 1; j >= 0; j--) { if (items[j].classList.contains('tree-folder-header')) { move(items[j]); break; } } }
+          break;
+      }
+    });
   });
 }
 
@@ -544,6 +665,7 @@ async function createNoteInFolder(folderId) {
   state.activeNoteId = newNote.id;
   state.activeFolderId = folderId;
   state.openFolderIds.add(folderId);
+  saveTreeState();
   state.decryptedTitleCache.set(newNote.id, 'New Note');
   await saveStore();
   renderAll();
@@ -740,10 +862,12 @@ function initSidebarResizers() {
   const leftPane = document.getElementById('sidebar-left');
   const rightPane = document.getElementById('sidebar-right');
 
+  const root = document.documentElement;
+  const px2rem = px => (px / 16) + 'rem';
   const savedLeft = localStorage.getItem('lucid-left-width');
   const savedRight = localStorage.getItem('lucid-right-width');
-  if (savedLeft) leftPane.style.width = savedLeft + 'px';
-  if (savedRight) rightPane.style.width = savedRight + 'px';
+  if (savedLeft) root.style.setProperty('--left-w', px2rem(savedLeft));
+  if (savedRight) root.style.setProperty('--right-w', px2rem(savedRight));
 
   if (leftResizer && leftPane) {
     let dragging = false;
@@ -756,8 +880,8 @@ function initSidebarResizers() {
     });
     window.addEventListener('mousemove', e => {
       if (!dragging) return;
-      const newWidth = Math.max(284, Math.min(480, e.clientX));
-      leftPane.style.width = newWidth + 'px';
+      const newWidth = Math.max(208, Math.min(480, e.clientX));
+      root.style.setProperty('--left-w', px2rem(newWidth));
       localStorage.setItem('lucid-left-width', newWidth);
     });
     window.addEventListener('mouseup', () => {
@@ -782,7 +906,7 @@ function initSidebarResizers() {
     window.addEventListener('mousemove', e => {
       if (!dragging) return;
       const newWidth = Math.max(180, Math.min(400, window.innerWidth - e.clientX));
-      rightPane.style.width = newWidth + 'px';
+      root.style.setProperty('--right-w', px2rem(newWidth));
       localStorage.setItem('lucid-right-width', newWidth);
     });
     window.addEventListener('mouseup', () => {
@@ -818,24 +942,12 @@ function initSplitHandle() {
     const rect = split.getBoundingClientRect();
     if (state.viewMode === 'split-horizontal') {
       const x = e.clientX - rect.left;
-      const total = rect.width;
-      const pct = Math.max(15, Math.min(85, (x / total) * 100));
-      editorPane.style.flex = 'none';
-      previewPane.style.flex = 'none';
-      editorPane.style.width = pct + '%';
-      previewPane.style.width = (100 - pct) + '%';
-      editorPane.style.height = '100%';
-      previewPane.style.height = '100%';
+      const pct = Math.max(15, Math.min(85, (x / rect.width) * 100));
+      split.style.setProperty('--split-pct', pct + '%');
     } else if (state.viewMode === 'split-vertical') {
       const y = e.clientY - rect.top;
-      const total = rect.height;
-      const pct = Math.max(15, Math.min(85, (y / total) * 100));
-      editorPane.style.flex = 'none';
-      previewPane.style.flex = 'none';
-      editorPane.style.height = pct + '%';
-      previewPane.style.height = (100 - pct) + '%';
-      editorPane.style.width = '100%';
-      previewPane.style.width = '100%';
+      const pct = Math.max(15, Math.min(85, (y / rect.height) * 100));
+      split.style.setProperty('--split-pct', pct + '%');
     }
   });
 
@@ -894,8 +1006,9 @@ function initViewModeTabs() {
   
   if (tabPreview) tabPreview.addEventListener('click', () => setViewMode('preview'));
 
-  const savedMode = localStorage.getItem('lucid-view-mode') || 'split-horizontal';
-  setViewMode(savedMode === 'split' ? 'split-horizontal' : savedMode);
+  // First-run default: split with preview ON, stacked top/bottom (works on any screen width).
+  const savedMode = localStorage.getItem('lucid-view-mode') || 'split-vertical';
+  setViewMode(savedMode === 'split' ? 'split-vertical' : savedMode);
 }
 
 // ─── SEAMLESS GLOWING SUN / MOON THEME TOGGLE ──────
@@ -903,6 +1016,13 @@ function applyTheme(themeId) {
   document.body.setAttribute('data-theme', themeId);
   document.documentElement.setAttribute('data-theme', themeId);
   localStorage.setItem('lucid-theme', themeId);
+
+  // Swap the highlight.js code theme to match the app theme
+  const hljsTheme = document.getElementById('hljs-theme');
+  if (hljsTheme) {
+    const style = themeId === 'warm-linen' ? 'github' : 'github-dark';
+    hljsTheme.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${style}.min.css`;
+  }
 
   const iconEl = document.getElementById('theme-toggle-icon');
   const btn = document.getElementById('btn-theme-toggle');
@@ -963,7 +1083,7 @@ function initExplorerModeToggle() {
 
 // ─── SMART GITHUB ICON & UPDATE INDICATOR ──────────
 async function checkVersionAndUpdateIndicator() {
-  const githubLink = document.querySelector('.inspector-github-link');
+  const githubLink = document.querySelector('.footer-github-link');
   if (!githubLink) return;
 
   let currentVersion = '1.0.0';
@@ -981,11 +1101,10 @@ async function checkVersionAndUpdateIndicator() {
   const isDevBuild = window.location.hostname === 'localhost' || window.location.port === '58243';
   const buildTag = isDevBuild ? 'dev build' : 'production';
 
-  // Set custom tooltip text (positioned ABOVE icon via CSS)
-  const upToDateMsg = `LucID v${currentVersion} (${buildTag}) Up to date`;
-  githubLink.setAttribute('data-tooltip', upToDateMsg);
+  // Native title tooltip (matches the sync/lock controls beside it)
+  const upToDateMsg = `LucID v${currentVersion} (${buildTag}) — Up to date`;
+  githubLink.setAttribute('title', upToDateMsg);
   githubLink.setAttribute('aria-label', upToDateMsg);
-  githubLink.removeAttribute('title');
 
   try {
     const ghRes = await fetch('https://api.github.com/repos/Arelius-D/LucID/releases/latest');
@@ -995,7 +1114,7 @@ async function checkVersionAndUpdateIndicator() {
       if (latestTag && compareVersions(latestTag, currentVersion) > 0) {
         githubLink.classList.add('update-available');
         const updateMsg = `LucID v${currentVersion} (${buildTag}) • Update Available (v${latestTag})`;
-        githubLink.setAttribute('data-tooltip', updateMsg);
+        githubLink.setAttribute('title', updateMsg);
         githubLink.setAttribute('aria-label', updateMsg);
         githubLink.href = 'https://github.com/Arelius-D/LucID/releases/latest';
       }
@@ -1032,6 +1151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSidebarResizers();
   initSplitHandle();
   initViewModeTabs();
+  initTreeKeyboard();
   initThemeToggle();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
@@ -1052,42 +1172,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  document.getElementById('btn-toggle-right').addEventListener('click', () => {
-    document.getElementById('sidebar-right').classList.toggle('collapsed');
-  });
+  // Inspector toggle mirrors the left sidebar: an in-panel collapse button, and
+  // a docked expand button in top-bar-right that only shows while collapsed.
+  const sidebarRight = document.getElementById('sidebar-right');
+  const btnToggleRight = document.getElementById('btn-toggle-right');   // in-panel collapse
+  const btnExpandRight = document.getElementById('btn-expand-right');   // docked expand
+  if (sidebarRight && btnToggleRight && btnExpandRight) {
+    const syncRight = () =>
+      btnExpandRight.classList.toggle('hidden', !sidebarRight.classList.contains('collapsed'));
+    btnToggleRight.addEventListener('click', () => { sidebarRight.classList.add('collapsed'); syncRight(); });
+    btnExpandRight.addEventListener('click', () => { sidebarRight.classList.remove('collapsed'); syncRight(); });
+    syncRight(); // collapsed by default → expand button visible on load
+  }
 
   // EXPANDABLE SEARCH BELOW EXPLORER HEADER ROW
   const btnSearch = document.getElementById('btn-toggle-search');
-  const searchWrapper = document.getElementById('search-wrapper');
+  const headerRow = document.getElementById('tree-header-row');
+  const btnSearchClose = document.getElementById('btn-search-close');
   const searchInput = document.getElementById('search-input');
 
-  if (btnSearch && searchWrapper && searchInput) {
+  if (btnSearch && headerRow && searchInput) {
+    const openSearch = () => {
+      headerRow.classList.add('searching');
+      searchInput.focus();
+    };
+    const closeSearch = () => {
+      headerRow.classList.remove('searching');
+      state.searchQuery = '';
+      searchInput.value = '';
+      renderAll();
+    };
+
     btnSearch.addEventListener('click', () => {
-      const isHidden = searchWrapper.classList.contains('hidden');
-      if (isHidden) {
-        searchWrapper.classList.remove('hidden');
-        searchInput.focus();
-      } else {
-        searchWrapper.classList.add('hidden');
-        state.searchQuery = '';
-        searchInput.value = '';
-        renderAll();
-      }
+      if (headerRow.classList.contains('searching')) closeSearch();
+      else openSearch();
     });
 
+    if (btnSearchClose) btnSearchClose.addEventListener('click', closeSearch);
+
     searchInput.addEventListener('blur', () => {
-      if (!searchInput.value.trim()) {
-        searchWrapper.classList.add('hidden');
-      }
+      if (!searchInput.value.trim()) headerRow.classList.remove('searching');
     });
 
     searchInput.addEventListener('keydown', e => {
-      if (e.key === 'Escape') {
-        searchWrapper.classList.add('hidden');
-        state.searchQuery = '';
-        searchInput.value = '';
-        renderAll();
-      }
+      if (e.key === 'Escape') closeSearch();
     });
 
     searchInput.addEventListener('input', e => {
@@ -1139,34 +1267,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     state.folders.push(folder);
     state.activeFolderId = folder.id;
     state.openFolderIds.add(folder.id);
+    saveTreeState();
     await saveStore();
     renderAll();
   });
-
-function updateLockScreenUI() {
-  const lockTitle = document.getElementById('lock-title');
-  const lockSubDesc = document.getElementById('lock-sub-desc');
-  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
-  const lockBtn = document.getElementById('lock-unlock-btn');
-
-  if (!state.authVerifier) {
-    if (lockTitle) lockTitle.textContent = 'Initialize LucID Vault';
-    if (lockSubDesc) lockSubDesc.innerHTML = 'Create your master passphrase to initialize your vault. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
-    if (lockConfirmInput) lockConfirmInput.classList.remove('hidden');
-    if (lockBtn) {
-      lockBtn.textContent = 'Next';
-      lockBtn.disabled = true;
-    }
-  } else {
-    if (lockTitle) lockTitle.textContent = 'LucID';
-    if (lockSubDesc) lockSubDesc.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
-    if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
-    if (lockBtn) {
-      lockBtn.textContent = 'Unlock Vault';
-      lockBtn.disabled = false;
-    }
-  }
-}
 
   // MANDATORY E2EE LOCK SCREEN & CRYPTOGRAPHIC PASSPHRASE VALIDATION
   const lockScreen = document.getElementById('lock-screen');
@@ -1196,7 +1300,7 @@ function updateLockScreenUI() {
       return;
     }
 
-    // 2. Exact 100% Match -> Both glow Emerald Green, Button becomes "Continue" & enabled!
+    // 2. Exact 100% Match -> Both glow gold (the app's success/accent colour), Button becomes "Continue" & enabled!
     if (v1 === v2) {
       if (lockInput) {
         lockInput.classList.add('is-matched');
@@ -1283,7 +1387,7 @@ function updateLockScreenUI() {
         if (check !== AUTH_MAGIC_SENTINEL) {
           lockError.textContent = 'Invalid master passphrase. Access denied.';
           lockError.style.display = 'block';
-          lockBtn.textContent = 'Unlock Vault';
+          lockBtn.textContent = 'Unlock';
           lockBtn.disabled = false;
           state.encryptionKey = null;
           sessionStorage.removeItem('lucid-passphrase');
@@ -1309,7 +1413,7 @@ function updateLockScreenUI() {
         lockError.textContent = 'Authentication error. Access denied.';
       }
       lockError.style.display = 'block';
-      lockBtn.textContent = !state.authVerifier ? 'Next' : 'Unlock Vault';
+      lockBtn.textContent = !state.authVerifier ? 'Next' : 'Unlock';
       lockBtn.disabled = !state.authVerifier;
     }
   }
@@ -1326,18 +1430,102 @@ function updateLockScreenUI() {
 
   if (lockBtn) lockBtn.addEventListener('click', unlockVault);
 
+  // Show/hide passphrase toggle (eye ↔ eye-slash)
+  const lockReveal = document.getElementById('lock-reveal-btn');
+  if (lockReveal && lockInput) {
+    lockReveal.addEventListener('click', () => {
+      const show = lockInput.type === 'password';
+      lockInput.type = show ? 'text' : 'password';
+      lockReveal.classList.toggle('revealed', show);
+      const label = show ? 'Hide passphrase' : 'Show passphrase';
+      lockReveal.title = label;
+      lockReveal.setAttribute('aria-label', label);
+      lockInput.focus();
+    });
+  }
+
+  // Caps Lock heads-up while typing the passphrase
+  const lockCaps = document.getElementById('lock-capslock');
+  function capsCheck(e) {
+    if (!lockCaps || !e.getModifierState) return;
+    lockCaps.classList.toggle('hidden', !e.getModifierState('CapsLock'));
+  }
+  [lockInput, lockConfirmInput].forEach(el => {
+    if (!el) return;
+    el.addEventListener('keydown', capsCheck);
+    el.addEventListener('keyup', capsCheck);
+    el.addEventListener('blur', () => { if (lockCaps) lockCaps.classList.add('hidden'); });
+  });
+
+  // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
+  function lockVault() {
+    sessionStorage.removeItem('lucid-passphrase');
+    state.encryptionKey = null;
+    document.getElementById('app').style.display = 'none';
+    lockScreen.classList.remove('hidden');
+    lockInput.value = '';
+    if (lockError) lockError.style.display = 'none';
+    updateLockScreenUI();
+    lockBtn.disabled = false;
+  }
   const lockVaultBtn = document.getElementById('btn-lock-vault');
   if (lockVaultBtn) {
-    lockVaultBtn.addEventListener('click', e => {
-      e.preventDefault();
-      sessionStorage.removeItem('lucid-passphrase');
-      state.encryptionKey = null;
-      document.getElementById('app').style.display = 'none';
-      lockScreen.classList.remove('hidden');
-      lockInput.value = '';
-      if (lockError) lockError.style.display = 'none';
-      updateLockScreenUI();
-      lockBtn.disabled = false;
+    lockVaultBtn.addEventListener('click', e => { e.preventDefault(); lockVault(); });
+  }
+
+  // ── Idle auto-lock ──
+  // Soft timeout is user-chosen (Off/5/15/30 min, default 5); a fixed 60-min
+  // hard ceiling always locks even when soft is Off. Only in-tab activity counts.
+  const AUTOLOCK_HARD_CEILING_MIN = 60;
+  let idleLastActivity = Date.now();
+  function getAutolockMs() {
+    const raw = parseInt(localStorage.getItem('lucid-autolock-min'), 10);
+    const soft = Number.isFinite(raw) ? raw : 5;              // default 5 min
+    const eff = soft > 0 ? Math.min(soft, AUTOLOCK_HARD_CEILING_MIN) : AUTOLOCK_HARD_CEILING_MIN;
+    return eff * 60 * 1000;
+  }
+  const markActivity = () => { idleLastActivity = Date.now(); };
+  ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt =>
+    document.addEventListener(evt, markActivity, { passive: true }));
+  setInterval(() => {
+    if (!state.encryptionKey) return;                          // only while unlocked
+    if (Date.now() - idleLastActivity >= getAutolockMs()) lockVault();
+  }, 15000);
+
+  // ── Auto-lock timeout picker (footer) ──
+  const AUTOLOCK_OPTIONS = [
+    { min: 0,  label: 'Off' },
+    { min: 5,  label: '5 minutes' },
+    { min: 15, label: '15 minutes' },
+    { min: 30, label: '30 minutes' },
+  ];
+  const btnAutolock = document.getElementById('btn-autolock');
+  function autolockLabel() {
+    const raw = parseInt(localStorage.getItem('lucid-autolock-min'), 10);
+    const soft = Number.isFinite(raw) ? raw : 5;
+    return soft > 0 ? `Auto-lock: ${soft} min` : 'Auto-lock: Off (still locks after 60 min idle)';
+  }
+  if (btnAutolock) {
+    const syncAutolockLabel = () => {
+      btnAutolock.title = autolockLabel();
+      btnAutolock.setAttribute('aria-label', autolockLabel());
+    };
+    syncAutolockLabel();
+    btnAutolock.addEventListener('click', e => {
+      e.stopPropagation();
+      const raw = parseInt(localStorage.getItem('lucid-autolock-min'), 10);
+      const current = Number.isFinite(raw) ? raw : 5;
+      const rect = btnAutolock.getBoundingClientRect();
+      const items = AUTOLOCK_OPTIONS.map(o => ({
+        label: o.label,
+        icon: o.min === current ? ICONS.tickCircle : '<span class="menu-icon-blank"></span>',
+        action: () => {
+          localStorage.setItem('lucid-autolock-min', String(o.min));
+          idleLastActivity = Date.now();
+          syncAutolockLabel();
+        }
+      }));
+      showTreeContextMenu(rect.left, rect.top, items);
     });
   }
 
