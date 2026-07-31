@@ -1153,12 +1153,18 @@ function updateLockScreenUI() {
     if (lockTitle) lockTitle.textContent = 'Initialize LucID Vault';
     if (lockSubDesc) lockSubDesc.innerHTML = 'Create your master passphrase to initialize your vault. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
     if (lockConfirmInput) lockConfirmInput.classList.remove('hidden');
-    if (lockBtn) lockBtn.textContent = 'Create Vault';
+    if (lockBtn) {
+      lockBtn.textContent = 'Next';
+      lockBtn.disabled = true;
+    }
   } else {
     if (lockTitle) lockTitle.textContent = 'LucID';
     if (lockSubDesc) lockSubDesc.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
     if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
-    if (lockBtn) lockBtn.textContent = 'Unlock Vault';
+    if (lockBtn) {
+      lockBtn.textContent = 'Unlock Vault';
+      lockBtn.disabled = false;
+    }
   }
 }
 
@@ -1170,6 +1176,87 @@ function updateLockScreenUI() {
   const lockError = document.getElementById('lock-error');
 
   updateLockScreenUI();
+
+  function checkPassphraseMatch() {
+    if (state.authVerifier) return;
+    const v1 = lockInput ? lockInput.value : '';
+    const v2 = lockConfirmInput ? lockConfirmInput.value : '';
+
+    if (lockError) lockError.style.display = 'none';
+
+    // 1. Both empty -> Reset to neutral disabled state
+    if (!v1 && !v2) {
+      if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
+      if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
+      if (lockBtn) {
+        lockBtn.classList.remove('is-ready');
+        lockBtn.textContent = 'Next';
+        lockBtn.disabled = true;
+      }
+      return;
+    }
+
+    // 2. Exact 100% Match -> Both glow Emerald Green, Button becomes "Continue" & enabled!
+    if (v1 && v2 && v1 === v2) {
+      if (lockInput) {
+        lockInput.classList.add('is-matched');
+        lockInput.classList.remove('is-mismatch');
+      }
+      if (lockConfirmInput) {
+        lockConfirmInput.classList.add('is-matched');
+        lockConfirmInput.classList.remove('is-mismatch');
+      }
+      if (lockBtn) {
+        lockBtn.classList.add('is-ready');
+        lockBtn.textContent = 'Continue';
+        lockBtn.disabled = false;
+      }
+      return;
+    }
+
+    // 3. User is still typing Field 2 (Length is shorter than Field 1) -> Stay calm, no red error yet!
+    if (v1 && v2 && v2.length < v1.length) {
+      if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
+      if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
+      if (lockBtn) {
+        lockBtn.classList.remove('is-ready');
+        lockBtn.textContent = 'Next';
+        lockBtn.disabled = true;
+      }
+      return;
+    }
+
+    // 4. Field 2 reached or exceeded Field 1 length & still does not match -> Show RED Mismatch Glow!
+    if (v1 && v2 && v2.length >= v1.length && v1 !== v2) {
+      if (lockInput) {
+        lockInput.classList.remove('is-matched');
+        lockInput.classList.add('is-mismatch');
+      }
+      if (lockConfirmInput) {
+        lockConfirmInput.classList.remove('is-matched');
+        lockConfirmInput.classList.add('is-mismatch');
+      }
+      if (lockError) {
+        lockError.textContent = 'Passphrases do not match. Please try again.';
+        lockError.style.display = 'block';
+      }
+      if (lockBtn) {
+        lockBtn.classList.remove('is-ready');
+        lockBtn.textContent = 'Next';
+        lockBtn.disabled = true;
+      }
+      return;
+    }
+
+    // Fallback neutral
+    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
+    if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
+    if (lockBtn) {
+      lockBtn.classList.remove('is-ready');
+      lockBtn.textContent = 'Next';
+      lockBtn.disabled = true;
+    }
+  }
 
   async function unlockVault() {
     const pass = lockInput ? lockInput.value : '';
@@ -1234,8 +1321,8 @@ function updateLockScreenUI() {
         lockError.textContent = 'Authentication error. Access denied.';
       }
       lockError.style.display = 'block';
-      lockBtn.textContent = !state.authVerifier ? 'Create Vault' : 'Unlock Vault';
-      lockBtn.disabled = false;
+      lockBtn.textContent = !state.authVerifier ? 'Next' : 'Unlock Vault';
+      lockBtn.disabled = !state.authVerifier;
     }
   }
 
