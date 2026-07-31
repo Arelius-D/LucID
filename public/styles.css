@@ -1167,6 +1167,8 @@ body {
 .lock-btn.is-ready {
   background: var(--success) !important;
   color: #ffffff !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
   box-shadow: 0 0.25rem 1rem var(--success-glow) !important;
 }
 .lock-footer {
