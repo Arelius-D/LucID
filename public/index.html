@@ -7,11 +7,11 @@
   <title>LucID</title>
   <link rel="icon" type="image/png" href="assets/branding/favicon.png">
   <!-- Clean Custom 2026 Design System -->
-  <link rel="stylesheet" href="styles.css?v=1.1.1-dev">
+  <link rel="stylesheet" href="styles.css?v=1.4.1-dev">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
@@ -23,7 +23,6 @@
       <header class="brand-header">
         <strong class="brand-logo">
           <img src="assets/branding/logo.png" class="brand-logo-img" alt="LucID">
-          LucID
         </strong>
         <button id="btn-toggle-left" class="icon-btn" title="Collapse sidebar">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM13.26 15.53L9.74 12l3.52-3.53"/></svg>
@@ -32,15 +31,16 @@
 
       <div class="sidebar-body">
         <!-- STREAMLINED EXPLORER TOOLBAR ROW -->
-        <div class="tree-header-row">
+        <div class="tree-header-row" id="tree-header-row">
+          <div class="toolbar-cluster">
           <div class="explorer-mode-pill">
             <button id="btn-mode-folders" class="explorer-pill-btn active" title="Folders View">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
-              Folders
+              <span class="pill-label">Folders</span>
             </button>
             <button id="btn-mode-tags" class="explorer-pill-btn" title="Tags View">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>
-              Tags
+              <span class="pill-label">Tags</span>
             </button>
           </div>
 
@@ -55,11 +55,16 @@
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5H20M14 8H17M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
             </button>
           </div>
-        </div>
 
-        <!-- SEARCH INPUT (EXPANDS DIRECTLY BELOW EXPLORER HEADER ROW) -->
-        <div id="search-wrapper" class="search-wrapper hidden">
-          <input type="search" id="search-input" class="search-input" placeholder="Search notes & tags… (Esc to close)">
+          <!-- INLINE SEARCH — morphs over the toolbar row -->
+          <div class="explorer-search" id="explorer-search">
+            <svg class="icon-svg search-lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 19C14.97 19 19 14.97 19 10C19 5.03 14.97 1 10 1C5.03 1 1 5.03 1 10C1 14.97 5.03 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
+            <input type="search" id="search-input" class="search-input" placeholder="Search notes &amp; tags…">
+            <button id="btn-search-close" class="search-close" title="Close search (Esc)">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          </div>
         </div>
 
         <div id="folder-tree" class="folder-tree"></div>
@@ -72,11 +77,21 @@
           <div class="e2ee-row">
             <span class="status-dot active" id="e2ee-dot"></span>
             <span id="e2ee-text">E2EE Active · AES-256-GCM</span>
+            <button id="btn-autolock" class="autolock-btn" title="Auto-lock timeout" aria-label="Auto-lock timeout">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.24 2H8.76C5 2 4.71 5.38 6.74 7.22l10.52 9.56C19.29 18.62 19 22 15.24 22H8.76C5 22 4.71 18.62 6.74 16.78l10.52-9.56C19.29 5.38 19 2 15.24 2z"/></svg>
+            </button>
           </div>
           <div class="footer-actions-row">
-            <div id="save-indicator" class="sync-status-badge" title="Synced to vault">
-              <svg class="icon-svg check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>
-              <span>Synced</span>
+            <div class="footer-status-cluster">
+              <a href="https://github.com/Arelius-D/LucID" target="_blank" rel="noopener noreferrer" class="footer-github-link" title="View LucID Repository on GitHub" aria-label="View LucID Repository on GitHub">
+                <svg class="icon-svg github-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+              </a>
+              <div id="save-indicator" class="sync-status-badge" title="Synced to vault">
+                <svg class="icon-svg check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>
+                <span>Synced</span>
+              </div>
             </div>
             <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 11.12c0 4.89-3.55 9.47-8.4 10.81-.33.09-.69.09-1.02 0-4.85-1.34-8.4-5.92-8.4-10.81V6.73c0-.82.62-1.75 1.39-2.06l5.57-2.28c1.25-.51 2.66-.51 3.91 0l5.57 2.28c.76.31 1.39 1.24 1.39 2.06l-.01 4.39z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>
@@ -123,8 +138,10 @@
             <span id="theme-toggle-icon"></span>
           </button>
 
-          <button id="btn-toggle-right" class="icon-btn" title="Toggle Inspector Pane">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM12 8v5"/><path stroke-width="2" d="M11.995 16h.009"/></svg>
+          <!-- DOCKED EXPAND INSPECTOR BUTTON — mirrors the left docked-expand;
+               only visible when the inspector is collapsed -->
+          <button id="btn-expand-right" class="icon-btn docked-expand-btn dock-right" title="Expand Inspector">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM13.26 15.53L9.74 12l3.52-3.53"/></svg>
           </button>
         </div>
       </header>
@@ -146,32 +163,34 @@
 
     <!-- RIGHT SIDEBAR (COLLAPSED BY DEFAULT AS REQUESTED) -->
     <aside id="sidebar-right" class="sidebar right-pane collapsed">
-      <section>
-        <h6>TABLE OF CONTENTS</h6>
-        <div id="toc-container" class="toc-list"><small class="empty-state">No headings</small></div>
-      </section>
-      <section>
-        <div class="tags-header">
-          <h6>TAGS</h6>
-          <button id="btn-add-tag" class="btn-tag-add" title="Add Tag">+</button>
-        </div>
-        <div id="tags-container" class="tags-list"></div>
-      </section>
-      <section>
-        <h6>METRICS</h6>
-        <div class="metrics-grid">
-          <div class="metric"><strong id="val-words">0</strong><small>Words</small></div>
-          <div class="metric"><strong id="val-chars">0</strong><small>Chars</small></div>
-          <div class="metric"><strong id="val-lines">0</strong><small>Lines</small></div>
-        </div>
-      </section>
-      <footer class="inspector-footer">
-        <a href="https://github.com/Arelius-D/LucID" target="_blank" rel="noopener noreferrer" class="inspector-github-link" title="View LucID Repository on GitHub">
-          <svg class="icon-svg github-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
-          </svg>
-        </a>
-      </footer>
+      <!-- INSPECTOR HEADER — collapse button lives inside the panel, next to the
+           center divider (mirrors the left panel's in-panel collapse button) -->
+      <header class="inspector-header">
+        <button id="btn-toggle-right" class="icon-btn inspector-collapse-btn" title="Collapse inspector">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM10.74 15.53L14.26 12l-3.52-3.53"/></svg>
+        </button>
+      </header>
+      <div class="inspector-body">
+        <section>
+          <h6>TABLE OF CONTENTS</h6>
+          <div id="toc-container" class="toc-list"><small class="empty-state">No headings</small></div>
+        </section>
+        <section>
+          <div class="tags-header">
+            <h6>TAGS</h6>
+            <button id="btn-add-tag" class="btn-tag-add" title="Add Tag">+</button>
+          </div>
+          <div id="tags-container" class="tags-list"></div>
+        </section>
+        <section>
+          <h6>METRICS</h6>
+          <div class="metrics-grid">
+            <div class="metric"><strong id="val-words">0</strong><small>Words</small></div>
+            <div class="metric"><strong id="val-chars">0</strong><small>Chars</small></div>
+            <div class="metric"><strong id="val-lines">0</strong><small>Lines</small></div>
+          </div>
+        </section>
+      </div>
     </aside>
   </div>
 
@@ -216,17 +235,31 @@
         <img src="assets/branding/logo.png" class="lock-logo-img" alt="LucID">
       </div>
       <h2 id="lock-title">LucID</h2>
+      <div id="lock-status" class="lock-status">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5z"/><path stroke-width="2" d="M15.996 16h.01M11.995 16h.01M7.995 16h.008"/></svg>
+        <span>Vault locked</span>
+      </div>
       <p id="lock-sub-desc" class="lock-sub">Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.</p>
       <div class="lock-inputs-group">
-        <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" autofocus>
+        <div class="lock-input-wrap">
+          <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" autofocus>
+          <button type="button" id="lock-reveal-btn" class="lock-reveal" title="Show passphrase" aria-label="Show passphrase">
+            <span class="icon-eye"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.58 12c0 1.98-1.6 3.58-3.58 3.58S8.42 13.98 8.42 12s1.6-3.58 3.58-3.58 3.58 1.6 3.58 3.58z"/><path d="M12 20.27c3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-2.29-3.6-5.58-5.68-9.11-5.68-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19 2.29 3.6 5.58 5.68 9.11 5.68z"/></svg></span>
+            <span class="icon-eye-slash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.53 9.47l-5.06 5.06a3.576 3.576 0 115.06-5.06z"/><path d="M17.82 5.77C16.07 4.45 14.07 3.73 12 3.73c-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19.79 1.24 1.71 2.31 2.71 3.17M8.42 19.53c1.14.48 2.35.74 3.58.74 3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-.33-.52-.69-1.01-1.06-1.47M15.51 12.7a3.565 3.565 0 01-2.82 2.82M9.47 14.53L2 22M22 2l-7.47 7.47"/></svg></span>
+          </button>
+        </div>
         <input type="password" id="lock-passphrase-confirm" class="lock-input hidden" placeholder="Confirm master passphrase">
       </div>
+      <div id="lock-capslock" class="lock-capslock hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M18.07 9.57L12 3.5 5.93 9.57M12 20.5V3.67"/></svg>
+        <span>Caps Lock is on</span>
+      </div>
       <div id="lock-error" class="lock-error" style="display:none"></div>
-      <button id="lock-unlock-btn" class="lock-btn">Unlock Vault</button>
+      <button id="lock-unlock-btn" class="lock-btn">Unlock</button>
       <small class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
     </div>
   </div>
 
-  <script src="app.js?v=1.1.1-dev"></script>
+  <script src="app.js?v=1.4.1-dev"></script>
 </body>
 </html>
