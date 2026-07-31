@@ -285,7 +285,7 @@ Collaborations, bug fixes, and feature enhancements are warmly welcome! If you'd
 
 LucID harnesses the power of excellent open-source projects:
 - [Node.js](https://nodejs.org/) for high-performance server runtime execution.
-- [Iconsax Linear](https://iconsax.io/) (`blade-iconsax`) for clean vector UI icons.
+- [Blade Iconsax](https://github.com/saade/blade-iconsax) (`blade-iconsax`) for clean vector UI icons.
 - [Caddy](https://github.com/caddyserver/caddy) for zero-touch Let's Encrypt TLS certificate provisioning.
 - [DDNS Updater](https://github.com/qdm12/ddns-updater) by [@qmcgaw](https://github.com/qmcgaw) for automated multi-provider dynamic DNS IP syncing.
 - [Express.js](https://github.com/expressjs/express) for lightweight Node.js HTTP backend services.
