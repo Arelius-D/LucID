@@ -1,0 +1,37 @@
+# Keeps dependencies current automatically. Policy: prefer latest — an outdated
+# dependency is a standing vulnerability, so updates are raised daily and major
+# versions are NOT held back. Breakage is caught by CI, which is the acceptable
+# trade against shipping known-vulnerable code.
+version: 2
+updates:
+  # Runtime + vendored browser libraries (dompurify / marked / highlight.js are
+  # devDependencies precisely so they are tracked here, then synced into
+  # public/vendor by `npm run vendor`).
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    labels: ["dependencies", "security"]
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+
+  # Docker base image (node:22-alpine -> newer patch/major).
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels: ["dependencies", "docker"]
+    commit-message:
+      prefix: "deps(docker)"
+
+  # The Actions used by the build pipeline itself.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels: ["dependencies", "ci"]
+    commit-message:
+      prefix: "deps(ci)"

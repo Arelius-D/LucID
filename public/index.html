@@ -7,13 +7,18 @@
   <title>LucID</title>
   <link rel="icon" type="image/png" href="assets/branding/favicon.png">
   <!-- Clean Custom 2026 Design System -->
-  <link rel="stylesheet" href="styles.css?v=1.4.1">
+  <!-- Content-Security-Policy: scripts may load ONLY from this origin, so injected
+       markup cannot execute inline JS even if the sanitizer were bypassed (S-04/S-11). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+  <link rel="stylesheet" href="styles.css?v=2.0.0-dev">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- Vendored locally (pinned): no third-party CDN can inject code into this origin (S-08/S-09/S-10) -->
+  <link id="hljs-theme" rel="stylesheet" href="vendor/hljs-styles/github-dark.min.css">
+  <script src="vendor/purify.min.js"></script>
+  <script src="vendor/marked.umd.js"></script>
+  <script src="vendor/highlight.min.js"></script>
 </head>
 <body>
   <div id="app" class="app-container">
@@ -24,7 +29,7 @@
         <strong class="brand-logo">
           <img src="assets/branding/logo.png" class="brand-logo-img" alt="LucID">
         </strong>
-        <button id="btn-toggle-left" class="icon-btn" title="Collapse sidebar">
+        <button id="btn-toggle-left" class="icon-btn" title="Collapse sidebar" aria-label="Collapse sidebar">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM13.26 15.53L9.74 12l3.52-3.53"/></svg>
         </button>
       </header>
@@ -34,24 +39,24 @@
         <div class="tree-header-row" id="tree-header-row">
           <div class="toolbar-cluster">
           <div class="explorer-mode-pill">
-            <button id="btn-mode-folders" class="explorer-pill-btn active" title="Folders View">
+            <button id="btn-mode-folders" class="explorer-pill-btn active" title="Folders View" aria-label="Folders View">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
               <span class="pill-label">Folders</span>
             </button>
-            <button id="btn-mode-tags" class="explorer-pill-btn" title="Tags View">
+            <button id="btn-mode-tags" class="explorer-pill-btn" title="Tags View" aria-label="Tags View">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>
               <span class="pill-label">Tags</span>
             </button>
           </div>
 
           <div class="explorer-actions-pill">
-            <button id="btn-new-note" class="icon-btn action-pill-btn" title="New Note">
+            <button id="btn-new-note" class="icon-btn action-pill-btn" title="New Note" aria-label="New Note">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.56 18v-5M12 15.5H7M8 2v3M16 2v3M15.81 3.42c3.34.12 5.03 1.35 5.13 6.05l.13 6.17c.08 4.12-.87 6.19-5.87 6.3l-6 .12c-5 .1-6.04-1.94-6.12-6.05l-.14-6.18c-.1-4.7 1.55-6 4.87-6.25l8-.16z"/></svg>
             </button>
-            <button id="btn-new-folder" class="icon-btn action-pill-btn" title="New Folder">
+            <button id="btn-new-folder" class="icon-btn action-pill-btn" title="New Folder" aria-label="New Folder">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
             </button>
-            <button id="btn-toggle-search" class="icon-btn action-pill-btn" title="Search Notes & Tags">
+            <button id="btn-toggle-search" class="icon-btn action-pill-btn" title="Search Notes & Tags" aria-label="Search Notes & Tags">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5H20M14 8H17M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
             </button>
           </div>
@@ -60,7 +65,7 @@
           <div class="explorer-search" id="explorer-search">
             <svg class="icon-svg search-lead" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 19C14.97 19 19 14.97 19 10C19 5.03 14.97 1 10 1C5.03 1 1 5.03 1 10C1 14.97 5.03 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
             <input type="search" id="search-input" class="search-input" placeholder="Search notes &amp; tags…">
-            <button id="btn-search-close" class="search-close" title="Close search (Esc)">
+            <button id="btn-search-close" class="search-close" title="Close search (Esc)" aria-label="Close search (Esc)">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6 6 18M6 6l12 12" stroke-linecap="round"/></svg>
             </button>
           </div>
@@ -88,12 +93,12 @@
                   <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                 </svg>
               </a>
-              <div id="save-indicator" class="sync-status-badge" title="Synced to vault">
+              <div id="save-indicator" class="sync-status-badge" title="Synced to vault" role="status" aria-live="polite">
                 <svg class="icon-svg check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>
                 <span>Synced</span>
               </div>
             </div>
-            <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault">
+            <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault" aria-label="Lock Encrypted Vault">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 11.12c0 4.89-3.55 9.47-8.4 10.81-.33.09-.69.09-1.02 0-4.85-1.34-8.4-5.92-8.4-10.81V6.73c0-.82.62-1.75 1.39-2.06l5.57-2.28c1.25-.51 2.66-.51 3.91 0l5.57 2.28c.76.31 1.39 1.24 1.39 2.06l-.01 4.39z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>
               <span>Lock</span>
             </button>
@@ -111,21 +116,21 @@
       <header class="top-bar">
         <div class="top-bar-left">
           <!-- CLEAN DOCKED EXPAND SIDEBAR BUTTON IN TOP BAR -->
-          <button id="btn-expand-left" class="icon-btn docked-expand-btn hidden" title="Expand Sidebar">
+          <button id="btn-expand-left" class="icon-btn docked-expand-btn hidden" title="Expand Sidebar" aria-label="Expand Sidebar">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM10.74 15.53L14.26 12l-3.52-3.53"/></svg>
           </button>
 
           <!-- VIEW MODE TABS WITH DYNAMIC ICONSAX SVGS -->
           <div class="view-tabs">
-            <button id="tab-mode-editor" class="view-tab active" title="Editor Only">
+            <button id="tab-mode-editor" class="view-tab active" title="Editor Only" aria-label="Editor Only">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13.26 3.6L5.05 12.29c-.31.33-.61.97-.67 1.41l-.37 3.22c-.13 1.17.7 1.98 1.86 1.81l3.2-.46c.44-.06 1.07-.38 1.38-.7l8.21-8.69c1.42-1.5 2.06-3.21-.09-5.24-2.14-2.01-3.83-1.32-5.31.16z"/><path d="M11.89 5.05l5.06 4.77"/></svg>
               <span>Editor</span>
             </button>
-            <button id="tab-mode-split" class="view-tab" title="Toggle Split Orientation (Side-by-Side ↔ Top-Bottom)">
+            <button id="tab-mode-split" class="view-tab" title="Toggle Split Orientation (Side-by-Side ↔ Top-Bottom)" aria-label="Toggle Split Orientation (Side-by-Side ↔ Top-Bottom)">
               <span class="split-tab-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H3v18h7V3zM21 3h-7v18h7V3z"/></svg></span>
               <span>Split</span>
             </button>
-            <button id="tab-mode-preview" class="view-tab" title="Preview Only">
+            <button id="tab-mode-preview" class="view-tab" title="Preview Only" aria-label="Preview Only">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.58 12c0 1.98-1.6 3.58-3.58 3.58S8.42 13.98 8.42 12s1.6-3.58 3.58-3.58 3.58 1.6 3.58 3.58z"/><path d="M12 20.27c3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-2.29-3.6-5.58-5.68-9.11-5.68-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19 2.29 3.6 5.58 5.68 9.11 5.68z"/></svg>
               <span>Preview</span>
             </button>
@@ -134,13 +139,13 @@
 
         <div class="top-bar-right">
           <!-- SEAMLESS GLOWING SUN / MOON THEME TOGGLE BUTTON -->
-          <button id="btn-theme-toggle" class="theme-glow-btn" title="Toggle Theme">
+          <button id="btn-theme-toggle" class="theme-glow-btn" title="Toggle Theme" aria-label="Toggle Theme">
             <span id="theme-toggle-icon"></span>
           </button>
 
           <!-- DOCKED EXPAND INSPECTOR BUTTON — mirrors the left docked-expand;
                only visible when the inspector is collapsed -->
-          <button id="btn-expand-right" class="icon-btn docked-expand-btn dock-right" title="Expand Inspector">
+          <button id="btn-expand-right" class="icon-btn docked-expand-btn dock-right" title="Expand Inspector" aria-label="Expand Inspector">
             <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM13.26 15.53L9.74 12l3.52-3.53"/></svg>
           </button>
         </div>
@@ -166,7 +171,7 @@
       <!-- INSPECTOR HEADER — collapse button lives inside the panel, next to the
            center divider (mirrors the left panel's in-panel collapse button) -->
       <header class="inspector-header">
-        <button id="btn-toggle-right" class="icon-btn inspector-collapse-btn" title="Collapse inspector">
+        <button id="btn-toggle-right" class="icon-btn inspector-collapse-btn" title="Collapse inspector" aria-label="Collapse inspector">
           <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM10.74 15.53L14.26 12l-3.52-3.53"/></svg>
         </button>
       </header>
@@ -178,7 +183,7 @@
         <section>
           <div class="tags-header">
             <h6>TAGS</h6>
-            <button id="btn-add-tag" class="btn-tag-add" title="Add Tag">+</button>
+            <button id="btn-add-tag" class="btn-tag-add" title="Add Tag" aria-label="Add Tag">+</button>
           </div>
           <div id="tags-container" class="tags-list"></div>
         </section>
@@ -198,7 +203,7 @@
   <div id="tree-context-menu" class="context-menu hidden"></div>
 
   <!-- IN-APP PROMPT MODAL -->
-  <div id="modal-prompt" class="modal-backdrop hidden">
+  <div id="modal-prompt" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-prompt-title">
     <div class="modal-card">
       <div class="modal-icon">
         <svg class="modal-prompt-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
@@ -214,7 +219,7 @@
   </div>
 
   <!-- IN-APP CONFIRMATION MODAL -->
-  <div id="modal-confirm" class="modal-backdrop hidden">
+  <div id="modal-confirm" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-confirm-title">
     <div class="modal-card">
       <div class="modal-icon">
         <svg class="modal-warning-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.17 14.83l5.66-5.66M14.83 14.83L9.17 9.17M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/></svg>
@@ -229,7 +234,7 @@
   </div>
 
   <!-- LOCK SCREEN -->
-  <div id="lock-screen" class="lock-screen">
+  <div id="lock-screen" class="lock-screen" role="dialog" aria-modal="true" aria-labelledby="lock-title">
     <div class="lock-card">
       <div class="lock-icon">
         <img src="assets/branding/logo.png" class="lock-logo-img" alt="LucID">
@@ -242,7 +247,7 @@
       <p id="lock-sub-desc" class="lock-sub">Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.</p>
       <div class="lock-inputs-group">
         <div class="lock-input-wrap">
-          <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" autofocus>
+          <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" aria-describedby="lock-error" autofocus>
           <button type="button" id="lock-reveal-btn" class="lock-reveal" title="Show passphrase" aria-label="Show passphrase">
             <span class="icon-eye"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.58 12c0 1.98-1.6 3.58-3.58 3.58S8.42 13.98 8.42 12s1.6-3.58 3.58-3.58 3.58 1.6 3.58 3.58z"/><path d="M12 20.27c3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-2.29-3.6-5.58-5.68-9.11-5.68-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19 2.29 3.6 5.58 5.68 9.11 5.68z"/></svg></span>
             <span class="icon-eye-slash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.53 9.47l-5.06 5.06a3.576 3.576 0 115.06-5.06z"/><path d="M17.82 5.77C16.07 4.45 14.07 3.73 12 3.73c-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19.79 1.24 1.71 2.31 2.71 3.17M8.42 19.53c1.14.48 2.35.74 3.58.74 3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-.33-.52-.69-1.01-1.06-1.47M15.51 12.7a3.565 3.565 0 01-2.82 2.82M9.47 14.53L2 22M22 2l-7.47 7.47"/></svg></span>
@@ -250,16 +255,16 @@
         </div>
         <input type="password" id="lock-passphrase-confirm" class="lock-input hidden" placeholder="Confirm master passphrase">
       </div>
-      <div id="lock-capslock" class="lock-capslock hidden">
+      <div id="lock-capslock" class="lock-capslock hidden" role="status" aria-live="polite">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M18.07 9.57L12 3.5 5.93 9.57M12 20.5V3.67"/></svg>
         <span>Caps Lock is on</span>
       </div>
-      <div id="lock-error" class="lock-error" style="display:none"></div>
+      <div id="lock-error" class="lock-error" role="alert" aria-live="assertive" style="display:none"></div>
       <button id="lock-unlock-btn" class="lock-btn">Unlock</button>
       <small class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
     </div>
   </div>
 
-  <script src="app.js?v=1.4.1"></script>
+  <script src="app.js?v=2.0.0-dev"></script>
 </body>
 </html>

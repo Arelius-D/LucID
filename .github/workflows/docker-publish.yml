@@ -18,6 +18,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Audit dependencies (fail on known vulnerabilities)
+        run: npm audit --audit-level=high
+
+      - name: Verify vendored browser libs match package.json
+        run: |
+          npm ci
+          npm run vendor
+          git diff --exit-code -- public/vendor \
+            || (echo "::error::public/vendor is out of date — run 'npm run vendor' and commit." && exit 1)
+
       - name: Set up QEMU (Multi-Architecture Support)
         uses: docker/setup-qemu-action@v3
 
