@@ -129,35 +129,41 @@ LucID combines zero-trust client cryptography with transport-layer security:
 
 ## Empirical Production System Footprint
 
-> **Measurement context:** figures below were captured on a live Linux server host. Re-measure and update the version and date stamp when publishing a new release.
+Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running stack every 5 seconds for 20 minutes — **170 samples**. Values are run averages with observed peaks, not a single-moment snapshot.
 
-### 1. Active container memory and CPU usage
+### 1. Active Container Memory & CPU Usage
 
-| Component | CPU % | cgroup RAM | Host Process RSS RAM | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **18.59 MiB** | **74.71 MB** | `Up (healthy)` |
-| Caddy Reverse Proxy (`caddy:latest`) | **0.00%** | **11.35 MiB** | **47.02 MB** | `Up (healthy)` |
-| Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.00%** | **5.07 MiB** | **16.05 MB** | `Up (healthy)` |
-| **Total active container stack** | **0.00%** | **~35.01 MiB** | **~137.78 MB** | **All healthy** |
+| Component | Avg CPU % | Peak CPU % | cgroup RAM | Host Process RSS RAM | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **0.04%** | **22.27 MiB** | **78.66 MB** | `Up` (no healthcheck) |
+| Caddy Reverse Proxy (`caddy:latest`) | **0.01%** | **1.27%** | **10.85 MiB** | **46.45 MB** | `Up` (no healthcheck) |
+| Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.03%** | **4.91%** | **5.54 MiB** | **16.52 MB** | `Up (healthy)` |
+| **Total Active Container Stack** | **0.05%** | **4.91%** | **38.67 MiB** | **141.63 MB** | **All Running** |
 
-### 2. Infrastructure overhead
+### 2. Infrastructure Overhead
 
 | Process / Daemon | Host Process RSS RAM | Role |
 | :--- | :--- | :--- |
-| `dockerd` | **101.12 MB** | Docker engine system daemon |
-| `containerd` | **94.31 MB** | Container runtime daemon |
-| `docker-proxy` | **42.00 MB** | Network port forwarding proxy |
-| `containerd-shim-runc-v2` | **34.12 MB** | Container process shims |
+| `dockerd` | **100.22 MB** | Docker Engine System Daemon |
+| `containerd` | **43.08 MB** | Container Runtime Daemon |
+| `docker-proxy` | **41.61 MB** | Network Port Forwarding Proxy |
+| `containerd-shim-runc-v2` | **34.90 MB** | Container Process Shims (one per container) |
+| **Total Infrastructure Overhead** | **219.80 MB** | Docker Engine Baseline |
 
-### 3. Disk footprint breakdown
+**Grand total, application stack plus Docker engine: 361.43 MB Host RSS.**
+
+> `containerd` counts only the daemon itself. Matching on a `/usr/bin/containerd` command-line substring also catches every `containerd-shim-runc-v2` process, folding the shims into the daemon figure and double-counting them against the row below.
+
+### 3. Disk Footprint Breakdown
 
 | Asset | Size | Category |
 | :--- | :--- | :--- |
-| Application deployment directory | **36 KB** | Configuration and local storage |
-| Application container image (`assarelius/lucid:latest`) | **276 MB** | Docker container image |
-| Caddy reverse proxy image (`caddy:latest`) | **88.7 MB** | Docker container image |
-| Dynamic DNS updater image (`qmcgaw/ddns-updater:latest`) | **19.4 MB** | Docker container image |
-| TLS certificate and ACME config cache | **< 10 KB** | Named Docker volumes |
+| Application Deployment Directory | **56 KB** | Configuration & Local Storage |
+| Application Container Image (`assarelius/lucid:latest`) | **277 MB** | Docker Container Image |
+| Caddy Reverse Proxy Image (`caddy:latest`) | **88.7 MB** | Docker Container Image |
+| Dynamic DNS Updater Image (`qmcgaw/ddns-updater:latest`) | **19.4 MB** | Docker Container Image |
+| TLS Certificate & ACME Config Cache (`lucid_caddy_data`, `lucid_caddy_config`) | **6.46 KB** | Named Docker Volumes |
+| Container Writable Layers (3 × 4.1 kB) | **12.3 KB** | Overlay2 Diff Layers |
 
 ---
 
@@ -195,7 +201,7 @@ sequenceDiagram
 | Tags | Encrypted (AES-256-GCM) |
 | Folder names | Encrypted (AES-256-GCM) |
 | Master passphrase | Never transmitted and never stored, anywhere |
-| Record IDs and timestamps | Plaintext. Opaque identifiers, no content |
+| Record IDs and timestamps | Plaintext. Randomly generated or timestamp-derived, so they describe nothing |
 | KDF parameters (salt, iterations) | Plaintext by design. A salt is not a secret and must be readable to derive your key |
 
 ### Key derivation
