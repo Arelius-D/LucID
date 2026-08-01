@@ -19,13 +19,39 @@ Run this single command on your Linux host, server, or VPS to audit ports, confi
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
 ```
 
-To completely uninstall and wipe all containers, images, volumes, and saved data:
+### Choosing a channel
+
+The installer defaults to the stable release. You can pick which branch to deploy, and the container image tag follows the branch automatically:
+
+| Command | Deployment files from | Container image |
+| :--- | :--- | :--- |
+| `install.sh` | `main` | `assarelius/lucid:latest` |
+| `install.sh --dev` | `dev` | `assarelius/lucid:dev` |
+| `install.sh --branch NAME` | `NAME` | `assarelius/lucid:NAME` |
+
+To install the development channel in one line:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash -s -- --dev
+```
+
+This matters because `docker-compose.yml` and `Caddyfile` are fetched from the same branch as the image. Mixing a `dev` image with `main`'s compose file can leave you running new application code against old deployment settings.
+
+> **The dev channel is untested pre-release code.** It may contain breaking changes to the vault format, and no migration path is guaranteed between dev builds. Use `main` unless you intend to test.
+
+### Uninstalling
+
+To completely remove all containers, images, volumes, firewall rules, and saved data:
 
 ```bash
 ./install.sh --purge
 ```
 
-> **Warning:** `--purge` permanently deletes your encrypted note database at `data/store.json`. Because the vault is end-to-end encrypted, there is no way to recover it afterwards.
+`--purge` removes whichever image tag you installed, so it works the same on either channel.
+
+> **Warning:** `--purge` permanently deletes your encrypted note database at `data/store.json`. Because the vault is end-to-end encrypted, there is no way to recover it afterwards. Copy `data/store.json` elsewhere first if you want to keep it.
+
+Run `install.sh --help` for the full option list.
 
 > **Note:** Database CLI export, import, and backup management utilities will be introduced in an upcoming release.
 
@@ -56,6 +82,8 @@ To reach LucID from anywhere over valid HTTPS without buying a domain:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
 ```
+
+Append `-s -- --dev` if you are deploying the development channel.
 
 Enter `y` when prompted for DuckDNS, then supply your domain and token. The installer detects your public IP and configures `ddns-updater` to keep DuckDNS synced automatically.
 
@@ -244,6 +272,8 @@ yourdomain.com {
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
 ```
+
+Add `-s -- --dev` for the development channel, or `-s -- --branch NAME` for a specific branch. See [Choosing a channel](#choosing-a-channel).
 
 ---
 
