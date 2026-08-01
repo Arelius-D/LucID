@@ -612,6 +612,19 @@ function renderAll() {
   updateE2EEUI();
 }
 
+// Cleanup for a finished drag. This lives here, and is called by the DROP handler,
+// because `dragend` is unreachable after a successful drop: the drop calls
+// renderAll(), which rebuilds the tree and destroys the very element the drag
+// started on, so the browser has nothing left to fire dragend at. Measured on a
+// live session: 20 dragstarts, 18 drops, 2 dragends — the two being the drags that
+// were abandoned without dropping. Cleanup therefore has to belong to the path that
+// actually runs, not to the one that only runs when the user changes their mind.
+function clearDragState() {
+  state.dragNoteId = null;
+  document.querySelectorAll('.tree-note.dragging').forEach(el => el.classList.remove('dragging'));
+  document.querySelectorAll('.tree-folder-header.drop-target').forEach(el => el.classList.remove('drop-target'));
+}
+
 function renderTree() {
   const container = document.getElementById('folder-tree');
   if (!container) return;
@@ -668,9 +681,8 @@ function renderTree() {
 
     header.addEventListener('drop', async e => {
       e.preventDefault();
-      header.classList.remove('drop-target');
       const noteId = state.dragNoteId;
-      state.dragNoteId = null;
+      clearDragState();
       if (!noteId) return;
       const note = state.notes.find(n => n.id === noteId);
       if (!note || note.folderId === folder.id) return;
@@ -725,11 +737,8 @@ function renderTree() {
         noteEl.classList.add('dragging');
       });
 
-      noteEl.addEventListener('dragend', () => {
-        state.dragNoteId = null;
-        noteEl.classList.remove('dragging');
-        document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
-      });
+      // Only reached when a drag is abandoned without dropping on a folder.
+      noteEl.addEventListener('dragend', clearDragState);
 
       noteEl.addEventListener('click', async e => {
         e.stopPropagation();
