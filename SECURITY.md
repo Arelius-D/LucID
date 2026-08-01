@@ -59,9 +59,22 @@ However, **the implementation as a whole has not been reviewed by an independent
 
 The salt is stored unencrypted by necessity — it must be readable to derive the key. A salt is not a secret; its purpose is to make every vault's derivation unique so that one precomputed attack cannot be reused across vaults.
 
+## The Caddy admin API is disabled
+
+The bundled `Caddyfile` sets `admin off`. Caddy's admin API is a control plane, not a status page: whatever can reach it can replace the running configuration, rewrite routes, change which upstream traffic is proxied to, and load TLS certificates. It is not read-only.
+
+By default it listens on `localhost:2019` inside the container, and "localhost" is weaker than it sounds there. The address is reachable by any process sharing that network namespace, and the Caddy image declares port 2019 as exposed. In this stack Caddy shares a Docker network with the application and the DDNS updater, so a problem in a neighbouring container would sit next to a socket capable of reconfiguring TLS and routing. For an application whose whole premise is that the operator controls the data path, that is the wrong thing to leave open by default.
+
+Switching it off has a real cost. A reachable admin endpoint would give Docker a clean liveness probe for Caddy, and that is why the reverse proxy in `docker-compose.yml` carries no healthcheck: an HTTP probe against port 80 follows Caddy's automatic HTTPS redirect and then fails the TLS handshake, reporting "unhealthy" while Caddy is serving correctly. Losing that signal is accepted deliberately. A health indicator is a convenience; an exposed control plane is an attack surface. The application container has its own healthcheck, and a failed Caddy is immediately obvious because the site stops answering.
+
+If you run a monitored fleet and want the endpoint, enable it explicitly in your own `Caddyfile`, bind it to an interface you control, and do not publish port 2019 to the host.
+
+---
+
 ## Keeping your deployment secure
 
 - Run behind the bundled Caddy reverse proxy so traffic is TLS-encrypted. **Web Crypto requires a secure context** — over plain HTTP to a bare IP, the browser disables encryption entirely and LucID will refuse to unlock.
+- Leave the Caddy admin API disabled unless you have a specific need for it, and never publish port 2019.
 - Do not publish the application port directly to the internet. The bundled `docker-compose.yml` binds it to `127.0.0.1` for this reason.
 - Keep the image current. Dependencies are updated automatically via Dependabot and the build fails on known high-severity vulnerabilities, but that only reaches you when you pull.
 - Use a long, unique passphrase. It is the only thing standing between an attacker with your vault file and your notes.
