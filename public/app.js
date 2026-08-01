@@ -654,6 +654,35 @@ function renderTree() {
       renderTree();
     });
 
+    // Drop target: a note dragged onto this folder header moves into it.
+    header.addEventListener('dragover', e => {
+      if (!state.dragNoteId) return;
+      const dragged = state.notes.find(n => n.id === state.dragNoteId);
+      if (!dragged || dragged.folderId === folder.id) return;
+      e.preventDefault();                       // without this the drop never fires
+      e.dataTransfer.dropEffect = 'move';
+      header.classList.add('drop-target');
+    });
+
+    header.addEventListener('dragleave', () => header.classList.remove('drop-target'));
+
+    header.addEventListener('drop', async e => {
+      e.preventDefault();
+      header.classList.remove('drop-target');
+      const noteId = state.dragNoteId;
+      state.dragNoteId = null;
+      if (!noteId) return;
+      const note = state.notes.find(n => n.id === noteId);
+      if (!note || note.folderId === folder.id) return;
+      await flushPendingSave();                 // never lose the in-flight edit
+      note.folderId = folder.id;
+      note.updatedAt = new Date().toISOString();
+      state.openFolderIds.add(folder.id);       // reveal where it landed
+      saveTreeState();
+      renderAll();
+      await saveStore();
+    });
+
     // Right-click context menu for Folder
     header.addEventListener('contextmenu', e => {
       e.preventDefault();
@@ -686,6 +715,21 @@ function renderTree() {
       }
 
       noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>`;
+
+      noteEl.draggable = true;
+
+      noteEl.addEventListener('dragstart', e => {
+        state.dragNoteId = note.id;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', note.id);
+        noteEl.classList.add('dragging');
+      });
+
+      noteEl.addEventListener('dragend', () => {
+        state.dragNoteId = null;
+        noteEl.classList.remove('dragging');
+        document.querySelectorAll('.drop-target').forEach(el => el.classList.remove('drop-target'));
+      });
 
       noteEl.addEventListener('click', async e => {
         e.stopPropagation();

@@ -8,11 +8,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.1.0-dev] - unreleased
 
+### Added
+- **Drag a note onto a folder to move it**: notes in the folder tree are now draggable and folder headers are drop targets. The dragged row fades, the folder under the cursor fills with a new `--bg-drop` token, and the destination folder opens so the note is visible where it landed. The in-flight edit is flushed before the move, so a note dragged mid-typing keeps its text. `state.dragNoteId` had been declared and unused since 1.4.1; it is now what it was always meant to be.
+- **`--bg-drop` design token**: added to both themes at a value clear of `--bg-active`, because a drop target is hovered by definition and had to stay legible underneath the hover state. Tree items signal state through background fill, so the drop cue is a fill rather than a ring — rings in this system belong to inputs — and the text uses `--text-primary`, never accent, per the existing note that accent's lightness relative to the default icon inverts between themes.
+
 ### Documentation
 - **Footprint figures re-measured on 2.0.0 code**: the README's numbers dated from 1.4.1. Re-sampled on the live host at 5-second intervals for 20 minutes, 240 samples. The application backend now registers 0.00% CPU across every sample, its cgroup memory falls from 22.27 to 14.10 MiB, and the whole stack drops from 38.67 to 31.26 MiB cgroup and 141.63 to 128.81 MB host RSS. The section now states outright that these are at-rest figures and explains why that is the number that matters, since encryption happens in the browser rather than on the server. Peak columns and compressed image sizes were added, and the stale claim that the application container carries no healthcheck was removed.
 
 ### Fixed
-- **Design-system violations in the footer indicator work**: `.visually-hidden` used `1px` / `-1px`, the only raw pixel declarations in the stylesheet, against a token block that states relational rem with no raw px; they now use `--hairline`. The sync and runtime badges used the `background-color` longhand where the other 76 declarations in the file use the `background` shorthand. Both were introduced earlier in this cycle and are corrected here rather than left to drift.
 - **Application healthcheck no longer spawns a Node runtime every minute**: the probe ran `node -e "require('http').request(...)"`, starting a complete Node process inside the container's cgroup once per interval. A sampled footprint audit measured the application's peak CPU at 14.28% against 0.04% for the same code before a healthcheck existed — the container was spending that CPU on monitoring itself. Replaced with a busybox `wget` probe against `/health`, which the `node:22-alpine` base already provides. The probe honours `PORT`.
 
 ---
