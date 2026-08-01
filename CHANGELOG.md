@@ -8,6 +8,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.1.0-dev] - unreleased
 
+### Documentation
+- **Footprint figures re-measured on 2.0.0 code**: the README's numbers dated from 1.4.1. Re-sampled on the live host at 5-second intervals for 20 minutes, 240 samples. The application backend now registers 0.00% CPU across every sample, its cgroup memory falls from 22.27 to 14.10 MiB, and the whole stack drops from 38.67 to 31.26 MiB cgroup and 141.63 to 128.81 MB host RSS. The section now states outright that these are at-rest figures and explains why that is the number that matters, since encryption happens in the browser rather than on the server. Peak columns and compressed image sizes were added, and the stale claim that the application container carries no healthcheck was removed.
+
 ### Fixed
 - **Application healthcheck no longer spawns a Node runtime every minute**: the probe ran `node -e "require('http').request(...)"`, starting a complete Node process inside the container's cgroup once per interval. A sampled footprint audit measured the application's peak CPU at 14.28% against 0.04% for the same code before a healthcheck existed — the container was spending that CPU on monitoring itself. Replaced with a busybox `wget` probe against `/health`, which the `node:22-alpine` base already provides. The probe honours `PORT`.
 
