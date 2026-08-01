@@ -871,9 +871,9 @@ select:focus-visible,
    carries the state visually, the tooltip carries the detail. */
 .visually-hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
+  width: var(--hairline);
+  height: var(--hairline);
+  margin: calc(-1 * var(--hairline));
   padding: 0;
   overflow: hidden;
   clip-path: inset(50%);
@@ -897,7 +897,7 @@ select:focus-visible,
 .sync-status-badge:hover,
 .runtime-badge:hover {
   color: var(--accent);
-  background-color: var(--surface-hover);
+  background: var(--surface-hover);
 }
 .sync-status-badge.saving {
   color: var(--accent);
@@ -1640,7 +1640,7 @@ select:focus-visible,
 }
 .footer-github-link:hover {
   color: var(--accent);
-  background-color: var(--surface-hover);
+  background: var(--surface-hover);
 }
 .footer-github-link.update-available {
   color: var(--accent);
