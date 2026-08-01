@@ -74,6 +74,7 @@
   --bg-input:     oklch(0.212 0.013 267);            /* was referenced but undefined */
   --bg-hover:     oklch(0.773 0.140 78.6 / 0.12);
   --bg-active:    oklch(0.773 0.140 78.6 / 0.20);
+  --bg-drop:      oklch(0.773 0.140 78.6 / 0.32);   /* drag drop target — must clear hover AND active */
   --surface-hover: oklch(0.321 0.025 266);           /* was referenced but undefined */
 
   --accent:        oklch(0.773 0.140 78.6);
@@ -119,6 +120,7 @@
   --bg-input:     oklch(0.985 0.018 92.4);
   --bg-hover:     oklch(0.747 0.046 83.8 / 0.15);
   --bg-active:    oklch(0.747 0.046 83.8 / 0.22);
+  --bg-drop:      oklch(0.747 0.046 83.8 / 0.36);   /* drag drop target — must clear hover AND active */
   --surface-hover: oklch(0.951 0.040 88.2);
 
   --accent:        oklch(0.643 0.055 81.4);
@@ -1650,6 +1652,22 @@ select:focus-visible,
   0% { transform: scale(1); filter: drop-shadow(0 0 0.125rem var(--accent)); }
   50% { transform: scale(1.08); filter: drop-shadow(0 0 0.375rem var(--accent)); }
   100% { transform: scale(1); filter: drop-shadow(0 0 0.125rem var(--accent)); }
+}
+
+/* Dragging a note onto a folder header moves it there. The dragged row fades;
+   the folder under the cursor fills with --bg-drop. Tree items signal state by
+   fill, so no ring here — box-shadow rings belong to inputs. --bg-drop sits
+   above --bg-active so the target stays legible while hover is also applied,
+   and text is --text-primary, never accent, per the note above
+   .tree-folder-header.active. */
+.tree-note[draggable="true"] { cursor: grab; }
+.tree-note.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+.tree-folder-header.drop-target {
+  background: var(--bg-drop);
+  color: var(--text-primary);
 }
 
 /* Two indicators now signal state through motion. Users who have asked the OS
