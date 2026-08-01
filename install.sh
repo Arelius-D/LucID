@@ -40,7 +40,53 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 # Handle Purge / Teardown Flag
-if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "--remove" ] || [ "$1" = "-r" ]; then
+# ── Branch / channel selection ───────────────────────────────────────────────
+# Which branch the deployment files (docker-compose.yml, Caddyfile) and the
+# container image are taken from. main -> :latest, dev -> :dev.
+BRANCH="main"
+PURGE=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --purge|-p|--clean|--remove|-r) PURGE=1 ;;
+    --dev|-d|dev)                   BRANCH="dev" ;;
+    --main|-m|main|--stable)        BRANCH="main" ;;
+    --branch|-b)                    shift; [ -n "${1:-}" ] || { echo "install.sh: --branch needs a name" >&2; exit 2; }; BRANCH="$1" ;;
+    --branch=*)                     BRANCH="${1#*=}" ;;
+    -h|--help)
+      echo "install.sh — deploy LucID"
+      echo ""
+      echo "USAGE"
+      echo "  install.sh [CHANNEL] [ACTION]"
+      echo ""
+      echo "CHANNEL"
+      echo "  --main, -m         stable branch, image assarelius/lucid:latest   (default)"
+      echo "  --dev, -d          dev branch,    image assarelius/lucid:dev"
+      echo "  --branch NAME      any branch;    image tag matches the branch name"
+      echo ""
+      echo "ACTION"
+      echo "  --purge, -p        stop and remove containers, images, volumes, data, ufw rules"
+      echo "  -h, --help         this text"
+      echo ""
+      echo "EXAMPLES"
+      echo "  install.sh                 install stable"
+      echo "  install.sh --dev           install the dev branch and :dev image"
+      echo "  install.sh --purge         complete teardown"
+      exit 0
+      ;;
+    *) echo "install.sh: unknown argument '$1' (try --help)" >&2; exit 2 ;;
+  esac
+  shift
+done
+
+# main is published as :latest; every other branch is published under its own name.
+if [ "$BRANCH" = "main" ]; then
+  IMAGE_TAG="latest"
+else
+  IMAGE_TAG="$BRANCH"
+fi
+
+# Handle Purge / Teardown Flag
+if [ "$PURGE" -eq 1 ]; then
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   echo -e "${RED}   LucID — Complete Environment Purge & Teardown${NC}"
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
@@ -76,7 +122,7 @@ if [ "$1" = "--purge" ] || [ "$1" = "-p" ] || [ "$1" = "--clean" ] || [ "$1" = "
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
-  ${DOCKER_CMD} rmi -f assarelius/lucid:latest caddy:latest qmcgaw/ddns-updater:latest >/dev/null 2>&1 || true
+  ${DOCKER_CMD} rmi -f assarelius/lucid:latest assarelius/lucid:dev "assarelius/lucid:${IMAGE_TAG}" caddy:latest qmcgaw/ddns-updater:latest >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Pruning unused Docker system caches and volumes... "
@@ -281,9 +327,9 @@ fi
 
 # 8. Fetch repository deployment files directly via git clone or curl fallback
 if command -v git >/dev/null 2>&1; then
-  echo -n "[FETCH] Fetching repository deployment files via Git... "
+  echo -n "[FETCH] Fetching deployment files from branch ${BRANCH} via Git... "
   rm -rf ./temp_lucid_repo 2>/dev/null || true
-  git clone --depth 1 https://github.com/Arelius-D/LucID.git ./temp_lucid_repo >/dev/null 2>&1
+  git clone --depth 1 --branch "$BRANCH" https://github.com/Arelius-D/LucID.git ./temp_lucid_repo >/dev/null 2>&1
   cp ./temp_lucid_repo/docker-compose.yml ./docker-compose.yml
   cp ./temp_lucid_repo/Caddyfile ./Caddyfile
   cp ./temp_lucid_repo/install.sh ./install.sh
@@ -292,14 +338,14 @@ if command -v git >/dev/null 2>&1; then
   echo -e "${GREEN}[OK]${NC}"
 else
   CACHE_BUSTER=$(date +%s)
-  echo -n "[FETCH] Downloading latest docker-compose.yml from main branch... "
-  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
+  echo -n "[FETCH] Downloading docker-compose.yml from branch ${BRANCH}... "
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/${BRANCH}/docker-compose.yml?v=${CACHE_BUSTER}" -o docker-compose.yml
   echo -e "${GREEN}[OK]${NC}"
-  echo -n "[FETCH] Downloading latest Caddyfile from main branch... "
-  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
+  echo -n "[FETCH] Downloading Caddyfile from branch ${BRANCH}... "
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/${BRANCH}/Caddyfile?v=${CACHE_BUSTER}" -o Caddyfile
   echo -e "${GREEN}[OK]${NC}"
   echo -n "[FETCH] Downloading latest install.sh script... "
-  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh?v=${CACHE_BUSTER}" -o install.sh
+  curl -fsSL "https://raw.githubusercontent.com/Arelius-D/LucID/${BRANCH}/install.sh?v=${CACHE_BUSTER}" -o install.sh
   chmod +x ./install.sh
   echo -e "${GREEN}[OK]${NC}"
 fi
@@ -339,7 +385,11 @@ pull_with_backoff() {
   fi
 }
 
-pull_with_backoff "assarelius/lucid:latest"
+# Pin the compose file to the channel that was requested.
+if [ -f docker-compose.yml ]; then
+  sed -i "s|image: assarelius/lucid:.*|image: assarelius/lucid:${IMAGE_TAG}|g" docker-compose.yml
+fi
+pull_with_backoff "assarelius/lucid:${IMAGE_TAG}"
 pull_with_backoff "caddy:latest"
 pull_with_backoff "qmcgaw/ddns-updater:latest"
 
