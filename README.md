@@ -97,10 +97,10 @@ Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running 
 
 | Component | Avg CPU % | Peak CPU % | cgroup RAM | Host Process RSS RAM | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **0.04%** | **22.27 MiB** | **78.66 MB** | `Up (healthy)` |
-| Caddy Reverse Proxy (`caddy:latest`) | **0.01%** | **1.27%** | **10.85 MiB** | **46.45 MB** | `Up (healthy)` |
+| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **0.04%** | **22.27 MiB** | **78.66 MB** | `Up` (no healthcheck) |
+| Caddy Reverse Proxy (`caddy:latest`) | **0.01%** | **1.27%** | **10.85 MiB** | **46.45 MB** | `Up` (no healthcheck) |
 | Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.03%** | **4.91%** | **5.54 MiB** | **16.52 MB** | `Up (healthy)` |
-| **Total Active Container Stack** | **0.05%** | **4.91%** | **38.67 MiB** | **141.63 MB** | **All Healthy** |
+| **Total Active Container Stack** | **0.05%** | **4.91%** | **38.67 MiB** | **141.63 MB** | **All Running** |
 
 ### 2. Infrastructure Overhead
 
