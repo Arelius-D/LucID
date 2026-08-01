@@ -743,6 +743,20 @@ body {
   outline-offset: -0.125rem;
 }
 
+/* A-01: keyboard focus must be visible on every interactive control, not just
+   tree items. :focus-visible means mouse users never see a ring — only keyboard
+   users do. Matches the accent outline already used by the tree. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 0.125rem solid var(--accent);
+  outline-offset: 0.125rem;
+  border-radius: var(--radius-sm);
+}
+
 /* ─── RIGHT-CLICK TREE CONTEXT MENU ─────────────── */
 .context-menu {
   position: fixed;
@@ -1196,6 +1210,22 @@ body {
   font-size: var(--text-sm);
   color: var(--text-muted);
   font-style: italic;
+}
+/* J-04: these replace hardcoded inline px styles previously injected from app.js */
+.empty-state-pane {
+  padding: var(--space-2xl);
+  text-align: center;
+  font-style: normal;
+}
+.empty-state-preview {
+  padding: var(--space-lg);
+}
+/* S-05: a note that could not be decrypted — shown read-only, never editable */
+.locked-note {
+  padding: var(--space-lg);
+  color: var(--danger);
+  font-style: normal;
+  line-height: 1.5;
 }
 
 .tags-list {

@@ -1,13 +1,19 @@
 {
   "name": "lucid",
-  "version": "1.4.1",
+  "version": "2.0.0-dev",
   "description": "100% Free, E2EE, 3-Pane Web Note-Taking Application",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "vendor": "node scripts/vendor.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5"
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "dompurify": "^3.4.12",
+    "marked": "^18.0.7",
+    "@highlightjs/cdn-assets": "^11.11.1"
   }
 }

@@ -1,0 +1,9 @@
+.git
+.github
+node_modules
+npm-debug.log
+data
+*.md
+!README.md
+.DS_Store
+.dockerignore

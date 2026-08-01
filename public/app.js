@@ -37,6 +37,9 @@ const ICONS = {
 
 const AUTH_MAGIC_SENTINEL = 'LUCID_VAULT_AUTHENTICATED_V1';
 
+// First-run view: editor + preview stacked top/bottom (works on any screen width).
+const DEFAULT_VIEW_MODE = 'split-vertical';
+
 // --- STATE ---
 const state = {
   folders: [],
@@ -47,11 +50,15 @@ const state = {
   searchQuery: '',
   encryptionKey: null,
   saveTimeout: null,
+  pendingNoteId: null,     // note the debounced save is bound to (J-02)
+  rawStore: null,          // encrypted store exactly as received from the server
+  kdf: null,               // { algo, iterations, salt } — per-vault, from the store
+  schemaVersion: null,
   openFolderIds: new Set(),
   openTagNames: new Set(),
   treeFocusId: null,
   dragNoteId: null,
-  viewMode: 'editor', // 'editor', 'split-vertical', 'split-horizontal', 'preview'
+  viewMode: DEFAULT_VIEW_MODE, // see DEFAULT_VIEW_MODE — single source of truth (J-07)
   explorerMode: 'folders', // 'folders' or 'tags'
   activeTagFilter: null,
   decryptedTitleCache: new Map(),
@@ -61,6 +68,29 @@ const state = {
 function apiPath(endpoint) {
   const base = window.location.pathname.replace(/\/+$/, '');
   return base + '/' + endpoint;
+}
+
+// ─── MODAL FOCUS MANAGEMENT (A-02) ─────────────────
+// Without this, Tab walks out of an open dialog into the page behind it and the
+// invoking control loses focus when the dialog closes.
+const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+
+function trapFocus(modal) {
+  const previouslyFocused = document.activeElement;
+  function onKeydown(e) {
+    if (e.key !== 'Tab') return;
+    const items = [...modal.querySelectorAll(FOCUSABLE)].filter(el => el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+  modal.addEventListener('keydown', onKeydown);
+  // Returns a cleanup that also restores focus to whatever opened the dialog.
+  return () => {
+    modal.removeEventListener('keydown', onKeydown);
+    if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
+  };
 }
 
 // ─── IN-APP MODALS ─────────────────────────────────
@@ -75,18 +105,25 @@ function showConfirmModal(title, message) {
     titleEl.textContent = title;
     msgEl.textContent = message;
     modal.classList.remove('hidden');
+    const releaseFocus = trapFocus(modal);
+    cancelBtn.focus();   // safe default on a destructive dialog
 
     function cleanup() {
       modal.classList.add('hidden');
       cancelBtn.removeEventListener('click', onCancel);
       dangerBtn.removeEventListener('click', onDanger);
+      modal.removeEventListener('keydown', onKeyDown);
+      releaseFocus();
     }
 
     function onCancel() { cleanup(); resolve(false); }
     function onDanger() { cleanup(); resolve(true); }
+    // A-03: the destructive dialog is the one that most needs an escape route.
+    function onKeyDown(e) { if (e.key === 'Escape') onCancel(); }
 
     cancelBtn.addEventListener('click', onCancel);
     dangerBtn.addEventListener('click', onDanger);
+    modal.addEventListener('keydown', onKeyDown);
   });
 }
 
@@ -103,6 +140,7 @@ function showPromptModal(title, message, defaultValue = '') {
     msgEl.textContent = message;
     inputEl.value = defaultValue;
     modal.classList.remove('hidden');
+    const releaseFocus = trapFocus(modal);
     inputEl.focus();
     inputEl.select();
 
@@ -111,6 +149,7 @@ function showPromptModal(title, message, defaultValue = '') {
       cancelBtn.removeEventListener('click', onCancel);
       submitBtn.removeEventListener('click', onSubmit);
       inputEl.removeEventListener('keydown', onKeyDown);
+      releaseFocus();
     }
 
     function onCancel() { cleanup(); resolve(null); }
@@ -124,40 +163,142 @@ function showPromptModal(title, message, defaultValue = '') {
 }
 
 // ─── E2EE CRYPTO ───────────────────────────────────
-async function deriveKey(passphrase) {
+// ─── KDF PARAMETERS (S-01 / S-02) ──────────────────
+// The salt is RANDOM PER VAULT and stored (unencrypted, as it must be) in the
+// store. It is not secret; its job is to make every vault's key derivation
+// unique, so one precomputed table cannot attack multiple vaults and the same
+// passphrase never yields the same key on two installs.
+const KDF_DEFAULTS = { algo: 'PBKDF2-SHA256', iterations: 600000, hash: 'SHA-256' };
+const SCHEMA_VERSION = 2;
+
+function bytesToB64(bytes) { return btoa(String.fromCharCode(...bytes)); }
+function b64ToBytes(b64) {
+  const raw = atob(b64);
+  const out = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+  return out;
+}
+function newKdfParams() {
+  return {
+    algo: KDF_DEFAULTS.algo,
+    iterations: KDF_DEFAULTS.iterations,
+    salt: bytesToB64(crypto.getRandomValues(new Uint8Array(16)))
+  };
+}
+
+async function deriveKey(passphrase, kdf) {
   if (!window.crypto || !window.crypto.subtle) {
     throw new Error('SECURE_CONTEXT_REQUIRED');
   }
+  if (!kdf || !kdf.salt) throw new Error('KDF_PARAMS_MISSING');
   const enc = new TextEncoder();
   const km = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt: enc.encode('vaultnotes-e2ee-salt-v2'), iterations: 100000, hash: 'SHA-256' },
+  return crypto.subtle.deriveKey(
+    {
+      name: 'PBKDF2',
+      salt: b64ToBytes(kdf.salt),
+      iterations: kdf.iterations || KDF_DEFAULTS.iterations,
+      hash: KDF_DEFAULTS.hash
+    },
     km,
     { name: 'AES-GCM', length: 256 },
     false,
     ['encrypt', 'decrypt']
   );
-  return key;
 }
 
 
+// ─── SESSION KEY STORAGE (S-03) ────────────────────
+// The master passphrase is NEVER persisted. We keep the derived, non-extractable
+// CryptoKey in IndexedDB — its bytes cannot be read back by any script (unlike a
+// passphrase string in sessionStorage, which an XSS could simply read). A per-tab
+// session token gates reuse, preserving the previous "unlocked until tab closes"
+// behaviour.
+const IDB_NAME = 'lucid-vault';
+const IDB_STORE = 'keys';
+const IDB_RECORD = 'session-key';
+const SESSION_TOKEN = 'lucid-session';
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => {
+      if (!req.result.objectStoreNames.contains(IDB_STORE)) req.result.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function idbPut(value) {
+  return idbOpen().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(value, IDB_RECORD);
+    tx.oncomplete = () => { db.close(); resolve(true); };
+    tx.onerror = () => { db.close(); reject(tx.error); };
+  }));
+}
+
+function idbGet() {
+  return idbOpen().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const r = tx.objectStore(IDB_STORE).get(IDB_RECORD);
+    r.onsuccess = () => { db.close(); resolve(r.result || null); };
+    r.onerror = () => { db.close(); reject(r.error); };
+  }));
+}
+
+async function persistSessionKey(key) {
+  try {
+    const token = (crypto.randomUUID && crypto.randomUUID()) ||
+      String(Date.now()) + Math.random().toString(36).slice(2);
+    await idbPut({ key, token });
+    sessionStorage.setItem(SESSION_TOKEN, token);
+  } catch (e) {
+    console.warn('Session key not persisted; passphrase will be required after reload.', e);
+  }
+}
+
+async function clearSessionKey() {
+  sessionStorage.removeItem(SESSION_TOKEN);
+  try {
+    const db = await idbOpen();
+    await new Promise(resolve => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).delete(IDB_RECORD);
+      tx.oncomplete = () => { db.close(); resolve(); };
+      tx.onerror = () => { db.close(); resolve(); };
+    });
+  } catch (e) { /* nothing to clear */ }
+}
+
 async function restoreKeyFromSession() {
-  const saved = sessionStorage.getItem('lucid-passphrase');
-  if (saved) {
-    const derived = await deriveKey(saved);
-    if (state.authVerifier) {
-      const check = await decryptText(state.authVerifier, derived);
+  const token = sessionStorage.getItem(SESSION_TOKEN);
+  if (!token) return false;
+  try {
+    const rec = await idbGet();
+    if (rec && rec.key && rec.token === token && state.authVerifier) {
+      const check = await tryDecryptText(state.authVerifier, rec.key);
       if (check === AUTH_MAGIC_SENTINEL) {
-        state.encryptionKey = derived;
+        state.encryptionKey = rec.key;
+        const src = state.rawStore || { folders: state.folders, notes: state.notes };
+        const plain = await decryptVaultIntoState(src, rec.key);
+        state.folders = plain.folders;
+        state.notes = plain.notes;
         return true;
       }
     }
+  } catch (e) {
+    console.warn('Session key restore failed:', e);
   }
+  await clearSessionKey();
   return false;
 }
 
 async function encryptText(text, key) {
-  if (!key) return text;
+  // S-06: fail CLOSED. Returning plaintext when the key is missing would silently
+  // write unencrypted notes to the server while the UI still claims E2EE.
+  if (!key) throw new Error('ENCRYPT_WITHOUT_KEY');
   const enc = new TextEncoder();
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
@@ -168,17 +309,69 @@ async function encryptText(text, key) {
   return 'ENC:' + btoa(String.fromCharCode(...payload));
 }
 
+// S-05: on failure this THROWS. It must never return a placeholder string that
+// could land in the editor and then be encrypted back over the real ciphertext.
 async function decryptText(data, key) {
   if (!key || !data || !data.startsWith('ENC:')) return data;
-  try {
-    const raw = atob(data.substring(4));
-    const buf = new Uint8Array(raw.length);
-    for (let i = 0; i < raw.length; i++) buf[i] = raw.charCodeAt(i);
-    const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
-    return new TextDecoder().decode(dec);
-  } catch (e) {
-    return '[🔒 Locked Note]';
+  const raw = atob(data.substring(4));
+  const buf = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) buf[i] = raw.charCodeAt(i);
+  const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+  return new TextDecoder().decode(dec);
+}
+
+// Convenience for the one place a failed decrypt is tolerable (passphrase check).
+async function tryDecryptText(data, key) {
+  try { return await decryptText(data, key); } catch (e) { return null; }
+}
+
+// ─── VAULT BOUNDARY (S-07) ─────────────────────────
+// EVERYTHING the user authors is encrypted at rest: note titles, note bodies,
+// tags, and folder names. Only structural ids, timestamps and the KDF params
+// stay in clear (ids are opaque; the salt must be readable to derive the key).
+//
+// Ciphertext is non-deterministic (random IV per encryption), so the same tag
+// encrypts to different bytes each time. Grouping/filtering therefore CANNOT be
+// done on ciphertext — the vault is decrypted once into memory on unlock, the
+// app works entirely in plaintext, and everything is re-encrypted on save.
+
+async function decryptVaultIntoState(raw, key) {
+  const folders = [];
+  for (const f of (raw.folders || [])) {
+    folders.push({ ...f, name: await decryptText(f.name, key) });
   }
+  const notes = [];
+  for (const n of (raw.notes || [])) {
+    const tags = [];
+    for (const t of (n.tags || [])) tags.push(await decryptText(t, key));
+    notes.push({
+      ...n,
+      title: await decryptText(n.title, key),
+      content: await decryptText(n.content, key),
+      tags
+    });
+  }
+  return { folders, notes };
+}
+
+async function encryptVaultFromState(key) {
+  const folders = [];
+  for (const f of state.folders) {
+    folders.push({ ...f, name: await encryptText(f.name || '', key) });
+  }
+  const notes = [];
+  for (const n of state.notes) {
+    const tags = [];
+    for (const t of (n.tags || [])) tags.push(await encryptText(t, key));
+    notes.push({
+      ...n,
+      title: await encryptText(n.title || '', key),
+      content: await encryptText(n.content || '', key),
+      tags,
+      isEncrypted: true
+    });
+  }
+  return { folders, notes };
 }
 
 // ─── PERSISTENCE ───────────────────────────────────
@@ -187,6 +380,10 @@ async function fetchStore() {
     const res = await fetch(apiPath('api/store'));
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
+    // Held as-is (still encrypted) until a key exists; decrypted on unlock.
+    state.rawStore = data;
+    state.schemaVersion = data.schemaVersion || 1;
+    state.kdf = data.kdf || null;
     if (data.folders && data.folders.length) state.folders = data.folders;
     if (data.notes && data.notes.length) state.notes = data.notes;
     state.authVerifier = data.authVerifier || null;
@@ -256,17 +453,26 @@ function saveTreeState() {
 }
 
 async function saveStore() {
+  // Fail closed: never write the in-memory PLAINTEXT vault to the server.
+  if (!state.encryptionKey || !state.kdf) {
+    console.warn('saveStore aborted: vault is locked.');
+    return;
+  }
   try {
     showSave('Syncing…', 'saving');
-    await fetch(apiPath('api/store'), {
+    const { folders, notes } = await encryptVaultFromState(state.encryptionKey);
+    const res = await fetch(apiPath('api/store'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        folders: state.folders,
-        notes: state.notes,
+        schemaVersion: SCHEMA_VERSION,
+        kdf: state.kdf,
+        folders,
+        notes,
         authVerifier: state.authVerifier
       })
     });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     showSave('Synced', '');
   } catch (err) {
     console.error('saveStore failed:', err);
@@ -274,15 +480,11 @@ async function saveStore() {
   }
 }
 
+// After decryptVaultIntoState(), note titles in state are already plaintext.
+// The cache is kept only so existing render call-sites keep working.
 async function preloadDecryptedTitles() {
-  if (!state.encryptionKey) return;
   for (const n of state.notes) {
-    if (n.title && n.title.startsWith('ENC:')) {
-      const dec = await decryptText(n.title, state.encryptionKey);
-      state.decryptedTitleCache.set(n.id, dec);
-    } else {
-      state.decryptedTitleCache.set(n.id, n.title || 'Untitled');
-    }
+    state.decryptedTitleCache.set(n.id, n.title || 'Untitled');
   }
 }
 
@@ -294,27 +496,52 @@ function extractTitleFromContent(content) {
   return firstLine.substring(0, 50) || 'Untitled';
 }
 
+// J-01/J-02: copy the editor into the note it belongs to. Captured against a
+// specific note id, so a note switch inside the debounce window can no longer
+// write one note's text into another — or silently discard it.
+function commitEditorToNote(noteId) {
+  const note = state.notes.find(n => n.id === noteId);
+  const ta = document.getElementById('markdown-textarea');
+  if (!note || !ta || ta.readOnly) return false;
+  const rawContent = ta.value || '';
+  const rawTitle = extractTitleFromContent(rawContent);
+  if (note.content === rawContent && note.title === rawTitle) return false; // nothing changed
+  note.title = rawTitle;
+  note.content = rawContent;
+  note.isEncrypted = true;
+  note.updatedAt = new Date().toISOString();
+  state.decryptedTitleCache.set(note.id, rawTitle);
+  return true;
+}
+
 function triggerAutoSave() {
   if (state.saveTimeout) clearTimeout(state.saveTimeout);
   if (!state.encryptionKey) return;
+  const targetId = state.activeNoteId;      // bind now, not when the timer fires
+  state.pendingNoteId = targetId;
   showSave('Syncing…', 'saving');
   state.saveTimeout = setTimeout(async () => {
-    const note = state.notes.find(n => n.id === state.activeNoteId);
-    if (!note) return;
-    const rawContent = document.getElementById('markdown-textarea').value || '';
-    const rawTitle = extractTitleFromContent(rawContent);
-    note.title = await encryptText(rawTitle, state.encryptionKey);
-    note.content = await encryptText(rawContent, state.encryptionKey);
-    note.isEncrypted = true;
-    note.updatedAt = new Date().toISOString();
-    
-    state.decryptedTitleCache.set(note.id, rawTitle);
-
+    state.saveTimeout = null;
+    commitEditorToNote(targetId);
+    state.pendingNoteId = null;
     await saveStore();
     if (state.explorerMode === 'folders') renderTree();
     else renderTagTree();
     renderTOC();
   }, 500);
+}
+
+// Run any pending autosave immediately instead of waiting out the debounce.
+// Called before switching notes, and when the tab is hidden or closed.
+async function flushPendingSave() {
+  if (!state.saveTimeout) return;
+  clearTimeout(state.saveTimeout);
+  state.saveTimeout = null;
+  const targetId = state.pendingNoteId || state.activeNoteId;
+  state.pendingNoteId = null;
+  if (!state.encryptionKey) return;
+  commitEditorToNote(targetId);
+  await saveStore();
 }
 
 function showSave(text, cls) {
@@ -428,8 +655,9 @@ function renderTree() {
 
       noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>`;
 
-      noteEl.addEventListener('click', e => {
+      noteEl.addEventListener('click', async e => {
         e.stopPropagation();
+        await flushPendingSave();   // J-02: never drop the previous note's edits
         state.activeNoteId = note.id;
         state.activeFolderId = note.folderId;
         renderAll();
@@ -532,8 +760,9 @@ function renderTagTree() {
 
       noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>`;
 
-      noteEl.addEventListener('click', e => {
+      noteEl.addEventListener('click', async e => {
         e.stopPropagation();
+        await flushPendingSave();   // J-02: never drop the previous note's edits
         state.activeNoteId = note.id;
         state.activeFolderId = note.folderId;
         renderAll();
@@ -698,9 +927,7 @@ async function renameNote(note) {
   const newTitle = await showPromptModal('Rename Note', 'Enter new title:', currentTitle);
   if (!newTitle || newTitle === currentTitle) return;
   
-  let content = note.content || '';
-  if (state.encryptionKey) content = await decryptText(content, state.encryptionKey);
-  
+  const content = note.content || '';   // already plaintext in state
   const lines = content.split('\n');
   if (lines.length > 0 && lines[0].startsWith('#')) {
     lines[0] = '# ' + newTitle;
@@ -709,8 +936,8 @@ async function renameNote(note) {
   }
   const updatedContent = lines.join('\n');
   
-  note.title = await encryptText(newTitle, state.encryptionKey);
-  note.content = await encryptText(updatedContent, state.encryptionKey);
+  note.title = newTitle;
+  note.content = updatedContent;
   state.decryptedTitleCache.set(note.id, newTitle);
   await saveStore();
   renderAll();
@@ -720,6 +947,7 @@ async function deleteNote(note) {
   const ok = await showConfirmModal('Delete Note', `Are you sure you want to delete this note?`);
   if (!ok) return;
   state.notes = state.notes.filter(n => n.id !== note.id);
+  state.decryptedTitleCache.delete(note.id);   // J-08: don't retain a decrypted title after delete
   state.activeNoteId = state.notes.length ? state.notes[0].id : null;
   await saveStore();
   renderAll();
@@ -766,14 +994,22 @@ async function renderActiveNote() {
 
   if (!note) {
     textarea.value = '';
-    preview.innerHTML = '<div class="empty-state" style="padding:40px;text-align:center;color:var(--text-muted)">Select or create a note to start writing</div>';
+    preview.innerHTML = '<div class="empty-state empty-state-pane">Select or create a note to start writing</div>';
     return;
   }
 
-  let content = note.content || '';
-  if (state.encryptionKey) {
-    content = await decryptText(content, state.encryptionKey);
+  const content = note.content || '';   // plaintext in state after unlock
+
+  // S-05 guard: if anything here is still ciphertext, decryption failed for this
+  // note. Show it as a locked, READ-ONLY state — never place it in the editor,
+  // where autosave would encrypt the placeholder over the real content.
+  if (typeof content === 'string' && content.startsWith('ENC:')) {
+    textarea.value = '';
+    textarea.readOnly = true;
+    preview.innerHTML = '<div class="empty-state locked-note">This note could not be decrypted with the current passphrase. It is shown read-only so its stored content is not overwritten.</div>';
+    return;
   }
+  textarea.readOnly = false;
 
   textarea.value = content;
   renderPreview(content);
@@ -782,10 +1018,13 @@ async function renderActiveNote() {
 function renderPreview(md) {
   const preview = document.getElementById('markdown-preview');
   if (!md || !md.trim()) {
-    preview.innerHTML = '<div class="empty-state" style="padding:20px;color:var(--text-muted);font-style:italic">Preview will appear here…</div>';
+    preview.innerHTML = '<div class="empty-state empty-state-preview">Preview will appear here…</div>';
     return;
   }
-  preview.innerHTML = marked.parse(md);
+  // S-04: never inject raw marked output. Note content is untrusted input — it can
+  // arrive from a restored vault, a synced file, or an unauthenticated API write.
+  // Sanitize BEFORE it touches innerHTML; highlight AFTER, on the cleaned DOM.
+  preview.innerHTML = sanitizeHtml(marked.parse(md));
   preview.querySelectorAll('pre code').forEach(block => {
     hljs.highlightElement(block);
   });
@@ -853,6 +1092,36 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+// ─── HTML SANITIZER (S-04) ─────────────────────────
+// Rendered markdown is untrusted. DOMPurify strips <script>, event handlers
+// (on*), and javascript:/data: URLs. Fails CLOSED: if the vendored library is
+// missing, we escape rather than render, so a load failure can never downgrade
+// us to injecting raw HTML.
+const SANITIZE_CONFIG = {
+  USE_PROFILES: { html: true },
+  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'base', 'meta'],
+  FORBID_ATTR: ['style', 'formaction', 'srcdoc', 'ping'],
+  ALLOW_DATA_ATTR: false
+};
+
+function sanitizeHtml(dirty) {
+  if (typeof DOMPurify === 'undefined' || !DOMPurify.sanitize) {
+    console.error('DOMPurify missing — refusing to render unsanitized HTML.');
+    return escapeHtml(String(dirty));
+  }
+  return DOMPurify.sanitize(dirty, SANITIZE_CONFIG);
+}
+
+// Any link surviving sanitization opens safely (no window.opener access).
+if (typeof DOMPurify !== 'undefined' && DOMPurify.addHook) {
+  DOMPurify.addHook('afterSanitizeAttributes', node => {
+    if (node.tagName === 'A' && node.hasAttribute('href')) {
+      node.setAttribute('target', '_blank');
+      node.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
 }
 
 // ─── HORIZONTAL SIDEBAR RESIZERS ───────────────────
@@ -1007,8 +1276,8 @@ function initViewModeTabs() {
   if (tabPreview) tabPreview.addEventListener('click', () => setViewMode('preview'));
 
   // First-run default: split with preview ON, stacked top/bottom (works on any screen width).
-  const savedMode = localStorage.getItem('lucid-view-mode') || 'split-vertical';
-  setViewMode(savedMode === 'split' ? 'split-vertical' : savedMode);
+  const savedMode = localStorage.getItem('lucid-view-mode') || DEFAULT_VIEW_MODE;
+  setViewMode(savedMode === 'split' ? DEFAULT_VIEW_MODE : savedMode);
 }
 
 // ─── SEAMLESS GLOWING SUN / MOON THEME TOGGLE ──────
@@ -1021,7 +1290,7 @@ function applyTheme(themeId) {
   const hljsTheme = document.getElementById('hljs-theme');
   if (hljsTheme) {
     const style = themeId === 'warm-linen' ? 'github' : 'github-dark';
-    hljsTheme.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${style}.min.css`;
+    hljsTheme.href = `vendor/hljs-styles/${style}.min.css`;
   }
 
   const iconEl = document.getElementById('theme-toggle-icon');
@@ -1086,7 +1355,7 @@ async function checkVersionAndUpdateIndicator() {
   const githubLink = document.querySelector('.footer-github-link');
   if (!githubLink) return;
 
-  let currentVersion = '1.4.1';
+  let currentVersion = '2.0.0-dev';
   try {
     const res = await fetch(apiPath('api/version'));
     if (res.ok) {
@@ -1135,6 +1404,34 @@ function compareVersions(v1, v2) {
   }
   return 0;
 }
+
+// ─── FAILURE VISIBILITY & EXIT SAFETY (J-01 / J-06) ─
+// Async failures previously surfaced only in the console: the user saw a frozen
+// or half-rendered UI with no signal. Now anything unhandled is shown.
+function reportFatal(what, err) {
+  console.error(what, err);
+  const el = document.getElementById('save-indicator');
+  if (el) {
+    el.className = 'sync-status-badge error';
+    el.title = what + ': ' + ((err && err.message) || err || 'unknown error');
+    el.innerHTML = `${ICONS.syncError} <span>Error</span>`;
+  }
+}
+window.addEventListener('error', e => reportFatal('Unexpected error', e.error || e.message));
+window.addEventListener('unhandledrejection', e => reportFatal('Unexpected error', e.reason));
+
+// Tab hidden / navigating away: run the pending save now rather than losing it
+// to the debounce window. visibilitychange still permits async work.
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushPendingSave();
+});
+window.addEventListener('pagehide', () => { flushPendingSave(); });
+
+// Encryption + upload cannot complete synchronously in beforeunload, so if a
+// save is still pending we ask the browser to confirm rather than lose the text.
+window.addEventListener('beforeunload', e => {
+  if (state.saveTimeout) { e.preventDefault(); e.returnValue = ''; return ''; }
+});
 
 // ─── INITIALIZATION ────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1379,29 +1676,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     lockError.style.display = 'none';
 
     try {
-      const derived = await deriveKey(pass);
-      
+      // First-time setup mints fresh per-vault KDF params (random salt).
+      const isSetup = !state.authVerifier;
+      if (isSetup && !state.kdf) state.kdf = newKdfParams();
+      const derived = await deriveKey(pass, state.kdf);
+
       if (state.authVerifier) {
-        // STRICT PASSPHRASE VERIFICATION: Must decrypt authVerifier sentinel exactly
-        const check = await decryptText(state.authVerifier, derived);
+        // STRICT PASSPHRASE VERIFICATION: must decrypt the sentinel exactly.
+        const check = await tryDecryptText(state.authVerifier, derived);
         if (check !== AUTH_MAGIC_SENTINEL) {
           lockError.textContent = 'Invalid master passphrase. Access denied.';
           lockError.style.display = 'block';
           lockBtn.textContent = 'Unlock';
           lockBtn.disabled = false;
           state.encryptionKey = null;
-          sessionStorage.removeItem('lucid-passphrase');
+          await clearSessionKey();
           return;
         }
-      } else {
-        // First lock setup: create cryptographic verifier sentinel
-        state.authVerifier = await encryptText(AUTH_MAGIC_SENTINEL, derived);
-        await saveStore();
       }
 
-      state.encryptionKey = derived;
-      sessionStorage.setItem('lucid-passphrase', pass);
-      await preloadDecryptedTitles();
+      if (isSetup) {
+        // First setup: state.folders/notes currently hold the plaintext seed data,
+        // so mint the sentinel and write the whole vault out encrypted.
+        state.authVerifier = await encryptText(AUTH_MAGIC_SENTINEL, derived);
+        state.encryptionKey = derived;
+        await saveStore();
+      } else {
+        // Returning user: decrypt the stored vault into memory as plaintext.
+        state.encryptionKey = derived;
+        const src = state.rawStore || { folders: state.folders, notes: state.notes };
+        const plain = await decryptVaultIntoState(src, derived);
+        state.folders = plain.folders;
+        state.notes = plain.notes;
+      }
+
+      await persistSessionKey(derived);   // stores the non-extractable key, not the passphrase
       lockScreen.classList.add('hidden');
       document.getElementById('app').style.display = 'flex';
       updateE2EEUI();
@@ -1459,7 +1768,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
   function lockVault() {
-    sessionStorage.removeItem('lucid-passphrase');
+    clearSessionKey();          // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
     document.getElementById('app').style.display = 'none';
     lockScreen.classList.remove('hidden');
