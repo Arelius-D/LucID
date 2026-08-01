@@ -9,7 +9,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.1.0-dev] - unreleased
 
 ### Added
-- **Drag a note onto a folder to move it**: notes in the folder tree are now draggable and folder headers are drop targets. The dragged row fades, the folder under the cursor fills with a new `--bg-drop` token, and the destination folder opens so the note is visible where it landed. The in-flight edit is flushed before the move, so a note dragged mid-typing keeps its text. `state.dragNoteId` had been declared and unused since 1.4.1; it is now what it was always meant to be.
+- **Drag a note onto a folder to move it**: notes in the folder tree are now draggable and folder headers are drop targets. The dragged row fades, the folder under the cursor fills with a new `--bg-drop` token, and the destination folder opens so the note is visible where it landed. The in-flight edit is flushed before the move, so a note dragged mid-typing keeps its text. Dropping a note on the folder it already lives in, or anywhere that is not a folder, is refused and the browser animates it back to where it came from. `state.dragNoteId` had been declared and unused since 1.4.1; it is now what it was always meant to be.
 - **`--bg-drop` design token**: added to both themes at a value clear of `--bg-active`, because a drop target is hovered by definition and had to stay legible underneath the hover state. Tree items signal state through background fill, so the drop cue is a fill rather than a ring — rings in this system belong to inputs — and the text uses `--text-primary`, never accent, per the existing note that accent's lightness relative to the default icon inverts between themes.
 
 ### Documentation
