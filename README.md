@@ -29,11 +29,13 @@ The installer defaults to the stable release. You can pick which branch to deplo
 | `install.sh --dev` | `dev` | `assarelius/lucid:dev` |
 | `install.sh --branch NAME` | `NAME` | `assarelius/lucid:NAME` |
 
-To install the development channel in one line:
+To install the development channel in one line, fetch the installer from the same branch you intend to deploy:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash -s -- --dev
+curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/dev/install.sh | bash -s -- --dev
 ```
+
+The installer script itself is versioned per branch, so pulling it from `main` and passing `--dev` will not work if `main` carries an older installer that does not recognise the flag.
 
 This matters because `docker-compose.yml` and `Caddyfile` are fetched from the same branch as the image. Mixing a `dev` image with `main`'s compose file can leave you running new application code against old deployment settings.
 
@@ -83,7 +85,7 @@ To reach LucID from anywhere over valid HTTPS without buying a domain:
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
 ```
 
-Append `-s -- --dev` if you are deploying the development channel.
+For the development channel, fetch the installer from the `dev` branch instead and append `-s -- --dev`.
 
 Enter `y` when prompted for DuckDNS, then supply your domain and token. The installer detects your public IP and configures `ddns-updater` to keep DuckDNS synced automatically.
 
@@ -273,7 +275,7 @@ yourdomain.com {
 curl -fsSL https://raw.githubusercontent.com/Arelius-D/LucID/main/install.sh | bash
 ```
 
-Add `-s -- --dev` for the development channel, or `-s -- --branch NAME` for a specific branch. See [Choosing a channel](#choosing-a-channel).
+For a non-stable channel, fetch the installer from that branch and pass the matching flag, for example `.../dev/install.sh | bash -s -- --dev`. See [Choosing a channel](#choosing-a-channel).
 
 ---
 
