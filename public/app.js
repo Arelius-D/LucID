@@ -22,6 +22,8 @@ const ICONS = {
   // Sync state uses one icon family so the three states read as one indicator.
   // The glyph itself changes on failure, so colour is reinforcement rather than
   // the only signal (WCAG 1.4.1).
+  bookmark2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2c2 0 3 1.01 3 3.03v7.05c0 1.99-1.41 2.76-3.14 1.72l-1.32-.8c-.3-.18-.78-.18-1.08 0l-1.32.8C8.41 14.84 7 14.07 7 12.08V5.03C7 3.01 8 2 10 2h4z"/><path d="M6.82 4.99C3.41 5.56 2 7.66 2 11.9v3.03C2 19.98 4 22 9 22h6c5 0 7-2.02 7-7.07V11.9c0-4.31-1.46-6.42-5-6.94"/></svg>`,
+  archiveTick: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86v14.09c0 1.8 1.29 2.56 2.87 1.69l4.88-2.71c.52-.29 1.36-.29 1.87 0l4.88 2.71c1.58.88 2.87.12 2.87-1.69V5.86C20.68 3.74 18.95 2 16.82 2z"/><path d="M9.59 11l1.5 1.5 4-4"/></svg>`,
   cloudConnection: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M6.37 9.51c-4.08.29-4.07 6.2 0 6.49h9.66c1.17.01 2.3-.43 3.17-1.22 2.86-2.5 1.33-7.5-2.44-7.98C15.41-1.34 3.62 1.75 6.41 9.51M12 16v3M12 23a2 2 0 100-4 2 2 0 000 4zM18 21h-4M10 21H6"/></svg>`,
   cloudCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M16.61 20c1.34.01 2.63-.49 3.62-1.39 3.27-2.86 1.52-8.6-2.79-9.14C15.9.13 2.43 3.67 5.62 12.56"/><path d="M7.28 12.97c-.53-.27-1.12-.41-1.71-.4-4.66.33-4.65 7.11 0 7.44M15.82 9.89c.52-.26 1.08-.4 1.66-.41M12.39 18.59l-2.83 2.82M12.39 21.41l-2.83-2.82"/></svg>`,
   edit: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.26 3.6L5.05 12.29c-.31.33-.61.97-.67 1.41l-.37 3.22c-.13 1.17.7 1.98 1.86 1.81l3.2-.46c.44-.06 1.07-.38 1.38-.7l8.21-8.69c1.42-1.5 2.06-3.21-.09-5.24-2.14-2.01-3.83-1.32-5.31.16z"/><path d="M11.89 5.05l5.06 4.77"/></svg>`,
@@ -115,7 +117,7 @@ function showConfirmModal(title, message) {
     function onCancel() { cleanup(); resolve(false); }
     function onDanger() { cleanup(); resolve(true); }
     // A-03: the destructive dialog is the one that most needs an escape route.
-    function onKeyDown(e) { if (e.key === 'Escape') onCancel(); }
+    function onKeyDown(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onCancel(); } }
 
     cancelBtn.addEventListener('click', onCancel);
     dangerBtn.addEventListener('click', onDanger);
@@ -150,7 +152,14 @@ function showPromptModal(title, message, defaultValue = '') {
 
     function onCancel() { cleanup(); resolve(null); }
     function onSubmit() { const val = inputEl.value.trim(); cleanup(); resolve(val || null); }
-    function onKeyDown(e) { if (e.key === 'Enter') onSubmit(); if (e.key === 'Escape') onCancel(); }
+    function onKeyDown(e) {
+      // preventDefault matters here: cleanup() restores focus to the control that
+      // opened this dialog, and without it the same Enter — or its key-repeat —
+      // reaches that control and reopens the dialog, which looks exactly like the
+      // dialog refusing to close.
+      if (e.key === 'Enter')  { e.preventDefault(); e.stopPropagation(); onSubmit(); }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onCancel(); }
+    }
 
     cancelBtn.addEventListener('click', onCancel);
     submitBtn.addEventListener('click', onSubmit);
@@ -166,6 +175,10 @@ function showPromptModal(title, message, defaultValue = '') {
 // passphrase never yields the same key on two installs.
 const KDF_DEFAULTS = { algo: 'PBKDF2-SHA256', iterations: 600000, hash: 'SHA-256' };
 const SCHEMA_VERSION = 2;
+
+// Candidate glyph for pinning, used in all three places at once: the row marker,
+// the context-menu item, and the toolbar mode button. 'bookmark2' or 'archiveTick'.
+let PIN_GLYPH = 'archiveTick';
 
 function bytesToB64(bytes) { return btoa(String.fromCharCode(...bytes)); }
 function b64ToBytes(b64) {
@@ -344,7 +357,9 @@ async function decryptVaultIntoState(raw, key) {
       ...n,
       title: await decryptText(n.title, key),
       content: await decryptText(n.content, key),
-      tags
+      tags,
+      // Absent on vaults written before pinning existed; treat as unpinned.
+      pinned: n.pinned === undefined ? false : (await decryptText(n.pinned, key)) === 'y'
     });
   }
   return { folders, notes };
@@ -364,6 +379,14 @@ async function encryptVaultFromState(key) {
       title: await encryptText(n.title || '', key),
       content: await encryptText(n.content || '', key),
       tags,
+      // Encrypted, not a bare boolean: the object spread above would otherwise
+      // carry `pinned: true` to the server in clear, handing it the list of
+      // notes you care most about — metadata the vault is supposed to hide.
+      // Single characters keep both states the same size by construction.
+      // ('true'/'false' happen to encrypt to equal lengths too, because 4 and 5
+      // bytes fall in the same base64 quantum, but that is luck rather than a
+      // property to rely on — 'y'/'n' is equal-length for any encoding.)
+      pinned: await encryptText(n.pinned ? 'y' : 'n', key),
       isEncrypted: true
     });
   }
@@ -596,12 +619,20 @@ async function updateRuntimeIndicator() {
 function renderAll() {
   const folderTree = document.getElementById('folder-tree');
   const tagTree = document.getElementById('tag-tree');
+  const pinnedTree = document.getElementById('pinned-tree');
   if (state.explorerMode === 'folders') {
     if (tagTree) tagTree.classList.add('hidden');
+    if (pinnedTree) pinnedTree.classList.add('hidden');
     if (folderTree) folderTree.classList.remove('hidden');
     renderTree();
+  } else if (state.explorerMode === 'pinned') {
+    if (folderTree) folderTree.classList.add('hidden');
+    if (tagTree) tagTree.classList.add('hidden');
+    if (pinnedTree) pinnedTree.classList.remove('hidden');
+    renderPinnedTree();
   } else {
     if (folderTree) folderTree.classList.add('hidden');
+    if (pinnedTree) pinnedTree.classList.add('hidden');
     if (tagTree) tagTree.classList.remove('hidden');
     renderTagTree();
   }
@@ -619,6 +650,18 @@ function renderAll() {
 // live session: 20 dragstarts, 18 drops, 2 dragends — the two being the drags that
 // were abandoned without dropping. Cleanup therefore has to belong to the path that
 // actually runs, not to the one that only runs when the user changes their mind.
+// Move focus onto a row that has just been rendered, so the keyboard lands where
+// the user's attention already is and focus is not left sitting on the button that
+// created the thing.
+function focusTreeItem(treeId) {
+  const el = document.querySelector(`[data-tree-id="${treeId}"]`);
+  if (!el) return;
+  const container = el.closest('[role="tree"]');
+  if (container) updateTreeRoving(container);
+  el.tabIndex = 0;
+  el.focus();
+}
+
 function clearDragState() {
   state.dragNoteId = null;
   document.querySelectorAll('.tree-note.dragging').forEach(el => el.classList.remove('dragging'));
@@ -726,7 +769,8 @@ function renderTree() {
         displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
       }
 
-      noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>`;
+      noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
+        (note.pinned ? `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>` : '');
 
       noteEl.draggable = true;
 
@@ -751,12 +795,7 @@ function renderTree() {
       // Right-click context menu for Note
       noteEl.addEventListener('contextmenu', e => {
         e.preventDefault();
-        showTreeContextMenu(e.clientX, e.clientY, [
-          { label: 'Rename Note', icon: ICONS.edit, action: () => renameNote(note) },
-          { label: 'Manage Tags', icon: ICONS.tag, action: () => manageNoteTags(note) },
-          { divider: true },
-          { label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => deleteNote(note) }
-        ]);
+        showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
       });
 
       notesContainer.appendChild(noteEl);
@@ -769,6 +808,64 @@ function renderTree() {
 }
 
 // ─── EXPANDABLE NESTED TAG TREE IN TAG VIEW ──────
+// Pinned view: a flat list of pinned notes. No folder headers and no grouping —
+// only notes can be pinned, so there is no hierarchy to show and nothing to expand.
+function renderPinnedTree() {
+  const container = document.getElementById('pinned-tree');
+  if (!container) return;
+  container.innerHTML = '';
+  container.setAttribute('role', 'tree');
+  container.setAttribute('aria-label', 'Pinned notes');
+  const q = state.searchQuery.toLowerCase();
+
+  const pinned = state.notes.filter(n => n.pinned);
+  const matching = pinned.filter(n => {
+    if (!q) return true;
+    const title = state.decryptedTitleCache.get(n.id) || n.title || '';
+    return title.toLowerCase().includes(q) || (n.tags && n.tags.some(t => t.toLowerCase().includes(q)));
+  });
+
+  if (!matching.length) {
+    container.innerHTML = pinned.length
+      ? '<div class="empty-state empty-state-pane">No matching pinned notes</div>'
+      : '<div class="empty-state empty-state-pane">Nothing pinned yet. Right-click a note to pin it.</div>';
+    return;
+  }
+
+  matching.forEach(note => {
+    const noteEl = document.createElement('div');
+    noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
+    noteEl.setAttribute('role', 'treeitem');
+    noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
+    noteEl.tabIndex = -1;
+    noteEl.dataset.treeId = 'note:' + note.id;
+
+    let displayTitle = state.decryptedTitleCache.get(note.id);
+    if (!displayTitle || displayTitle.startsWith('ENC:')) {
+      displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
+    }
+    noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
+      `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>`;
+
+    noteEl.addEventListener('click', async e => {
+      e.stopPropagation();
+      await flushPendingSave();
+      state.activeNoteId = note.id;
+      state.activeFolderId = note.folderId;
+      renderAll();
+    });
+
+    noteEl.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
+    });
+
+    container.appendChild(noteEl);
+  });
+
+  updateTreeRoving(container);
+}
+
 function renderTagTree() {
   const container = document.getElementById('tag-tree');
   if (!container) return;
@@ -855,12 +952,7 @@ function renderTagTree() {
 
       noteEl.addEventListener('contextmenu', e => {
         e.preventDefault();
-        showTreeContextMenu(e.clientX, e.clientY, [
-          { label: 'Rename Note', icon: ICONS.edit, action: () => renameNote(note) },
-          { label: 'Manage Tags', icon: ICONS.tag, action: () => manageNoteTags(note) },
-          { divider: true },
-          { label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => deleteNote(note) }
-        ]);
+        showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
       });
 
       notesContainer.appendChild(noteEl);
@@ -1026,6 +1118,56 @@ async function renameNote(note) {
   state.decryptedTitleCache.set(note.id, newTitle);
   await saveStore();
   renderAll();
+}
+
+// The right-click menu for a note, identical in every view. Items reflect state
+// rather than listing both halves of a toggle: a pinned note offers only Remove
+// Pin, a note with no tags offers no Remove Tag. Offering an action that cannot
+// apply is the same defect as hiding one that can.
+function noteContextItems(note) {
+  const items = [
+    { label: note.pinned ? 'Remove Pin' : 'Pin Note', icon: ICONS[PIN_GLYPH], action: () => togglePin(note) },
+    { label: 'Add Tag', icon: ICONS.tag, action: () => addTagToNote(note) }
+  ];
+  if (note.tags && note.tags.length) {
+    items.push({ label: 'Remove Tag', icon: ICONS.tagCross, action: () => removeTagFromNote(note) });
+  }
+  items.push({ label: 'Rename Note', icon: ICONS.edit, action: () => renameNote(note) });
+  items.push({ divider: true });
+  items.push({ label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => deleteNote(note) });
+  return items;
+}
+
+async function addTagToNote(note) {
+  const input = await showPromptModal('Add Tag', 'Enter a tag (without #):');
+  if (input === null) return;
+  const tag = input.trim().replace(/^#/, '').toLowerCase();
+  if (!tag) return;
+  note.tags = note.tags || [];
+  if (note.tags.includes(tag)) return;
+  note.tags.push(tag);
+  note.updatedAt = new Date().toISOString();
+  renderAll();
+  await saveStore();
+}
+
+async function removeTagFromNote(note) {
+  const current = (note.tags || []).map(t => '#' + t).join('  ');
+  const input = await showPromptModal('Remove Tag', 'On this note: ' + current);
+  if (input === null) return;
+  const tag = input.trim().replace(/^#/, '').toLowerCase();
+  if (!tag || !note.tags.includes(tag)) return;
+  note.tags = note.tags.filter(t => t !== tag);
+  note.updatedAt = new Date().toISOString();
+  renderAll();
+  await saveStore();
+}
+
+async function togglePin(note) {
+  note.pinned = !note.pinned;
+  note.updatedAt = new Date().toISOString();
+  renderAll();
+  await saveStore();
 }
 
 async function deleteNote(note) {
@@ -1407,35 +1549,39 @@ function initThemeToggle() {
 
 // ─── EXPLORER DUAL MODE PILL TOGGLE (Folders vs Tags) ─
 function initExplorerModeToggle() {
-  const btnFolders = document.getElementById('btn-mode-folders');
-  const btnTags = document.getElementById('btn-mode-tags');
-  const folderTree = document.getElementById('folder-tree');
-  const tagTree = document.getElementById('tag-tree');
+  // Three views over the same notes. Each owns one container and one pill button,
+  // so adding a fourth later is a row in this table rather than another branch.
+  const MODES = {
+    folders: { btn: 'btn-mode-folders', tree: 'folder-tree', render: renderTree },
+    tags:    { btn: 'btn-mode-tags',    tree: 'tag-tree',    render: renderTagTree },
+    pinned:  { btn: 'btn-mode-pinned',  tree: 'pinned-tree', render: renderPinnedTree }
+  };
+
+  const pinBtn = document.getElementById('btn-mode-pinned');
+  if (pinBtn) pinBtn.innerHTML = ICONS[PIN_GLYPH];
 
   function updateExplorerUI(mode) {
+    if (!MODES[mode]) mode = 'folders';
     state.explorerMode = mode;
-    if (mode === 'folders') {
-      if (btnFolders) btnFolders.classList.add('active');
-      if (btnTags) btnTags.classList.remove('active');
-      if (tagTree) tagTree.classList.add('hidden');
-      if (folderTree) folderTree.classList.remove('hidden');
-      renderTree();
-    } else {
-      if (btnTags) btnTags.classList.add('active');
-      if (btnFolders) btnFolders.classList.remove('active');
-      if (folderTree) folderTree.classList.add('hidden');
-      if (tagTree) tagTree.classList.remove('hidden');
-      renderTagTree();
-    }
+    Object.entries(MODES).forEach(([name, m]) => {
+      const btn = document.getElementById(m.btn);
+      const tree = document.getElementById(m.tree);
+      if (btn) {
+        btn.classList.toggle('active', name === mode);
+        btn.setAttribute('aria-pressed', String(name === mode));
+      }
+      if (tree) tree.classList.toggle('hidden', name !== mode);
+    });
+    MODES[mode].render();
   }
 
-  if (btnFolders) btnFolders.addEventListener('click', () => updateExplorerUI('folders'));
-  if (btnTags) btnTags.addEventListener('click', () => updateExplorerUI('tags'));
+  Object.entries(MODES).forEach(([name, m]) => {
+    const btn = document.getElementById(m.btn);
+    if (btn) btn.addEventListener('click', () => updateExplorerUI(name));
+  });
 
   updateExplorerUI(state.explorerMode);
 }
-
-// ─── SMART GITHUB ICON & UPDATE INDICATOR ──────────
 // ─── REPOSITORY / UPDATE INDICATOR ─────────────────
 // Two requests, once per page load, held in memory. Nothing polls and nothing
 // refetches on render: unauthenticated api.github.com allows 60 requests per
@@ -1534,6 +1680,7 @@ async function checkVersionAndUpdateIndicator() {
 }
 
 const CHANNEL_LABELS = { dev: 'dev build', rc: 'release candidate', beta: 'beta', alpha: 'alpha' };
+
 function describeChannel(version) {
   const suffix = (String(version).split('-')[1] || '').toLowerCase().replace(/[^a-z]/g, '');
   if (!suffix) return 'release';
@@ -1661,6 +1808,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (btnSearchClose) btnSearchClose.addEventListener('click', closeSearch);
 
+    // Clicking outside the search box closes it. Previously only the X, the toggle
+    // button and Escape did, so clicking away left the toolbar hidden behind a
+    // search field the user had already finished with.
+    document.addEventListener('click', e => {
+      if (!headerRow.classList.contains('searching')) return;
+      if (headerRow.contains(e.target)) return;
+      closeSearch();
+    });
+
     searchInput.addEventListener('blur', () => {
       if (!searchInput.value.trim()) headerRow.classList.remove('searching');
     });
@@ -1721,6 +1877,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     saveTreeState();
     await saveStore();
     renderAll();
+    focusTreeItem('folder:' + folder.id);
   });
 
   // MANDATORY E2EE LOCK SCREEN & CRYPTOGRAPHIC PASSPHRASE VALIDATION
