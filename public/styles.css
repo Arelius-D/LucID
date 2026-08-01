@@ -405,7 +405,11 @@ body {
 
 .left-pane {
   width: var(--left-w, 20rem);   /* default shows labels with comfortable margin */
-  min-width: 13rem;      /* toolbar goes icon-only before this, so nothing clips */
+  min-width: 15rem;      /* Six icon buttons in one pill measure 205px of content;
+                            with the sidebar body's 12px insets that needs a 229px
+                            pane, so 13rem (208px) clipped. Measured, not guessed:
+                            240px leaves 11px of slack. Was 13rem when the toolbar
+                            held two pills of three buttons and needed only 180px. */
   max-width: 30rem;
   flex-shrink: 0;
   container-type: inline-size;   /* enables the icon-only container query below */
@@ -466,23 +470,14 @@ body {
   gap: var(--space-md);
 }
 
-/* ─── EXPLORER TOOLBAR: ICON-ONLY WHEN NARROW ───── */
-/* The labeled toolbar needs ~18.9rem of sidebar to fit. Below 19.5rem we drop
-   the Folders/Tags text (icon-only) so the actions pill can never clip —
-   no dead zone at any width. Container query on .left-pane. */
-@container (max-width: 19.5rem) {
-  .pill-label { display: none; }
-  .explorer-pill-btn { padding: 0 var(--space-xs); }
-  /* higher specificity so these beat the later base rules */
-  .explorer-actions-pill .action-pill-btn { width: 1.5rem; }
-  .toolbar-cluster.toolbar-cluster { gap: var(--space-xs); }
-}
-
 /* ─── INLINE SEARCH THAT MORPHS OVER THE TOOLBAR ─── */
 .toolbar-cluster {
   position: relative;   /* the search overlay fills this exact box */
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  flex: 1 1 auto;       /* spans the row so the pill inside it can too, which is
+                           what makes the left and right insets equal */
+  min-width: 0;
   gap: var(--space-sm);
 }
 .explorer-search {
@@ -539,13 +534,11 @@ body {
   background: var(--bg-hover);
 }
 
-/* Morph: pills give way to the search field */
-.explorer-mode-pill,
-.explorer-actions-pill {
+/* Morph: the toolbar gives way to the search field */
+.explorer-toolbar-pill {
   transition: opacity var(--motion-base) var(--ease-standard);
 }
-.tree-header-row.searching .explorer-mode-pill,
-.tree-header-row.searching .explorer-actions-pill {
+.tree-header-row.searching .explorer-toolbar-pill {
   opacity: 0;
   pointer-events: none;
 }
@@ -568,24 +561,38 @@ body {
   overflow: hidden;
 }
 
-.explorer-mode-pill {
+/* One container holds all six controls: three views, a divider, three actions.
+   Fixed to the left edge of the sidebar body; the row it sits in supplies the
+   right inset, so the gap to the panel edge is the same on both sides at every
+   width. Icons only — six labelled buttons cannot fit in any sidebar width the
+   panel allows, and trying was what made the cluster clip. */
+.explorer-toolbar-pill {
   display: flex;
   align-items: center;
-  flex: 0 0 auto; /* FIXED: Prevent Folders / Tags from stretching when sidebar expands */
+  justify-content: space-between;
+  flex: 1 1 auto;      /* fills the row, so the inset to the sidebar edge is the
+                          same on the left and the right at every panel width */
+  min-width: 0;
   height: 2.25rem;
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-2xs);
-  gap: var(--space-2xs);
+  gap: var(--space-3xs);
+}
+.toolbar-divider {
+  width: var(--hairline);
+  align-self: stretch;
+  margin: var(--space-2xs) var(--space-2xs);
+  background: var(--border);
+  flex-shrink: 0;
 }
 
 .explorer-pill-btn {
-  flex: 0 0 auto; /* FIXED: Compact non-stretching width */
+  flex: 0 0 auto;
   height: 100%;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0 var(--space-sm);
+  width: 1.875rem;
+  padding: 0;
   border-radius: var(--radius-md);
   border: var(--hairline) solid transparent;
   background: transparent;
@@ -607,18 +614,6 @@ body {
   border-color: transparent;
   box-shadow: var(--shadow-sm);
   font-weight: 600;
-}
-
-.explorer-actions-pill {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto; /* FIXED: Keep action buttons fixed and visible */
-  height: 2.25rem;
-  background: var(--bg-surface);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-2xs);
-  gap: var(--space-3xs);
 }
 
 /* FIXED CONFINEMENT & ALIGNMENT FOR ACTION PILL BUTTONS */
@@ -737,6 +732,17 @@ body {
   color: var(--text-primary);
   font-weight: 600;
 }
+
+/* Pinned marker. Hangs at the right of the row where the folder count badge sits,
+   so it reads as state on the row rather than a control to press. */
+.pin-marker {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.pin-marker .icon-svg { width: 0.875rem; height: 0.875rem; }
 
 /* Keyboard focus ring for tree navigation (arrow keys / Tab) */
 .tree-folder-header:focus-visible,

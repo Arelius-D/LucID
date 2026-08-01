@@ -38,28 +38,27 @@
         <!-- STREAMLINED EXPLORER TOOLBAR ROW -->
         <div class="tree-header-row" id="tree-header-row">
           <div class="toolbar-cluster">
-          <div class="explorer-mode-pill">
-            <button id="btn-mode-folders" class="explorer-pill-btn active" title="Folders View" aria-label="Folders View">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
-              <span class="pill-label">Folders</span>
-            </button>
-            <button id="btn-mode-tags" class="explorer-pill-btn" title="Tags View" aria-label="Tags View">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>
-              <span class="pill-label">Tags</span>
-            </button>
-          </div>
-
-          <div class="explorer-actions-pill">
-            <button id="btn-new-note" class="icon-btn action-pill-btn" title="New Note" aria-label="New Note">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.56 18v-5M12 15.5H7M8 2v3M16 2v3M15.81 3.42c3.34.12 5.03 1.35 5.13 6.05l.13 6.17c.08 4.12-.87 6.19-5.87 6.3l-6 .12c-5 .1-6.04-1.94-6.12-6.05l-.14-6.18c-.1-4.7 1.55-6 4.87-6.25l8-.16z"/></svg>
-            </button>
-            <button id="btn-new-folder" class="icon-btn action-pill-btn" title="New Folder" aria-label="New Folder">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
-            </button>
-            <button id="btn-toggle-search" class="icon-btn action-pill-btn" title="Search Notes & Tags" aria-label="Search Notes & Tags">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5H20M14 8H17M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
-            </button>
-          </div>
+            <div class="explorer-toolbar-pill">
+              <button id="btn-mode-folders" class="explorer-pill-btn active" title="Folders View" aria-label="Folders View">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
+              </button>
+              <button id="btn-mode-tags" class="explorer-pill-btn" title="Tags View" aria-label="Tags View">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>
+              </button>
+              <button id="btn-mode-pinned" class="explorer-pill-btn" title="Pinned Notes" aria-label="Pinned Notes">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2c2 0 3 1.01 3 3.03v7.05c0 1.99-1.41 2.76-3.14 1.72l-1.32-.8c-.3-.18-.78-.18-1.08 0l-1.32.8C8.41 14.84 7 14.07 7 12.08V5.03C7 3.01 8 2 10 2h4z"/><path d="M6.82 4.99C3.41 5.56 2 7.66 2 11.9v3.03C2 19.98 4 22 9 22h6c5 0 7-2.02 7-7.07V11.9c0-4.31-1.46-6.42-5-6.94"/></svg>
+              </button>
+              <span class="toolbar-divider" aria-hidden="true"></span>
+              <button id="btn-new-note" class="icon-btn action-pill-btn" title="New Note" aria-label="New Note">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.56 18v-5M12 15.5H7M8 2v3M16 2v3M15.81 3.42c3.34.12 5.03 1.35 5.13 6.05l.13 6.17c.08 4.12-.87 6.19-5.87 6.3l-6 .12c-5 .1-6.04-1.94-6.12-6.05l-.14-6.18c-.1-4.7 1.55-6 4.87-6.25l8-.16z"/></svg>
+              </button>
+              <button id="btn-new-folder" class="icon-btn action-pill-btn" title="New Folder" aria-label="New Folder">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>
+              </button>
+              <button id="btn-toggle-search" class="icon-btn action-pill-btn" title="Search Notes &amp; Tags" aria-label="Search Notes &amp; Tags">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 5H20M14 8H17M10 19C14.9706 19 19 14.9706 19 10C19 5.02944 14.9706 1 10 1C5.02944 1 1 5.02944 1 10C1 14.9706 5.02944 19 10 19Z" stroke-linecap="round"/><path d="M21 21L17 17"/></svg>
+              </button>
+            </div>
 
           <!-- INLINE SEARCH — morphs over the toolbar row -->
           <div class="explorer-search" id="explorer-search">
@@ -74,6 +73,7 @@
 
         <div id="folder-tree" class="folder-tree"></div>
         <div id="tag-tree" class="tag-tree hidden"></div>
+        <div id="pinned-tree" class="folder-tree hidden"></div>
       </div>
 
       <!-- SIDEBAR FOOTER CONTAINING E2EE STATUS, SYNC INDICATOR & LOCK BUTTON -->
