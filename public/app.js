@@ -12,27 +12,23 @@ const ICONS = {
   folderClosed: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/><path d="M8 2h9c2 0 3 1 3 3v1.38"/></svg>`,
   folderOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.67 14.3l-.4 5c-.15 1.53-.27 2.7-2.98 2.7H5.71C3 22 2.88 20.83 2.73 19.3l-.4-5c-.08-.83.18-1.6.65-2.19l.02-.02C3.55 11.42 4.38 11 5.31 11h13.38c.93 0 1.75.42 2.29 1.07.01.01.02.02.02.03.49.59.76 1.36.67 2.2z"/><path d="M3.5 11.43V6.28c0-3.4.85-4.25 4.25-4.25h1.27c1.27 0 1.56.38 2.04 1.02l1.27 1.7c.32.42.51.68 1.36.68h2.55c3.4 0 4.25.85 4.25 4.25v1.79M9.43 17h5.14"/></svg>`,
   folderCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.81 15.73l-3.54-3.54M13.77 12.23l-3.54 3.54"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`,
-  folderAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`,
   note: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M8 13h4M8 17h8"/></svg>`,
   noteAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.56 18v-5M12 15.5H7M8 2v3M16 2v3M15.81 3.42c3.34.12 5.03 1.35 5.13 6.05l.13 6.17c.08 4.12-.87 6.19-5.87 6.3l-6 .12c-5 .1-6.04-1.94-6.12-6.05l-.14-6.18c-.1-4.7 1.55-6 4.87-6.25l8-.16z"/></svg>`,
   noteRemove: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M8 14h8"/></svg>`,
   tagCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M14.83 9.17l-5.66 5.66M14.83 14.83L9.17 9.17"/></svg>`,
-  closeSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.17 14.83l5.66-5.66M14.83 14.83L9.17 9.17M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/></svg>`,
-  securitySafe: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 11.12c0 4.89-3.55 9.47-8.4 10.81-.33.09-.69.09-1.02 0-4.85-1.34-8.4-5.92-8.4-10.81V6.73c0-.82.62-1.75 1.39-2.06l5.57-2.28c1.25-.51 2.66-.51 3.91 0l5.57 2.28c.76.31 1.39 1.24 1.39 2.06l-.01 4.39z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>`,
   sun: `<svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
   moon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`,
-  eye: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.58 12c0 1.98-1.6 3.58-3.58 3.58S8.42 13.98 8.42 12s1.6-3.58 3.58-3.58 3.58 1.6 3.58 3.58z"/><path d="M12 20.27c3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-2.29-3.6-5.58-5.68-9.11-5.68-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19 2.29 3.6 5.58 5.68 9.11 5.68z"/></svg>`,
-  info: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM12 8v5"/><path stroke-width="2" d="M11.995 16h.009"/></svg>`,
   tickCircle: `<svg class="icon-svg check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
-  refresh2: `<svg class="icon-svg icon-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2c3.04 0 5.78 1.36 7.64 3.51M22 2v4h-4"/></svg>`,
-  syncError: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M9.17 14.83l5.66-5.66M14.83 14.83L9.17 9.17"/></svg>`,
+  // Sync state uses one icon family so the three states read as one indicator.
+  // The glyph itself changes on failure, so colour is reinforcement rather than
+  // the only signal (WCAG 1.4.1).
+  cloudConnection: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M6.37 9.51c-4.08.29-4.07 6.2 0 6.49h9.66c1.17.01 2.3-.43 3.17-1.22 2.86-2.5 1.33-7.5-2.44-7.98C15.41-1.34 3.62 1.75 6.41 9.51M12 16v3M12 23a2 2 0 100-4 2 2 0 000 4zM18 21h-4M10 21H6"/></svg>`,
+  cloudCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M16.61 20c1.34.01 2.63-.49 3.62-1.39 3.27-2.86 1.52-8.6-2.79-9.14C15.9.13 2.43 3.67 5.62 12.56"/><path d="M7.28 12.97c-.53-.27-1.12-.41-1.71-.4-4.66.33-4.65 7.11 0 7.44M15.82 9.89c.52-.26 1.08-.4 1.66-.41M12.39 18.59l-2.83 2.82M12.39 21.41l-2.83-2.82"/></svg>`,
   edit: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.26 3.6L5.05 12.29c-.31.33-.61.97-.67 1.41l-.37 3.22c-.13 1.17.7 1.98 1.86 1.81l3.2-.46c.44-.06 1.07-.38 1.38-.7l8.21-8.69c1.42-1.5 2.06-3.21-.09-5.24-2.14-2.01-3.83-1.32-5.31.16z"/><path d="M11.89 5.05l5.06 4.77"/></svg>`,
   elementSplit: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H3v7h7V3zM21 3h-7v7h7V3zM10 14H3v7h7v-7zM21 14h-7v7h7v-7z"/></svg>`,
   element3: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H3v18h7V3zM21 3h-7v18h7V3z"/></svg>`,
   element2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10V3h18v7H3zM3 21v-7h18v7H3z"/></svg>`,
   tag: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>`,
-  arrowCircleLeft: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM13.26 15.53L9.74 12l3.52-3.53"/></svg>`,
-  arrowCircleRight: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zM10.74 15.53L14.26 12l-3.52-3.53"/></svg>`
 };
 
 const AUTH_MAGIC_SENTINEL = 'LUCID_VAULT_AUTHENTICATED_V1';
@@ -410,7 +406,7 @@ async function fetchStore() {
     updateLockScreenUI();
   } catch (err) {
     console.warn('fetchStore failed:', err);
-    showSave('Error loading', 'error');
+    showSave('Vault could not be loaded from the server', 'error');
   }
 }
 
@@ -459,7 +455,7 @@ async function saveStore() {
     return;
   }
   try {
-    showSave('Syncing…', 'saving');
+    showSave('Syncing changes to vault', 'saving');
     const { folders, notes } = await encryptVaultFromState(state.encryptionKey);
     const res = await fetch(apiPath('api/store'), {
       method: 'POST',
@@ -473,10 +469,10 @@ async function saveStore() {
       })
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
-    showSave('Synced', '');
+    showSave('Synced to vault', '');
   } catch (err) {
     console.error('saveStore failed:', err);
-    showSave('Sync error', 'error');
+    showSave('Sync error: changes were not saved to the vault', 'error');
   }
 }
 
@@ -519,7 +515,7 @@ function triggerAutoSave() {
   if (!state.encryptionKey) return;
   const targetId = state.activeNoteId;      // bind now, not when the timer fires
   state.pendingNoteId = targetId;
-  showSave('Syncing…', 'saving');
+  showSave('Syncing changes to vault', 'saving');
   state.saveTimeout = setTimeout(async () => {
     state.saveTimeout = null;
     commitEditorToNote(targetId);
@@ -544,19 +540,55 @@ async function flushPendingSave() {
   await saveStore();
 }
 
-function showSave(text, cls) {
+// The visible label is gone: three distinct glyphs carry the state, and the
+// tooltip carries the detail. The text is kept in the DOM but visually hidden,
+// because this element is an aria-live region and an icon swap alone announces
+// nothing to a screen reader.
+const SYNC_ICONS = { error: 'cloudCross', saving: 'cloudConnection', ok: 'cloudConnection' };
+
+function showSave(message, cls) {
   const el = document.getElementById('save-indicator');
   if (!el) return;
+  const icon = SYNC_ICONS[cls] || SYNC_ICONS.ok;
+  const text = message || 'Synced to vault';
   el.className = 'sync-status-badge' + (cls ? ' ' + cls : '');
-  if (cls === 'error') {
-    el.title = 'Sync error: Failed to save changes';
-    el.innerHTML = `${ICONS.syncError} <span>Sync error</span>`;
-  } else if (cls === 'saving') {
-    el.title = 'Syncing changes to vault…';
-    el.innerHTML = `${ICONS.refresh2} <span>Syncing…</span>`;
-  } else {
-    el.title = 'Synced';
-    el.innerHTML = `${ICONS.tickCircle} <span>Synced</span>`;
+  el.title = text;
+  el.setAttribute('aria-label', text);
+  el.innerHTML = `${ICONS[icon]} <span class="visually-hidden">${escapeHtml(text)}</span>`;
+}
+
+// Container runtime. /health is the only runtime fact the browser can obtain,
+// and it can only speak for the application container: reading the health of
+// caddy or the DDNS updater would require mounting the Docker socket into the
+// internet-facing process, which is not a trade this project will make.
+function formatUptime(seconds) {
+  const s = Math.max(0, Math.floor(Number(seconds) || 0));
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (d) return `${d}d ${h}h`;
+  if (h) return `${h}h ${m}m`;
+  if (m) return `${m}m`;
+  return `${s}s`;
+}
+
+async function updateRuntimeIndicator() {
+  const el = document.getElementById('runtime-indicator');
+  if (!el) return;
+  const set = (cls, msg) => {
+    el.className = 'runtime-badge' + (cls ? ' ' + cls : '');
+    el.title = msg;
+    el.setAttribute('aria-label', msg);
+  };
+  try {
+    const res = await fetch(apiPath('health'));
+    if (!res.ok) throw new Error(`health ${res.status}`);
+    const data = await res.json();
+    const healthy = data && data.status === 'healthy';
+    set(healthy ? '' : 'error',
+        `Server ${healthy ? 'healthy' : 'reporting ' + String(data && data.status)} \u2014 running ${formatUptime(data && data.uptime)}`);
+  } catch (err) {
+    set('error', 'Server unreachable');
   }
 }
 
@@ -1351,6 +1383,26 @@ function initExplorerModeToggle() {
 }
 
 // ─── SMART GITHUB ICON & UPDATE INDICATOR ──────────
+// ─── REPOSITORY / UPDATE INDICATOR ─────────────────
+// Two requests, once per page load, held in memory. Nothing polls and nothing
+// refetches on render: unauthenticated api.github.com allows 60 requests per
+// hour per IP, and a tooltip is not worth spending that on repeatedly.
+//
+// The release channel is authoritative for "is there something newer": a
+// GitHub Release exists only after a version was actually cut and published,
+// whereas a git tag exists the moment it is pushed, before the image that
+// carries it has finished building. Commit distance comes from /compare, which
+// accepts tag and branch names directly, so the version string the build
+// already reports about itself is the only identifier needed.
+const GH_REPO = 'Arelius-D/LucID';
+const GH_API = `https://api.github.com/repos/${GH_REPO}`;
+
+async function ghJson(url) {
+  const res = await fetch(url);
+  if (!res.ok) { const e = new Error(`GitHub API ${res.status}`); e.status = res.status; throw e; }
+  return res.json();
+}
+
 async function checkVersionAndUpdateIndicator() {
   const githubLink = document.querySelector('.footer-github-link');
   if (!githubLink) return;
@@ -1366,42 +1418,94 @@ async function checkVersionAndUpdateIndicator() {
     console.warn('Could not fetch local version:', e);
   }
 
-  // Detect build environment
-  const isDevBuild = window.location.hostname === 'localhost' || window.location.port === '58243';
-  const buildTag = isDevBuild ? 'dev build' : 'production';
+  // The channel comes from the version string, which is the build's own claim
+  // about itself. It was previously guessed from hostname and port, so any dev
+  // image reached through a reverse proxy reported itself as "production".
+  const channel = describeChannel(currentVersion);
+  const isPreRelease = channel !== 'release';
+  const branch = isPreRelease ? 'dev' : 'main';
+  const base = `LucID v${currentVersion} (${channel})`;
 
-  // Native title tooltip (matches the sync/lock controls beside it)
-  const upToDateMsg = `LucID v${currentVersion} (${buildTag}) — Up to date`;
-  githubLink.setAttribute('title', upToDateMsg);
-  githubLink.setAttribute('aria-label', upToDateMsg);
+  const setLabel = (msg) => {
+    githubLink.setAttribute('title', msg);
+    githubLink.setAttribute('aria-label', msg);
+  };
+  // Neutral until the remote answers. Claiming currency before asking is an
+  // assertion the app has no basis for, and it used to survive every failure.
+  setLabel(`${base} \u2014 checking for updates`);
 
+  // Request 1: the latest published release.
+  let release = null;
   try {
-    const ghRes = await fetch('https://api.github.com/repos/Arelius-D/LucID/releases/latest');
-    if (ghRes.ok) {
-      const ghData = await ghRes.json();
-      const latestTag = (ghData.tag_name || '').replace(/^v/, '');
-      if (latestTag && compareVersions(latestTag, currentVersion) > 0) {
-        githubLink.classList.add('update-available');
-        const updateMsg = `LucID v${currentVersion} (${buildTag}) • Update Available (v${latestTag})`;
-        githubLink.setAttribute('title', updateMsg);
-        githubLink.setAttribute('aria-label', updateMsg);
-        githubLink.href = 'https://github.com/Arelius-D/LucID/releases/latest';
-      }
-    }
+    release = await ghJson(`${GH_API}/releases/latest`);
   } catch (err) {
-    // Silent fallback if GitHub API rate limited or offline
+    // 404 means no Release has been published, which is a fact worth stating.
+    // Anything else is a failed check and must not be reported as either.
+    console.warn('Release lookup failed:', err);
+    setLabel(err.status === 404
+      ? `${base} \u2014 no releases published yet`
+      : `${base} \u2014 update check unavailable`);
+    return;
   }
+
+  const latest = String(release.tag_name || '').replace(/^v/, '');
+  if (!latest) { setLabel(`${base} \u2014 update check unavailable`); return; }
+
+  const published = release.published_at
+    ? new Date(release.published_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+    : null;
+
+  // Request 2: how far the tracked branch has moved past that release. /compare
+  // takes refs by name, so no build metadata has to be injected to ask this.
+  let ahead = null;
+  try {
+    const cmp = await ghJson(`${GH_API}/compare/v${latest}...${branch}`);
+    if (typeof cmp.ahead_by === 'number') ahead = cmp.ahead_by;
+  } catch (err) {
+    console.warn('Compare lookup failed:', err);   // optional detail, not fatal
+  }
+  const trail = ahead ? ` \u00b7 ${branch} +${ahead} commit${ahead === 1 ? '' : 's'} since v${latest}` : '';
+
+  if (compareVersions(latest, currentVersion) > 0) {
+    githubLink.classList.add('update-available');
+    githubLink.href = release.html_url || `https://github.com/${GH_REPO}/releases/tag/v${latest}`;
+    setLabel(`${base} \u2014 update available: v${latest}${published ? ' (' + published + ')' : ''}`);
+    return;
+  }
+
+  githubLink.classList.remove('update-available');
+  githubLink.href = `https://github.com/${GH_REPO}`;
+  setLabel(isPreRelease
+    ? `${base} \u2014 latest release v${latest}${published ? ' (' + published + ')' : ''}${trail}`
+    : `${base} \u2014 up to date${trail}`);
 }
 
+const CHANNEL_LABELS = { dev: 'dev build', rc: 'release candidate', beta: 'beta', alpha: 'alpha' };
+function describeChannel(version) {
+  const suffix = (String(version).split('-')[1] || '').toLowerCase().replace(/[^a-z]/g, '');
+  if (!suffix) return 'release';
+  return CHANNEL_LABELS[suffix] || 'pre-release';
+}
+
+// Numeric core first. When cores are equal, a build carrying a pre-release
+// suffix (2.0.0-dev) ranks BELOW the plain release (2.0.0), per semver. The
+// previous implementation mapped "0-dev" to NaN and silently returned "equal".
 function compareVersions(v1, v2) {
-  const p1 = v1.split('.').map(Number);
-  const p2 = v2.split('.').map(Number);
-  for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
-    const n1 = p1[i] || 0;
-    const n2 = p2[i] || 0;
+  const parse = (v) => {
+    const [core, pre = ''] = String(v).split('-', 2);
+    const nums = core.split('.').map(n => parseInt(n, 10) || 0);
+    return { nums, pre };
+  };
+  const a = parse(v1);
+  const b = parse(v2);
+  for (let i = 0; i < Math.max(a.nums.length, b.nums.length); i++) {
+    const n1 = a.nums[i] || 0;
+    const n2 = b.nums[i] || 0;
     if (n1 > n2) return 1;
     if (n1 < n2) return -1;
   }
+  if (!a.pre && b.pre) return 1;
+  if (a.pre && !b.pre) return -1;
   return 0;
 }
 
@@ -1410,12 +1514,7 @@ function compareVersions(v1, v2) {
 // or half-rendered UI with no signal. Now anything unhandled is shown.
 function reportFatal(what, err) {
   console.error(what, err);
-  const el = document.getElementById('save-indicator');
-  if (el) {
-    el.className = 'sync-status-badge error';
-    el.title = what + ': ' + ((err && err.message) || err || 'unknown error');
-    el.innerHTML = `${ICONS.syncError} <span>Error</span>`;
-  }
+  showSave(what + ': ' + ((err && err.message) || err || 'unknown error'), 'error');
 }
 window.addEventListener('error', e => reportFatal('Unexpected error', e.error || e.message));
 window.addEventListener('unhandledrejection', e => reportFatal('Unexpected error', e.reason));
@@ -1452,6 +1551,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initThemeToggle();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
+  updateRuntimeIndicator();
+  setInterval(updateRuntimeIndicator, 60000);
 
   // Sidebar toggles with docked button in top-bar-left (left sidebar expanded by default)
   const sidebarLeft = document.getElementById('sidebar-left');

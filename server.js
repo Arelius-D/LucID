@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,28 +30,41 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
+// Record identifiers are stored in plaintext by design: the client must be able
+// to address a record without decrypting it. They therefore must not describe
+// their own contents. Seeded ids are generated randomly for the same reason
+// user-created ids are timestamps, so nothing about a vault is legible from the
+// key set alone.
+function newId(prefix) {
+  return prefix + '-' + crypto.randomBytes(8).toString('hex');
+}
+
 // Initial default data if store file doesn't exist
-const initialData = {
-  schemaVersion: 2,
-  kdf: null,
-  folders: [
-    { id: 'f-welcome', name: 'General', parentId: null },
-    { id: 'f-personal', name: 'Personal', parentId: null }
-  ],
-  notes: [
-    {
-      id: 'n-welcome',
-      folderId: 'f-welcome',
-      title: 'Welcome to LucID',
-      content: '# Welcome to LucID\n\nLucID is a modern, privacy-focused note-taking application featuring client-side **AES-256-GCM End-to-End Encryption (E2EE)**.\n\n## Capabilities\n- 🔒 **Client-Side E2EE**: Your master passphrase encrypts all note titles and contents locally in your browser before storage.\n- ↕️↔️ **Dual Split View**: Easily toggle between Side-by-Side (Left/Right) and Top-Bottom split views.\n- ☀️🌙 **Theme Engine**: Dusk Ember (Dark) and Warm Linen (Light) themes.\n- 📁🏷️ **Folders & Tags**: Expandable hierarchy with instant search.',
-      isEncrypted: false,
-      tags: ['welcome', 'lucid'],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ],
-  authVerifier: null
-};
+function buildInitialData() {
+  const generalId = newId('f');
+  const now = new Date().toISOString();
+  return {
+    schemaVersion: 2,
+    kdf: null,
+    folders: [
+      { id: generalId, name: 'General', parentId: null },
+      { id: newId('f'), name: 'Personal', parentId: null }
+    ],
+    notes: [
+      {
+        id: newId('n'),
+        folderId: generalId,
+        title: 'Welcome to LucID',
+        content: '# Welcome to LucID\n\nLucID is a self-hosted, privacy-focused note-taking application with client-side **AES-256-GCM end-to-end encryption**.\n\n## Capabilities\n- **Client-side E2EE**: your passphrase encrypts note titles, contents, tags and folder names in the browser before anything is stored. The server holds ciphertext it cannot read.\n- **Dual split view**: toggle between side-by-side and top-bottom layouts.\n- **Theme engine**: Dusk Ember (dark) and Warm Linen (light).\n- **Folders and tags**: expandable hierarchy with instant search.\n\nDelete this note whenever you like. Nothing depends on it.',
+        isEncrypted: false,
+        tags: ['welcome', 'lucid'],
+        createdAt: now,
+        updatedAt: now
+      }
+    ],
+    authVerifier: null
+  };
+}
 
 // B-02: a corrupt store must NEVER silently become the default vault. If we
 // returned defaults here, the client would load them and the next autosave would
@@ -58,8 +72,9 @@ const initialData = {
 // returns an error, and the client stays locked so nothing is written.
 function readData() {
   if (!fs.existsSync(DATA_FILE)) {
-    writeData(initialData);
-    return initialData;
+    const seeded = buildInitialData();
+    writeData(seeded);
+    return seeded;
   }
   const raw = fs.readFileSync(DATA_FILE, 'utf8');
   try {

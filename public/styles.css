@@ -867,19 +867,50 @@ select:focus-visible,
   border-top: none;
 }
 
-.sync-status-badge {
-  font-size: 0.75rem;
-  font-weight: 500;
+/* Status text is present for assistive technology but not painted: the glyph
+   carries the state visually, the tooltip carries the detail. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Sync and runtime read as one control family with the repository link beside
+   them: same box, same hover, same accent. */
+.sync-status-badge,
+.runtime-badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-xs);
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
+  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
+}
+.sync-status-badge:hover,
+.runtime-badge:hover {
+  color: var(--accent);
+  background-color: var(--surface-hover);
 }
 .sync-status-badge.saving {
   color: var(--accent);
+  animation: pulse-sync 1.2s infinite var(--ease-standard);
 }
-.sync-status-badge.error {
+.sync-status-badge.error,
+.runtime-badge.error {
   color: var(--danger);
+}
+@keyframes pulse-sync {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.45; }
+  100% { opacity: 1; }
 }
 
 .lock-action-btn {
@@ -1619,6 +1650,16 @@ select:focus-visible,
   0% { transform: scale(1); filter: drop-shadow(0 0 0.125rem var(--accent)); }
   50% { transform: scale(1.08); filter: drop-shadow(0 0 0.375rem var(--accent)); }
   100% { transform: scale(1); filter: drop-shadow(0 0 0.125rem var(--accent)); }
+}
+
+/* Two indicators now signal state through motion. Users who have asked the OS
+   to reduce motion keep the colour and glyph change and lose only the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .footer-github-link.update-available,
+  .sync-status-badge.saving,
+  .icon-spin {
+    animation: none;
+  }
 }
 
 /* ─── RESPONSIVE BREAKPOINTS ─────────────────────── */
