@@ -1,6 +1,6 @@
 # Pinned major version for reproducible builds (was: node:alpine, a floating tag
 # that could jump Node majors between two identical builds).
-FROM node:22-alpine
+FROM node:25-alpine
 
 WORKDIR /app
 
