@@ -6,7 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.0.0-dev] - 2026-08-01 (unreleased)
+## [2.0.0] - 2026-08-01
 ### Breaking
 - **Vault format v2 (`schemaVersion: 2`)**: The store now carries a `schemaVersion` and a `kdf` block (`algo`, `iterations`, `salt`). Vaults written by 1.x cannot be read by 2.x. LucID has had no public installs, so no migration path is provided — 2.0.0 establishes the format.
 - **Full-vault encryption**: Folder names and tags are now encrypted alongside note titles and bodies. Previously only titles and content were encrypted, leaving taxonomy and topic metadata readable on the server. Only non-descriptive record IDs, timestamps and the KDF parameters (which must be readable to derive the key) remain in clear.
