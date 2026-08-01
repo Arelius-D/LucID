@@ -20,6 +20,6 @@ USER node
 EXPOSE 3000
 
 HEALTHCHECK --interval=60s --timeout=10s --start-period=15s --retries=3 \
-  CMD node -e "require('http').request({host:'127.0.0.1',port:3000,path:'/health',timeout:5000},r=>process.exit(r.statusCode<400?0:1)).on('error',()=>process.exit(1)).end()"
+  CMD wget -q -O /dev/null "http://127.0.0.1:${PORT:-3000}/health" || exit 1
 
 CMD ["node", "server.js"]

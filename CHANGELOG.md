@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.1.0-dev] - unreleased
+
+### Fixed
+- **Application healthcheck no longer spawns a Node runtime every minute**: the probe ran `node -e "require('http').request(...)"`, starting a complete Node process inside the container's cgroup once per interval. A sampled footprint audit measured the application's peak CPU at 14.28% against 0.04% for the same code before a healthcheck existed — the container was spending that CPU on monitoring itself. Replaced with a busybox `wget` probe against `/health`, which the `node:22-alpine` base already provides. The probe honours `PORT`.
+
+---
+
 ## [2.0.0] - 2026-08-01
 ### Breaking
 - **Vault format v2 (`schemaVersion: 2`)**: The store now carries a `schemaVersion` and a `kdf` block (`algo`, `iterations`, `salt`). Vaults written by 1.x cannot be read by 2.x. LucID has had no public installs, so no migration path is provided — 2.0.0 establishes the format.
