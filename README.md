@@ -129,28 +129,34 @@ LucID combines zero-trust client cryptography with transport-layer security:
 
 ## Empirical Production System Footprint
 
-Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running stack every 5 seconds for 20 minutes — **170 samples**. Values are run averages with observed peaks, not a single-moment snapshot.
+Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running stack every 5 seconds for 20 minutes — **240 samples**. Values are run averages with observed peaks, not a single-moment snapshot.
+
+**These are at-rest figures.** No browser session was open and no notes were read or written for the duration of the run, so the stack is doing what a self-hosted notes app does for the overwhelming majority of its uptime: sitting deployed, holding a TLS certificate, keeping a DNS record current, and waiting. That is the number that matters for a service you leave running on a VPS or a home server all year. Encryption and decryption happen in your browser, not on the server, so opening a vault costs your device CPU and costs the host almost nothing beyond serving a few static files.
 
 ### 1. Active Container Memory & CPU Usage
 
-| Component | Avg CPU % | Peak CPU % | cgroup RAM | Host Process RSS RAM | Status |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **0.04%** | **22.27 MiB** | **78.66 MB** | `Up` (no healthcheck) |
-| Caddy Reverse Proxy (`caddy:latest`) | **0.01%** | **1.27%** | **10.85 MiB** | **46.45 MB** | `Up` (no healthcheck) |
-| Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.03%** | **4.91%** | **5.54 MiB** | **16.52 MB** | `Up (healthy)` |
-| **Total Active Container Stack** | **0.05%** | **4.91%** | **38.67 MiB** | **141.63 MB** | **All Running** |
+| Component | Avg CPU % | Peak CPU % | Avg cgroup RAM | Peak cgroup RAM | Host Process RSS RAM | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| Application Backend (`assarelius/lucid:latest`) | **0.00%** | **0.00%** | **14.10 MiB** | **15.19 MiB** | **65.02 MB** | `Up (healthy)` |
+| Caddy Reverse Proxy (`caddy:latest`) | **0.00%** | **0.12%** | **11.68 MiB** | **12.15 MiB** | **47.35 MB** | `Up` (no healthcheck) |
+| Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.11%** | **5.51%** | **5.48 MiB** | **8.81 MiB** | **16.44 MB** | `Up (healthy)` |
+| **Total Active Container Stack** | **0.11%** | — | **31.26 MiB** | — | **128.81 MB** | **All Running** |
+
+The application backend registered **0.00% CPU across every one of the 240 samples**, at rest and while serving.
+
+> Caddy carries no healthcheck deliberately. An HTTP probe against port 80 follows Caddy's automatic HTTPS redirect and then fails the TLS handshake against localhost, reporting `unhealthy` while Caddy is serving correctly, and the admin endpoint that would give a clean probe is switched off. See `SECURITY.md`.
 
 ### 2. Infrastructure Overhead
 
-| Process / Daemon | Host Process RSS RAM | Role |
-| :--- | :--- | :--- |
-| `dockerd` | **100.22 MB** | Docker Engine System Daemon |
-| `containerd` | **43.08 MB** | Container Runtime Daemon |
-| `docker-proxy` | **41.61 MB** | Network Port Forwarding Proxy |
-| `containerd-shim-runc-v2` | **34.90 MB** | Container Process Shims (one per container) |
-| **Total Infrastructure Overhead** | **219.80 MB** | Docker Engine Baseline |
+| Process / Daemon | Avg Host RSS | Peak Host RSS | Role |
+| :--- | :--- | :--- | :--- |
+| `dockerd` | **102.57 MB** | 106.76 MB | Docker Engine System Daemon |
+| `containerd` | **45.13 MB** | 48.87 MB | Container Runtime Daemon |
+| `containerd-shim-runc-v2` | **35.39 MB** | 36.31 MB | Container Process Shims (one per container) |
+| `docker-proxy` | **31.12 MB** | 31.12 MB | Network Port Forwarding Proxy |
+| **Total Infrastructure Overhead** | **214.21 MB** | — | Docker Engine Baseline |
 
-**Grand total, application stack plus Docker engine: 361.43 MB Host RSS.**
+**Grand total, application stack plus Docker engine: 343.02 MB Host RSS.**
 
 > `containerd` counts only the daemon itself. Matching on a `/usr/bin/containerd` command-line substring also catches every `containerd-shim-runc-v2` process, folding the shims into the daemon figure and double-counting them against the row below.
 
@@ -158,12 +164,13 @@ Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running 
 
 | Asset | Size | Category |
 | :--- | :--- | :--- |
-| Application Deployment Directory | **56 KB** | Configuration & Local Storage |
-| Application Container Image (`assarelius/lucid:latest`) | **277 MB** | Docker Container Image |
-| Caddy Reverse Proxy Image (`caddy:latest`) | **88.7 MB** | Docker Container Image |
-| Dynamic DNS Updater Image (`qmcgaw/ddns-updater:latest`) | **19.4 MB** | Docker Container Image |
-| TLS Certificate & ACME Config Cache (`lucid_caddy_data`, `lucid_caddy_config`) | **6.46 KB** | Named Docker Volumes |
+| Application Deployment Directory | **60 KB** | Configuration & Local Storage |
+| Application Container Image (`assarelius/lucid:latest`) | **254 MB** on disk, **63.5 MB** compressed | Docker Container Image |
+| Caddy Reverse Proxy Image (`caddy:latest`) | **88.7 MB** on disk, **24.3 MB** compressed | Docker Container Image |
+| Dynamic DNS Updater Image (`qmcgaw/ddns-updater:latest`) | **19.4 MB** on disk, **5.55 MB** compressed | Docker Container Image |
+| TLS Certificate & ACME Config Cache (`lucid_caddy_data`, `lucid_caddy_config`) | **6.47 KB** | Named Docker Volumes |
 | Container Writable Layers (3 × 4.1 kB) | **12.3 KB** | Overlay2 Diff Layers |
+| Build Cache | **0 B** | Docker Build Cache |
 
 ---
 
