@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.3.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.2.0] - 2026-08-03
 ### Added
 - **Four locally-served font sets with an in-app picker**: Geist + Geist Mono (the new default), IBM Plex Sans + Plex Mono, Source Sans 3 + Source Code Pro, and Inter + JetBrains Mono, all vendored from @fontsource packages by `npm run vendor` into `public/vendor/fonts/` (latin subset, only the weights the UI uses - 412 KB for all four sets, and the browser downloads only the active one). A new footer button (Iconsax smallcaps glyph) opens the same picker pattern as the auto-lock timeout; the choice persists per browser like the theme and applies live with no reload. Google Fonts is gone entirely: the `<link>` tags are removed and `style-src`/`font-src` tighten to `'self'` in both the CSP header and meta - the app now makes zero third-party requests of any kind, completing genuine offline/air-gapped operation. Every set ships with its upstream OFL 1.1 license file, and Dependabot tracks font updates through the same devDependency pipeline as the vendored libraries.

@@ -12,7 +12,7 @@
        which is the ENFORCING copy: browsers ignore frame-ancestors in a meta policy
        (S-12), so clickjacking protection comes from the header alone. -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
-  <link rel="stylesheet" href="styles.css?v=2.2.0">
+  <link rel="stylesheet" href="styles.css?v=2.3.0-dev">
   <!-- Vendored locally (pinned): no third-party CDN can inject code into this origin (S-08/S-09/S-10) -->
   <link id="hljs-theme" rel="stylesheet" href="vendor/hljs-styles/github-dark.min.css">
   <script src="vendor/purify.min.js"></script>
@@ -285,6 +285,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=2.2.0"></script>
+  <script src="app.js?v=2.3.0-dev"></script>
 </body>
 </html>
