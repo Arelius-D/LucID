@@ -22,6 +22,32 @@ if (CORS_ORIGIN) {
   app.use(cors({ origin: CORS_ORIGIN.split(',').map(s => s.trim()), credentials: false }));
 }
 
+// S-12: the CSP is also sent as an HTTP header. The meta tag in index.html stays as
+// defense in depth, but browsers IGNORE frame-ancestors in meta-delivered policies,
+// so until this header existed the app was embeddable by any site (clickjacking).
+// Sent from the app rather than the reverse proxy so every deployment shape gets
+// it, including bare `node server.js` and loopback-direct access. Unlike the meta,
+// style-src carries no 'unsafe-inline': the app has no inline styles, DOMPurify
+// strips style attributes from rendered markdown, and CSSOM writes are not CSP-gated.
+const CSP_HEADER = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "font-src 'self'",
+  "img-src 'self' data: blob:",
+  "connect-src 'self' https://api.github.com",
+  "object-src 'none'",
+  "frame-src 'none'",
+  "frame-ancestors 'none'",
+  "base-uri 'none'",
+  "form-action 'none'"
+].join('; ');
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', CSP_HEADER);
+  res.setHeader('X-Frame-Options', 'DENY');
+  next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 

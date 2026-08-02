@@ -117,9 +117,9 @@ LucID combines zero-trust client cryptography with transport-layer security:
 
 - **100% free and open source.** No paid tiers, no locked features, no tracking, no telemetry.
 - **Client-side E2EE.** The native Web Crypto API (`crypto.subtle`) encrypts your data locally before anything is transmitted.
-- **No third-party JavaScript.** Every script that executes in your browser is served from your own host, so no external CDN can inject code into the application. The one remaining outbound third-party request is Google Fonts for typography, which falls back to system fonts if unreachable.
+- **Zero third-party requests.** Every script and every font is served from your own host - no external CDN can inject code into the application, and no outside party sees your traffic. Typography ships as four locally-served font sets (Geist by default, IBM Plex, Source, and Inter + JetBrains), selectable from the sidebar footer.
 - **Automated dynamic DNS stack.** Integrates [DDNS Updater](https://github.com/qdm12/ddns-updater) for free domain IP syncing, with zero-touch [Caddy](https://github.com/caddyserver/caddy) Let's Encrypt TLS.
-- **Native Markdown.** Full support for code blocks, tables, task lists, blockquotes, and GitHub-style alerts, with syntax highlighting.
+- **Native Markdown.** Full support for code blocks, tables, task lists, and blockquotes, with syntax highlighting.
 - **Dual split views.** Toggle between side-by-side and top-bottom editor layouts.
 - **Folders and tags.** Organised hierarchy, with a third view for pinned notes and instant search across note titles and tags.
 - **Idle auto-lock.** Configurable inactivity timeout (off, 5, 15, or 30 minutes) with a fixed 60-minute hard ceiling that applies even when the timeout is disabled.
@@ -186,7 +186,7 @@ sequenceDiagram
     actor User as User (Browser)
     participant Crypto as Web Crypto API (client-side)
     participant Caddy as Caddy TLS Reverse Proxy (caddy:latest)
-    participant Server as Express Backend (bound to 127.0.0.1)
+    participant Server as Express Backend (published host-loopback only)
     participant Storage as Encrypted Vault (data/store.json)
 
     User->>Crypto: Master passphrase (never leaves the browser, never stored)
@@ -194,7 +194,7 @@ sequenceDiagram
     Crypto->>Crypto: AES-256-GCM encrypt titles, bodies, tags and folder names
     Crypto->>Caddy: HTTPS request carrying ciphertext only
     Caddy->>Caddy: Automatic Let's Encrypt TLS provisioning
-    Caddy->>Server: Reverse proxy to 127.0.0.1:58243 (sole ingress)
+    Caddy->>Server: Reverse proxy to app:3000 on the compose network (sole ingress)
     Server->>Storage: Atomic write, temp file then fsync then rename
     Storage-->>User: On unlock, ciphertext is returned and decrypted in-browser
 ```
@@ -254,6 +254,7 @@ LucID deliberately runs on a very small dependency surface: two runtime packages
 | `dompurify` | Sanitises rendered Markdown before it reaches the DOM |
 | `marked` | Markdown parsing |
 | `@highlightjs/cdn-assets` | Syntax highlighting for code blocks and its themes |
+| `@fontsource/*` (8 packages) | The four user-selectable UI/editor font sets, served from your origin |
 
 **How the policy is enforced:**
 
@@ -302,6 +303,7 @@ services:
     image: assarelius/lucid:latest
     container_name: lucid-app
     restart: unless-stopped
+    user: "${LUCID_UID:-1000}:${LUCID_GID:-1000}"
     ports:
       - "127.0.0.1:58243:3000"
     volumes:

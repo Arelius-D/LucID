@@ -8,28 +8,35 @@
 
 // ─── INLINE ICONSAX SVG MAP ─────────────────────────
 const ICONS = {
-  chevron: `<svg class="icon-svg tree-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`,
+  chevron: `<svg class="icon-svg tree-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08"/></svg>`,
+  chevronOpen: `<svg class="icon-svg tree-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"/></svg>`,
   folderClosed: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/><path d="M8 2h9c2 0 3 1 3 3v1.38"/></svg>`,
   folderOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.67 14.3l-.4 5c-.15 1.53-.27 2.7-2.98 2.7H5.71C3 22 2.88 20.83 2.73 19.3l-.4-5c-.08-.83.18-1.6.65-2.19l.02-.02C3.55 11.42 4.38 11 5.31 11h13.38c.93 0 1.75.42 2.29 1.07.01.01.02.02.02.03.49.59.76 1.36.67 2.2z"/><path d="M3.5 11.43V6.28c0-3.4.85-4.25 4.25-4.25h1.27c1.27 0 1.56.38 2.04 1.02l1.27 1.7c.32.42.51.68 1.36.68h2.55c3.4 0 4.25.85 4.25 4.25v1.79M9.43 17h5.14"/></svg>`,
   folderCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.81 15.73l-3.54-3.54M13.77 12.23l-3.54 3.54"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`,
-  note: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M8 13h4M8 17h8"/></svg>`,
-  noteAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.56 18v-5M12 15.5H7M8 2v3M16 2v3M15.81 3.42c3.34.12 5.03 1.35 5.13 6.05l.13 6.17c.08 4.12-.87 6.19-5.87 6.3l-6 .12c-5 .1-6.04-1.94-6.12-6.05l-.14-6.18c-.1-4.7 1.55-6 4.87-6.25l8-.16z"/></svg>`,
-  noteRemove: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M8 14h8"/></svg>`,
-  tagCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M14.83 9.17l-5.66 5.66M14.83 14.83L9.17 9.17"/></svg>`,
-  sun: `<svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
-  moon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`,
+  note: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M11 22h5c3.5 0 5-2 5-5V7c0-3-1.5-5-5-5H8C4.5 2 3 4 3 7v7"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M4 17l-2 2 2 2M7 17l2 2-2 2"/></svg>`,
+  noteAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path stroke-miterlimit="10" d="M14.5 10.65h-5M12 8.21v5"/><path d="M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86v14.09c0 1.8 1.29 2.56 2.87 1.69l4.88-2.71c.52-.29 1.36-.29 1.87 0l4.88 2.71c1.58.88 2.87.12 2.87-1.69V5.86C20.68 3.74 18.95 2 16.82 2z"/></svg>`,
+  noteRemove: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path stroke-miterlimit="10" d="M14.5 10.65h-5"/><path d="M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86v14.09c0 1.8 1.29 2.56 2.87 1.69l4.88-2.71c.52-.29 1.36-.29 1.87 0l4.88 2.71c1.58.88 2.87.12 2.87-1.69V5.86C20.68 3.74 18.95 2 16.82 2z"/></svg>`,
+  tagCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(45 12 12)"><path d="M10.28 20.25H17c2.76 0 5-2.24 5-5v-6.5c0-2.76-2.24-5-5-5h-6.72c-1.41 0-2.75.59-3.7 1.64L3.05 9.27a4.053 4.053 0 000 5.46l3.53 3.88a4.978 4.978 0 003.7 1.64z"/></g><path d="M16 14.47l-4.94-4.94M11.06 14.47L16 9.53"/></svg>`,
+  sun: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M12 18.5a6.5 6.5 0 100-13 6.5 6.5 0 000 13z"/><path stroke-width="2" d="M19.14 19.14l-.13-.13m0-14.02l.13-.13-.13.13zM4.86 19.14l.13-.13-.13.13zM12 2.08V2v.08zM12 22v-.08.08zM2.08 12H2h.08zM22 12h-.08.08zM4.99 4.99l-.13-.13.13.13z"/></svg>`,
+  moon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.03 12.42c.36 5.15 4.73 9.34 9.96 9.57 3.69.16 6.99-1.56 8.97-4.27.82-1.11.38-1.85-.99-1.6-.67.12-1.36.17-2.08.14C13 16.06 9 11.97 8.98 7.14c-.01-1.3.26-2.53.75-3.65.54-1.24-.11-1.83-1.36-1.3C4.41 3.86 1.7 7.85 2.03 12.42z"/></svg>`,
   tickCircle: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   // Sync state uses one icon family so the three states read as one indicator.
   // The glyph itself changes on failure, so colour is reinforcement rather than
   // the only signal (WCAG 1.4.1).
-  archiveTick: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86v14.09c0 1.8 1.29 2.56 2.87 1.69l4.88-2.71c.52-.29 1.36-.29 1.87 0l4.88 2.71c1.58.88 2.87.12 2.87-1.69V5.86C20.68 3.74 18.95 2 16.82 2z"/><path d="M9.59 11l1.5 1.5 4-4"/></svg>`,
+  pin: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M22 6v2.42C22 10 21 11 19.42 11H16V4.01C16 2.9 16.91 2 18.02 2c1.09.01 2.09.45 2.81 1.17C21.55 3.9 22 4.9 22 6z"/><path d="M2 7v14c0 .83.94 1.3 1.6.8l1.71-1.28c.4-.3.96-.26 1.32.1l1.66 1.67c.39.39 1.03.39 1.42 0l1.68-1.68c.35-.35.91-.39 1.3-.09l1.71 1.28c.66.49 1.6.02 1.6-.8V4c0-1.1.9-2 2-2H6C3 2 2 3.79 2 6v1z"/><path d="M6 9h6M6.75 13h4.5"/></svg>`,
+  pinAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M22 6v2.42C22 10 21 11 19.42 11H16V4.01C16 2.9 16.91 2 18.02 2c1.09.01 2.09.45 2.81 1.17C21.55 3.9 22 4.9 22 6z"/><path d="M2 7v14c0 .83.94 1.3 1.6.8l1.71-1.28c.4-.3.96-.26 1.32.1l1.66 1.67c.39.39 1.03.39 1.42 0l1.68-1.68c.35-.35.91-.39 1.3-.09l1.71 1.28c.66.49 1.6.02 1.6-.8V4c0-1.1.9-2 2-2H6C3 2 2 3.79 2 6v1z"/><path d="M6.25 10h5.5M9 12.75v-5.5"/></svg>`,
+  pinRemove: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M22 6v2.42C22 10 21 11 19.42 11H16V4.01C16 2.9 16.91 2 18.02 2c1.09.01 2.09.45 2.81 1.17C21.55 3.9 22 4.9 22 6z"/><path d="M2 7v14c0 .83.94 1.3 1.6.8l1.71-1.28c.4-.3.96-.26 1.32.1l1.66 1.67c.39.39 1.03.39 1.42 0l1.68-1.68c.35-.35.91-.39 1.3-.09l1.71 1.28c.66.49 1.6.02 1.6-.8V4c0-1.1.9-2 2-2H6C3 2 2 3.79 2 6v1z"/><path d="M6.25 10h5.5"/></svg>`,
   cloudConnection: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M6.37 9.51c-4.08.29-4.07 6.2 0 6.49h9.66c1.17.01 2.3-.43 3.17-1.22 2.86-2.5 1.33-7.5-2.44-7.98C15.41-1.34 3.62 1.75 6.41 9.51M12 16v3M12 23a2 2 0 100-4 2 2 0 000 4zM18 21h-4M10 21H6"/></svg>`,
   cloudCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M16.61 20c1.34.01 2.63-.49 3.62-1.39 3.27-2.86 1.52-8.6-2.79-9.14C15.9.13 2.43 3.67 5.62 12.56"/><path d="M7.28 12.97c-.53-.27-1.12-.41-1.71-.4-4.66.33-4.65 7.11 0 7.44M15.82 9.89c.52-.26 1.08-.4 1.66-.41M12.39 18.59l-2.83 2.82M12.39 21.41l-2.83-2.82"/></svg>`,
-  edit: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.26 3.6L5.05 12.29c-.31.33-.61.97-.67 1.41l-.37 3.22c-.13 1.17.7 1.98 1.86 1.81l3.2-.46c.44-.06 1.07-.38 1.38-.7l8.21-8.69c1.42-1.5 2.06-3.21-.09-5.24-2.14-2.01-3.83-1.32-5.31.16z"/><path d="M11.89 5.05l5.06 4.77"/></svg>`,
+  edit: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11.02 19.5H7.5c-.62 0-1.17-.02-1.66-.09-2.63-.29-3.34-1.53-3.34-4.91v-5c0-3.38.71-4.62 3.34-4.91.49-.07 1.04-.09 1.66-.09h3.46M15.02 4.5h1.48c.62 0 1.17.02 1.66.09 2.63.29 3.34 1.53 3.34 4.91v5c0 3.38-.71 4.62-3.34 4.91-.49.07-1.04.09-1.66.09h-1.48M15 2v20M8 8.5v7"/></svg>`,
   elementSplit: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H3v7h7V3zM21 3h-7v7h7V3zM10 14H3v7h7v-7zM21 14h-7v7h7v-7z"/></svg>`,
   element3: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H3v18h7V3zM21 3h-7v18h7V3z"/></svg>`,
   element2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10V3h18v7H3zM3 21v-7h18v7H3z"/></svg>`,
-  tag: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>`,
+  tag: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.17 15.3l4.53 4.53a4.78 4.78 0 006.75 0l4.39-4.39a4.78 4.78 0 000-6.75L15.3 4.17a4.75 4.75 0 00-3.6-1.39l-5 .24c-2 .09-3.59 1.68-3.69 3.67l-.24 5c-.06 1.35.45 2.66 1.4 3.61z"/><path d="M9.5 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/></svg>`,
+  trash: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 5.98c-3.33-.33-6.68-.5-10.02-.5-1.98 0-3.96.1-5.94.3L3 5.98M8.5 4.97l.22-1.31C8.88 2.71 9 2 10.69 2h2.62c1.69 0 1.82.75 1.97 1.67l.22 1.3M18.85 9.14l-.65 10.07C18.09 20.78 18 22 15.21 22H8.79C6 22 5.91 20.78 5.8 19.21L5.15 9.14M10.33 16.5h3.33M9.5 12.5h5"/></svg>`,
+  // Open state derived from lin-trash: lid+handle rotated -12deg about the lid's
+  // left hinge, path data unmodified (Iconsax draws no open-trash glyph).
+  trashOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-12 3 5.98)"><path d="M21 5.98c-3.33-.33-6.68-.5-10.02-.5-1.98 0-3.96.1-5.94.3L3 5.98M8.5 4.97l.22-1.31C8.88 2.71 9 2 10.69 2h2.62c1.69 0 1.82.75 1.97 1.67l.22 1.3"/></g><path d="M18.85 9.14l-.65 10.07C18.09 20.78 18 22 15.21 22H8.79C6 22 5.91 20.78 5.8 19.21L5.15 9.14M10.33 16.5h3.33M9.5 12.5h5"/></svg>`,
 };
 
 const AUTH_MAGIC_SENTINEL = 'LUCID_VAULT_AUTHENTICATED_V1';
@@ -55,15 +62,20 @@ const state = {
   openTagNames: new Set(),
   treeFocusId: null,
   dragNoteId: null,
+  trashPreviewId: null,    // trashed note shown READ-ONLY in the center pane; never the editor
   viewMode: DEFAULT_VIEW_MODE, // see DEFAULT_VIEW_MODE — single source of truth (J-07)
   explorerMode: 'folders', // a key of EXPLORER_MODES: 'folders' | 'tags' | 'pinned'
   activeTagFilter: null,
   decryptedTitleCache: new Map(),
+  storeLoaded: false,      // false until GET /api/store succeeds — gates the lock screen mode (J-10)
 };
 
 // --- API PATH ---
 function apiPath(endpoint) {
-  const base = window.location.pathname.replace(/\/+$/, '');
+  // Strip an explicit document segment first: a user landing on /index.html would
+  // otherwise get API paths like /index.html/api/store, which 404 and shove the
+  // lock screen into its failure mode for no real reason.
+  const base = window.location.pathname.replace(/\/index\.html?$/i, '').replace(/\/+$/, '');
   return base + '/' + endpoint;
 }
 
@@ -136,17 +148,26 @@ function showConfirmModal(title, message) {
   });
 }
 
-function showPromptModal(title, message, defaultValue = '') {
+// The prompt dialog serves folders, notes AND tags — icon and placeholder must
+// match the subject or the dialog lies about what it edits.
+const PROMPT_FOLDER_ICON = `<svg class="modal-prompt-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`;
+
+function showPromptModal(title, message, defaultValue = '', opts = {}) {
   return new Promise(resolve => {
     const modal = document.getElementById('modal-prompt');
     const titleEl = document.getElementById('modal-prompt-title');
     const msgEl = document.getElementById('modal-prompt-msg');
     const inputEl = document.getElementById('modal-prompt-input');
+    const iconEl = document.getElementById('modal-prompt-icon');
     const cancelBtn = document.getElementById('modal-prompt-btn-cancel');
     const submitBtn = document.getElementById('modal-prompt-btn-submit');
 
     titleEl.textContent = title;
     msgEl.textContent = message;
+    inputEl.placeholder = opts.placeholder || 'Name';
+    if (iconEl) iconEl.innerHTML = (opts.icon && ICONS[opts.icon])
+      ? ICONS[opts.icon].replace('icon-svg', 'modal-prompt-svg')
+      : PROMPT_FOLDER_ICON;
     inputEl.value = defaultValue;
     modal.classList.remove('hidden');
     const releaseFocus = trapFocus(modal);
@@ -189,7 +210,7 @@ const SCHEMA_VERSION = 2;
 
 // The glyph that marks a pinned note: on its row, in its context menu, and on the
 // toolbar button. One constant so the three can never disagree.
-const PIN_GLYPH = 'archiveTick';
+const PIN_GLYPH = 'pin';
 
 function bytesToB64(bytes) { return btoa(String.fromCharCode(...bytes)); }
 function b64ToBytes(b64) {
@@ -358,7 +379,12 @@ async function tryDecryptText(data, key) {
 async function decryptVaultIntoState(raw, key) {
   const folders = [];
   for (const f of (raw.folders || [])) {
-    folders.push({ ...f, name: await decryptText(f.name, key) });
+    folders.push({
+      ...f,
+      name: await decryptText(f.name, key),
+      // Absent on vaults written before the trash existed; treat as live.
+      trashed: f.trashed === undefined ? false : (await decryptText(f.trashed, key)) === 'y'
+    });
   }
   const notes = [];
   for (const n of (raw.notes || [])) {
@@ -370,7 +396,10 @@ async function decryptVaultIntoState(raw, key) {
       content: await decryptText(n.content, key),
       tags,
       // Absent on vaults written before pinning existed; treat as unpinned.
-      pinned: n.pinned === undefined ? false : (await decryptText(n.pinned, key)) === 'y'
+      pinned: n.pinned === undefined ? false : (await decryptText(n.pinned, key)) === 'y',
+      // Same rule as pinned, same reason: trash membership is metadata about what
+      // you keep and discard, so it rides encrypted, never as a bare boolean.
+      trashed: n.trashed === undefined ? false : (await decryptText(n.trashed, key)) === 'y'
     });
   }
   return { folders, notes };
@@ -379,7 +408,11 @@ async function decryptVaultIntoState(raw, key) {
 async function encryptVaultFromState(key) {
   const folders = [];
   for (const f of state.folders) {
-    folders.push({ ...f, name: await encryptText(f.name || '', key) });
+    folders.push({
+      ...f,
+      name: await encryptText(f.name || '', key),
+      trashed: await encryptText(f.trashed ? 'y' : 'n', key)
+    });
   }
   const notes = [];
   for (const n of state.notes) {
@@ -398,6 +431,7 @@ async function encryptVaultFromState(key) {
       // bytes fall in the same base64 quantum, but that is luck rather than a
       // property to rely on — 'y'/'n' is equal-length for any encoding.)
       pinned: await encryptText(n.pinned ? 'y' : 'n', key),
+      trashed: await encryptText(n.trashed ? 'y' : 'n', key),
       isEncrypted: true
     });
   }
@@ -417,6 +451,7 @@ async function fetchStore() {
     if (data.folders && data.folders.length) state.folders = data.folders;
     if (data.notes && data.notes.length) state.notes = data.notes;
     state.authVerifier = data.authVerifier || null;
+    state.storeLoaded = true;
 
     // Restore saved tree open/collapse state; first run (no saved state) defaults to all folders open.
     const savedOpenFolders = localStorage.getItem('lucid-open-folders');
@@ -426,7 +461,8 @@ async function fetchStore() {
     } else {
       state.folders.forEach(f => state.openFolderIds.add(f.id));
     }
-    const savedOpenTags = localStorage.getItem('lucid-open-tags');
+    localStorage.removeItem('lucid-open-tags');   // S-13: purge the legacy plaintext copy from disk
+    const savedOpenTags = sessionStorage.getItem('lucid-open-tags');
     if (savedOpenTags !== null) {
       try { state.openTagNames = new Set(JSON.parse(savedOpenTags)); } catch (e) {}
     }
@@ -439,8 +475,15 @@ async function fetchStore() {
     renderAll();
     updateLockScreenUI();
   } catch (err) {
+    // J-10: an unreachable store must NEVER present as first-run. Before this
+    // flag existed, a transient GET failure left authVerifier null and the lock
+    // screen offered "Initialize LucID" over an EXISTING vault — and a new
+    // passphrase typed there would have re-keyed and emptied it on the next
+    // successful save. Fail closed into an explicit unreachable mode instead.
+    state.storeLoaded = false;
     console.warn('fetchStore failed:', err);
     showSave('Vault could not be loaded from the server', 'error');
+    updateLockScreenUI();
   }
 }
 
@@ -451,6 +494,24 @@ function updateLockScreenUI() {
   const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
   const lockBtn = document.getElementById('lock-unlock-btn');
   const lockStatus = document.getElementById('lock-status');
+
+  // J-10: server unreachable — neither Unlock nor Initialize is offerable,
+  // because we do not know which one is true. The button becomes Retry.
+  if (!state.storeLoaded) {
+    if (lockStatus) {
+      lockStatus.classList.remove('hidden');
+      const s = lockStatus.querySelector('span');
+      if (s) s.textContent = 'Server unreachable';
+    }
+    if (lockTitle) lockTitle.textContent = 'LucID';
+    if (lockSubDesc) lockSubDesc.textContent = 'The vault could not be loaded from the server. Unlocking and initialization stay disabled until it answers, so nothing can be overwritten.';
+    if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
+    if (lockBtn) {
+      lockBtn.textContent = 'Retry';
+      lockBtn.disabled = false;
+    }
+    return;
+  }
 
   if (!state.authVerifier) {
     // first-time setup: not "locked" yet, so hide the locked cue
@@ -463,7 +524,11 @@ function updateLockScreenUI() {
       lockBtn.disabled = true;
     }
   } else {
-    if (lockStatus) lockStatus.classList.remove('hidden');
+    if (lockStatus) {
+      lockStatus.classList.remove('hidden');
+      const s = lockStatus.querySelector('span');
+      if (s) s.textContent = 'Vault locked';   // reset after a possible unreachable phase
+    }
     if (lockTitle) lockTitle.textContent = 'LucID';
     if (lockSubDesc) lockSubDesc.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
     if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
@@ -474,11 +539,15 @@ function updateLockScreenUI() {
   }
 }
 
-// Persist tree open/collapse to localStorage (non-sensitive UI pref).
+// Persist tree open/collapse state. Folder ids are opaque and may live in
+// localStorage; tag names are USER CONTENT in plaintext (S-13) — the vault
+// encrypts tags at rest precisely because taxonomy is content, so the open-tags
+// set is session-scoped: it dies with the tab like the unlock token, and never
+// touches disk unencrypted.
 function saveTreeState() {
   try {
     localStorage.setItem('lucid-open-folders', JSON.stringify([...state.openFolderIds]));
-    localStorage.setItem('lucid-open-tags', JSON.stringify([...state.openTagNames]));
+    sessionStorage.setItem('lucid-open-tags', JSON.stringify([...state.openTagNames]));
   } catch (e) {}
 }
 
@@ -486,6 +555,7 @@ async function saveStore() {
   // Fail closed: never write the in-memory PLAINTEXT vault to the server.
   if (!state.encryptionKey || !state.kdf) {
     console.warn('saveStore aborted: vault is locked.');
+    showSave('Locked before changes could sync', 'error');   // never silent (J-02)
     return;
   }
   try {
@@ -661,6 +731,7 @@ function renderAll() {
   renderTOC();
   renderMetrics();
   renderTags();
+  renderTrashPanel();
   updateE2EEUI();
 }
 
@@ -689,6 +760,16 @@ function clearDragState() {
   document.querySelectorAll('.tree-folder-header.drop-target').forEach(el => el.classList.remove('drop-target'));
 }
 
+// J-09: group heights are MEASURED, not hand-computed. The old (n*36+12)px
+// formula assumed 36px per row while the CSS row actually costs ~37.5px, so
+// folders clipped their tail from the 10th note. scrollHeight is the truth;
+// converted to rem so the stored value stays relational.
+function sizeTreeGroups(container) {
+  container.querySelectorAll('.tree-notes:not(.collapsed)').forEach(el => {
+    el.style.maxHeight = (el.scrollHeight / 16) + 'rem';
+  });
+}
+
 function renderTree() {
   const container = document.getElementById('folder-tree');
   if (!container) return;
@@ -697,8 +778,9 @@ function renderTree() {
   container.setAttribute('aria-label', 'Folders');
   const q = state.searchQuery.toLowerCase();
 
-  state.folders.forEach(folder => {
+  state.folders.filter(f => !f.trashed).forEach(folder => {
     const folderNotes = state.notes.filter(n => {
+      if (n.trashed) return false;
       if (n.folderId !== folder.id) return false;
       if (state.activeTagFilter && (!n.tags || !n.tags.includes(state.activeTagFilter))) return false;
       if (!q) return true;
@@ -721,7 +803,7 @@ function renderTree() {
     header.dataset.treeId = 'folder:' + folder.id;
 
     const folderIconHtml = isOpen ? ICONS.folderOpen : ICONS.folderClosed;
-    header.innerHTML = `${ICONS.chevron}${folderIconHtml} <span>${escapeHtml(folder.name)}</span><span class="count-badge">${folderNotes.length}</span>`;
+    header.innerHTML = `${isOpen ? ICONS.chevronOpen : ICONS.chevron}${folderIconHtml} <span>${escapeHtml(folder.name)}</span><span class="count-badge">${folderNotes.length}</span>`;
 
     header.addEventListener('click', () => {
       state.activeFolderId = folder.id;
@@ -735,7 +817,7 @@ function renderTree() {
     header.addEventListener('dragover', e => {
       if (!state.dragNoteId) return;
       const dragged = state.notes.find(n => n.id === state.dragNoteId);
-      if (!dragged || dragged.folderId === folder.id) return;
+      if (!dragged || (!dragged.trashed && dragged.folderId === folder.id)) return;
       e.preventDefault();                       // without this the drop never fires
       e.dataTransfer.dropEffect = 'move';
       header.classList.add('drop-target');
@@ -749,9 +831,10 @@ function renderTree() {
       clearDragState();
       if (!noteId) return;
       const note = state.notes.find(n => n.id === noteId);
-      if (!note || note.folderId === folder.id) return;
+      if (!note || (!note.trashed && note.folderId === folder.id)) return;
       await flushPendingSave();                 // never lose the in-flight edit
       note.folderId = folder.id;
+      note.trashed = false;                     // dragging out of the trash restores
       note.updatedAt = new Date().toISOString();
       state.openFolderIds.add(folder.id);       // reveal where it landed
       saveTreeState();
@@ -766,7 +849,7 @@ function renderTree() {
         { label: 'New Note in Folder', icon: ICONS.noteAdd, action: () => createNoteInFolder(folder.id) },
         { label: 'Rename Folder', icon: ICONS.edit, action: () => renameFolder(folder) },
         { divider: true },
-        { label: 'Delete Folder', icon: ICONS.folderCross, danger: true, action: () => deleteFolder(folder) }
+        { label: 'Delete Folder', icon: ICONS.folderCross, danger: true, action: () => trashFolder(folder) }
       ]);
     });
 
@@ -775,7 +858,7 @@ function renderTree() {
     const notesContainer = document.createElement('div');
     notesContainer.className = 'tree-notes' + (isOpen ? '' : ' collapsed');
     notesContainer.setAttribute('role', 'group');
-    notesContainer.style.maxHeight = isOpen ? ((folderNotes.length * 36 + 12) / 16) + 'rem' : '0';
+    if (!isOpen) notesContainer.style.maxHeight = '0';   // open groups sized by sizeTreeGroups()
 
     folderNotes.forEach(note => {
       const noteEl = document.createElement('div');
@@ -808,6 +891,7 @@ function renderTree() {
       noteEl.addEventListener('click', async e => {
         e.stopPropagation();
         await flushPendingSave();   // J-02: never drop the previous note's edits
+        state.trashPreviewId = null;   // any live selection leaves the trash preview
         state.activeNoteId = note.id;
         state.activeFolderId = note.folderId;
         renderAll();
@@ -825,6 +909,7 @@ function renderTree() {
     wrapper.appendChild(notesContainer);
     container.appendChild(wrapper);
   });
+  sizeTreeGroups(container);
   updateTreeRoving(container);
 }
 
@@ -839,7 +924,7 @@ function renderPinnedTree() {
   container.setAttribute('aria-label', 'Pinned notes');
   const q = state.searchQuery.toLowerCase();
 
-  const pinned = state.notes.filter(n => n.pinned);
+  const pinned = state.notes.filter(n => n.pinned && !n.trashed);
   const matching = pinned.filter(n => {
     if (!q) return true;
     const title = state.decryptedTitleCache.get(n.id) || n.title || '';
@@ -871,6 +956,7 @@ function renderPinnedTree() {
     noteEl.addEventListener('click', async e => {
       e.stopPropagation();
       await flushPendingSave();
+      state.trashPreviewId = null;   // any live selection leaves the trash preview
       state.activeNoteId = note.id;
       state.activeFolderId = note.folderId;
       renderAll();
@@ -896,7 +982,7 @@ function renderTagTree() {
   const q = state.searchQuery.toLowerCase();
 
   const tagMap = new Map();
-  state.notes.forEach(n => {
+  state.notes.filter(n => !n.trashed).forEach(n => {
     if (n.tags && n.tags.length) {
       n.tags.forEach(t => {
         if (!q || t.toLowerCase().includes(q)) {
@@ -924,7 +1010,7 @@ function renderTagTree() {
     header.setAttribute('aria-expanded', String(isOpen));
     header.tabIndex = -1;
     header.dataset.treeId = 'tag:' + tag;
-    header.innerHTML = `${ICONS.chevron}${ICONS.tag} <span>#${escapeHtml(tag)}</span><span class="count-badge">${tagNotes.length}</span>`;
+    header.innerHTML = `${isOpen ? ICONS.chevronOpen : ICONS.chevron}${ICONS.tag} <span>#${escapeHtml(tag)}</span><span class="count-badge">${tagNotes.length}</span>`;
 
     header.addEventListener('click', () => {
       if (state.openTagNames.has(tag)) state.openTagNames.delete(tag);
@@ -946,7 +1032,7 @@ function renderTagTree() {
     const notesContainer = document.createElement('div');
     notesContainer.className = 'tree-notes' + (isOpen ? '' : ' collapsed');
     notesContainer.setAttribute('role', 'group');
-    notesContainer.style.maxHeight = isOpen ? ((tagNotes.length * 36 + 12) / 16) + 'rem' : '0';
+    if (!isOpen) notesContainer.style.maxHeight = '0';   // open groups sized by sizeTreeGroups()
 
     tagNotes.forEach(note => {
       const noteEl = document.createElement('div');
@@ -966,6 +1052,7 @@ function renderTagTree() {
       noteEl.addEventListener('click', async e => {
         e.stopPropagation();
         await flushPendingSave();   // J-02: never drop the previous note's edits
+        state.trashPreviewId = null;   // any live selection leaves the trash preview
         state.activeNoteId = note.id;
         state.activeFolderId = note.folderId;
         renderAll();
@@ -982,6 +1069,7 @@ function renderTagTree() {
     wrapper.appendChild(notesContainer);
     container.appendChild(wrapper);
   });
+  sizeTreeGroups(container);
   updateTreeRoving(container);
 }
 
@@ -1008,8 +1096,10 @@ function refocusTree(container) {
 function initTreeKeyboard() {
   // Driven off EXPLORER_MODES so a view cannot be given rows, roving tabindex and
   // role="tree" and then be left without arrow keys, which is what happened to the
-  // pinned view while this was a hand-written list of two ids.
-  Object.values(EXPLORER_MODES).map(m => m.tree).forEach(id => {
+  // pinned view while this was a hand-written list of two ids. The trash list is
+  // not an explorer mode (it lives in its own panel above the footer) but its
+  // rows join the same wiring.
+  [...Object.values(EXPLORER_MODES).map(m => m.tree), 'trash-list'].forEach(id => {
     const container = document.getElementById(id);
     if (!container) return;
     container.addEventListener('keydown', e => {
@@ -1103,30 +1193,66 @@ async function createNoteInFolder(folderId) {
 }
 
 async function renameFolder(folder) {
-  const name = await showPromptModal('Rename Folder', 'Enter new folder name:', folder.name);
+  const name = await showPromptModal('Rename Folder', 'Enter new folder name:', folder.name, { placeholder: 'Folder name' });
   if (!name || name === folder.name) return;
   folder.name = name;
   await saveStore();
   renderAll();
 }
 
-async function deleteFolder(folder) {
-  const ok = await showConfirmModal('Delete Folder', `Are you sure you want to delete folder "${folder.name}"? Notes will be moved to Uncategorized.`);
+// ─── TRASH ─────────────────────────────────────────
+// Soft delete (decided 2026-08-02): Delete moves things here with NO confirm —
+// the trash IS the undo. The only hard deletes are the per-item "Delete
+// permanently" and "Empty Trash", both behind the confirm modal, and emptying is
+// manual only. A note's folderId doubles as its restore memory; restoring a note
+// whose folder is also in the trash brings the folder back but leaves the
+// folder's OTHER trashed notes where they are — they still point at it, so
+// restoring them later drops them straight back in. Trash state rides in the
+// vault encrypted (like pinned), so it follows the user across devices and the
+// server never learns what is kept versus discarded.
+
+function firstLiveFolder() { return state.folders.find(f => !f.trashed) || null; }
+
+function retargetActiveAfterTrash() {
+  const live = state.notes.filter(n => !n.trashed);
+  if (!live.find(n => n.id === state.activeNoteId)) {
+    state.activeNoteId = live.length ? live[0].id : null;
+    const flf = firstLiveFolder();
+    state.activeFolderId = live.length ? live[0].folderId : (flf ? flf.id : null);
+  }
+}
+
+async function trashFolder(folder) {
+  await flushPendingSave();
+  folder.trashed = true;
+  state.notes.forEach(n => {
+    if (n.folderId === folder.id && !n.trashed) {
+      n.trashed = true;
+      n.updatedAt = new Date().toISOString();
+    }
+  });
+  retargetActiveAfterTrash();
+  await saveStore();
+  renderAll();
+}
+
+async function restoreFolder(folder) {
+  folder.trashed = false;   // back to the root tree; its notes stay in the trash until restored themselves
+  await saveStore();
+  renderAll();
+}
+
+async function permaDeleteFolder(folder) {
+  const ok = await showConfirmModal('Delete Permanently', `Permanently delete folder "${folder.name}"? This cannot be undone.`);
   if (!ok) return;
   state.folders = state.folders.filter(f => f.id !== folder.id);
-  state.notes.forEach(n => {
-    if (n.folderId === folder.id) n.folderId = state.folders.length ? state.folders[0].id : null;
-  });
-  if (state.activeFolderId === folder.id) {
-    state.activeFolderId = state.folders.length ? state.folders[0].id : null;
-  }
   await saveStore();
   renderAll();
 }
 
 async function renameNote(note) {
   const currentTitle = state.decryptedTitleCache.get(note.id) || 'Untitled Note';
-  const newTitle = await showPromptModal('Rename Note', 'Enter new title:', currentTitle);
+  const newTitle = await showPromptModal('Rename Note', 'Enter new title:', currentTitle, { placeholder: 'Note title', icon: 'note' });
   if (!newTitle || newTitle === currentTitle) return;
   
   const content = note.content || '';   // already plaintext in state
@@ -1151,7 +1277,7 @@ async function renameNote(note) {
 // apply is the same defect as hiding one that can.
 function noteContextItems(note) {
   const items = [
-    { label: note.pinned ? 'Remove Pin' : 'Pin Note', icon: ICONS[PIN_GLYPH], action: () => togglePin(note) },
+    { label: note.pinned ? 'Remove Pin' : 'Pin Note', icon: note.pinned ? ICONS.pinRemove : ICONS.pinAdd, action: () => togglePin(note) },
     { label: 'Add Tag', icon: ICONS.tag, action: () => addTagToNote(note) }
   ];
   if (note.tags && note.tags.length) {
@@ -1159,12 +1285,12 @@ function noteContextItems(note) {
   }
   items.push({ label: 'Rename Note', icon: ICONS.edit, action: () => renameNote(note) });
   items.push({ divider: true });
-  items.push({ label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => deleteNote(note) });
+  items.push({ label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => trashNote(note) });
   return items;
 }
 
 async function addTagToNote(note) {
-  const input = await showPromptModal('Add Tag', 'Enter a tag (without #):');
+  const input = await showPromptModal('Add Tag', 'Enter a tag (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
   if (input === null) return;
   const tag = input.trim().replace(/^#/, '').toLowerCase();
   if (!tag) return;
@@ -1178,7 +1304,7 @@ async function addTagToNote(note) {
 
 async function removeTagFromNote(note) {
   const current = (note.tags || []).map(t => '#' + t).join('  ');
-  const input = await showPromptModal('Remove Tag', 'On this note: ' + current);
+  const input = await showPromptModal('Remove Tag', 'On this note: ' + current, '', { placeholder: 'Tag to remove', icon: 'tagCross' });
   if (input === null) return;
   const tag = input.trim().replace(/^#/, '').toLowerCase();
   if (!tag || !note.tags.includes(tag)) return;
@@ -1195,28 +1321,147 @@ async function togglePin(note) {
   await saveStore();
 }
 
-async function deleteNote(note) {
-  const ok = await showConfirmModal('Delete Note', `Are you sure you want to delete this note?`);
-  if (!ok) return;
-  state.notes = state.notes.filter(n => n.id !== note.id);
-  state.decryptedTitleCache.delete(note.id);   // J-08: don't retain a decrypted title after delete
-  state.activeNoteId = state.notes.length ? state.notes[0].id : null;
+async function trashNote(note) {
+  await flushPendingSave();
+  note.trashed = true;
+  note.updatedAt = new Date().toISOString();
+  retargetActiveAfterTrash();
   await saveStore();
   renderAll();
 }
 
+async function restoreNote(note) {
+  const home = state.folders.find(f => f.id === note.folderId);
+  if (home && home.trashed) {
+    home.trashed = false;             // the folder returns; its other trashed notes stay put
+  } else if (!home) {
+    let target = firstLiveFolder();   // original folder was permanently deleted
+    if (!target) {
+      target = { id: newId('f'), name: 'General', parentId: null, trashed: false };
+      state.folders.push(target);
+    }
+    note.folderId = target.id;
+  }
+  note.trashed = false;
+  note.updatedAt = new Date().toISOString();
+  // Restoring the previewed note opens it LIVE, in the user's own view mode.
+  if (state.trashPreviewId === note.id) state.trashPreviewId = null;
+  state.activeNoteId = note.id;
+  state.activeFolderId = note.folderId;
+  state.openFolderIds.add(note.folderId);
+  saveTreeState();
+  await saveStore();
+  renderAll();
+}
+
+async function permaDeleteNote(note) {
+  const ok = await showConfirmModal('Delete Permanently', 'Permanently delete this note? This cannot be undone.');
+  if (!ok) return;
+  state.notes = state.notes.filter(n => n.id !== note.id);
+  state.decryptedTitleCache.delete(note.id);   // J-08: don't retain a decrypted title after delete
+  await saveStore();
+  renderAll();
+}
+
+async function emptyTrash() {
+  const nf = state.folders.filter(f => f.trashed).length;
+  const nn = state.notes.filter(n => n.trashed).length;
+  if (!nf && !nn) return;
+  const ok = await showConfirmModal('Empty Trash', `Permanently delete ${nn} note(s) and ${nf} folder(s)? This cannot be undone.`);
+  if (!ok) return;
+  state.notes.filter(n => n.trashed).forEach(n => state.decryptedTitleCache.delete(n.id));
+  state.notes = state.notes.filter(n => !n.trashed);
+  state.folders = state.folders.filter(f => !f.trashed);
+  await saveStore();
+  renderAll();
+}
+
+// The panel above the trash row: trashed folders first, then notes. Rows join the
+// shared tree keyboard wiring; notes are draggable — dropping one on a live
+// folder header restores it into that folder.
+function renderTrashPanel() {
+  const list = document.getElementById('trash-list');
+  if (!list) return;
+  const tf = state.folders.filter(f => f.trashed);
+  const tn = state.notes.filter(n => n.trashed);
+  list.innerHTML = '';
+  if (!tf.length && !tn.length) {
+    list.innerHTML = '<div class="empty-state">Trash is empty</div>';
+    return;
+  }
+  tf.forEach(folder => {
+    const el = document.createElement('div');
+    el.className = 'tree-note';
+    el.setAttribute('role', 'treeitem');
+    el.tabIndex = -1;
+    el.dataset.treeId = 'trash-folder:' + folder.id;
+    el.innerHTML = `${ICONS.folderCross} <span>${escapeHtml(folder.name)}</span>`;
+    el.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showTreeContextMenu(e.clientX, e.clientY, [
+        { label: 'Restore Folder', icon: ICONS.folderOpen, action: () => restoreFolder(folder) },
+        { divider: true },
+        { label: 'Delete Permanently', icon: ICONS.trash, danger: true, action: () => permaDeleteFolder(folder) }
+      ]);
+    });
+    list.appendChild(el);
+  });
+  tn.forEach(note => {
+    const el = document.createElement('div');
+    el.className = 'tree-note';
+    el.setAttribute('role', 'treeitem');
+    el.tabIndex = -1;
+    el.dataset.treeId = 'trash-note:' + note.id;
+    if (note.id === state.trashPreviewId) el.classList.add('active');
+    let title = state.decryptedTitleCache.get(note.id);
+    if (!title || title.startsWith('ENC:')) {
+      title = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
+    }
+    el.innerHTML = `${ICONS.noteRemove} <span>${escapeHtml(title)}</span>`;
+    el.draggable = true;
+    el.addEventListener('dragstart', e => {
+      state.dragNoteId = note.id;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', note.id);
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', clearDragState);
+    // Selecting a trashed note previews it read-only in the center pane, so it
+    // can be identified before restoring. No edit path opens.
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      state.trashPreviewId = note.id;
+      renderAll();
+    });
+    el.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showTreeContextMenu(e.clientX, e.clientY, [
+        { label: 'Restore Note', icon: ICONS.note, action: () => restoreNote(note) },
+        { divider: true },
+        { label: 'Delete Permanently', icon: ICONS.trash, danger: true, action: () => permaDeleteNote(note) }
+      ]);
+    });
+    list.appendChild(el);
+  });
+  updateTreeRoving(list);
+}
+
 
 async function renameTagGlobal(oldTag) {
-  const newTag = await showPromptModal('Rename Tag', `Rename tag #${oldTag} to:`, oldTag);
-  if (!newTag || newTag === oldTag) return;
-  const clean = newTag.replace(/^#/, '').trim().toLowerCase();
+  const input = await showPromptModal('Rename Tag', `Rename tag #${oldTag} to:`, oldTag, { placeholder: 'Tag name', icon: 'tag' });
+  if (input === null) return;
+  // J-11: normalize BEFORE validating, exactly like addTagToNote — an input of
+  // "#" must not collapse into an empty tag written onto every carrier.
+  const clean = input.replace(/^#/, '').trim().toLowerCase();
+  if (!clean || clean === oldTag) return;
   state.notes.forEach(n => {
-    if (n.tags) {
-      const idx = n.tags.indexOf(oldTag);
-      if (idx !== -1) n.tags[idx] = clean;
-    }
+    if (!n.tags || !n.tags.includes(oldTag)) return;
+    // Set-dedupe: renaming #a to #b on a note that already has #b must not
+    // leave ['b','b'] behind.
+    n.tags = [...new Set(n.tags.map(t => (t === oldTag ? clean : t)))];
+    n.updatedAt = new Date().toISOString();
   });
-  triggerAutoSave();
+  await saveStore();   // immediate, like every other tag mutation (one idiom)
   renderAll();
 }
 
@@ -1226,7 +1471,7 @@ async function removeTagGlobal(tag) {
   state.notes.forEach(n => {
     if (n.tags) n.tags = n.tags.filter(t => t !== tag);
   });
-  triggerAutoSave();
+  await saveStore();
   renderAll();
 }
 
@@ -1235,9 +1480,33 @@ async function removeTagGlobal(tag) {
 // and the leftover keyword advertised an ordering guarantee its one caller does not
 // take and does not need.
 function renderActiveNote() {
-  const note = state.notes.find(n => n.id === state.activeNoteId);
   const textarea = document.getElementById('markdown-textarea');
   const preview = document.getElementById('markdown-preview');
+  const splitContainer = document.getElementById('editor-split');
+
+  // Trash preview: a selected trashed note renders READ-ONLY in the preview pane
+  // so it can be identified before restoring - the editor never loads it, so no
+  // edit path exists. The user's own view mode (including split orientation) is
+  // NEVER overwritten by this: it stays in state.viewMode and localStorage, and
+  // leaving the preview simply re-applies it.
+  const tp = state.trashPreviewId
+    ? state.notes.find(n => n.id === state.trashPreviewId && n.trashed)
+    : null;
+  if (state.trashPreviewId && !tp) state.trashPreviewId = null;   // restored or purged meanwhile
+  if (tp) {
+    splitContainer.className = 'editor-split mode-preview trash-preview';
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    const tabPreview = document.getElementById('tab-mode-preview');
+    if (tabPreview) tabPreview.classList.add('active');
+    renderPreview(tp.content || '');
+    return;
+  }
+  if (splitContainer.classList.contains('trash-preview')) {
+    // Leaving the trash preview: re-apply the persisted mode - it never changed.
+    setViewMode(state.viewMode);
+  }
+
+  const note = state.notes.find(n => n.id === state.activeNoteId);
 
   if (!note) {
     textarea.value = '';
@@ -1295,23 +1564,36 @@ function renderTOC() {
   });
 }
 
+// The inspector follows whatever the center pane shows: the trash preview when
+// one is open (read-only, identification only), otherwise the active note.
+function displayedNote() {
+  if (state.trashPreviewId) {
+    const tp = state.notes.find(n => n.id === state.trashPreviewId && n.trashed);
+    if (tp) return tp;
+  }
+  return state.notes.find(n => n.id === state.activeNoteId);
+}
+
 function renderTags() {
   const container = document.getElementById('tags-container');
-  const note = state.notes.find(n => n.id === state.activeNoteId);
+  const note = displayedNote();
   if (!note || !note.tags || !note.tags.length) {
     container.innerHTML = '<div class="empty-state">No tags</div>';
     return;
   }
   container.innerHTML = '';
+  const readOnly = !!note.trashed;   // trashed notes are not editable, tags included
   note.tags.forEach((tag, idx) => {
     const chip = document.createElement('span');
     chip.className = 'tag-chip';
-    chip.innerHTML = `#${escapeHtml(tag)} <span class="tag-del-btn" title="Remove Tag">×</span>`;
-    
-    chip.querySelector('.tag-del-btn').addEventListener('click', async e => {
+    chip.innerHTML = `#${escapeHtml(tag)}` + (readOnly ? '' : ` <span class="tag-del-btn" title="Remove Tag">×</span>`);
+
+    const del = chip.querySelector('.tag-del-btn');
+    if (del) del.addEventListener('click', async e => {
       e.stopPropagation();
       note.tags.splice(idx, 1);
-      triggerAutoSave();
+      note.updatedAt = new Date().toISOString();
+      await saveStore();
       renderTags();
       renderExplorer();
     });
@@ -1321,18 +1603,27 @@ function renderTags() {
 }
 
 function renderMetrics() {
-  const text = document.getElementById('markdown-textarea').value || '';
+  const shown = displayedNote();
+  const text = (shown && shown.trashed ? shown.content : document.getElementById('markdown-textarea').value) || '';
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
   document.getElementById('val-words').textContent = words.toLocaleString();
   document.getElementById('val-chars').textContent = text.length.toLocaleString();
   document.getElementById('val-lines').textContent = text ? text.split('\n').length.toLocaleString() : '0';
 }
 
+// An indicator must be able to say something other than "fine". The one condition
+// this badge can truthfully detect is Web Crypto being unavailable (plain HTTP to
+// an IP) — the same condition the unlock path reports as SECURE_CONTEXT_REQUIRED.
 function updateE2EEUI() {
-  const dot = document.getElementById('e2ee-dot');
-  const text = document.getElementById('e2ee-text');
-  if (dot) dot.classList.add('active');
-  if (text) text.textContent = 'E2EE Active · AES-256-GCM';
+  const badge = document.getElementById('e2ee-badge');
+  if (!badge) return;
+  const ok = !!(window.crypto && window.crypto.subtle);
+  const msg = ok ? 'E2EE Active · AES-256-GCM' : 'E2EE unavailable · needs HTTPS';
+  badge.classList.toggle('error', !ok);
+  badge.title = msg;
+  badge.setAttribute('aria-label', msg);
+  const sr = badge.querySelector('.visually-hidden');
+  if (sr) sr.textContent = msg;
 }
 
 function escapeHtml(str) {
@@ -1396,7 +1687,7 @@ function initSidebarResizers() {
     });
     window.addEventListener('mousemove', e => {
       if (!dragging) return;
-      const newWidth = Math.max(208, Math.min(480, e.clientX));
+      const newWidth = Math.max(240, Math.min(480, e.clientX));   // floor matches the CSS min-width (15rem)
       root.style.setProperty('--left-w', px2rem(newWidth));
       localStorage.setItem('lucid-left-width', newWidth);
     });
@@ -1421,7 +1712,7 @@ function initSidebarResizers() {
     });
     window.addEventListener('mousemove', e => {
       if (!dragging) return;
-      const newWidth = Math.max(180, Math.min(400, window.innerWidth - e.clientX));
+      const newWidth = Math.max(192, Math.min(400, window.innerWidth - e.clientX));   // floor matches the CSS min-width (12rem)
       root.style.setProperty('--right-w', px2rem(newWidth));
       localStorage.setItem('lucid-right-width', newWidth);
     });
@@ -1477,39 +1768,50 @@ function initSplitHandle() {
 }
 
 // ─── VIEW MODE TABS WITH OPTION A ICONSAX SVGS ──────
-function initViewModeTabs() {
+// Module scope, not inside the init closure: renderActiveNote re-applies the
+// persisted mode when leaving the trash preview. Choosing a view tab is itself
+// an explicit exit from the trash preview - the pane then belongs to the LIVE
+// active note again, in the mode the user just chose.
+function setViewMode(mode) {
   const tabEditor = document.getElementById('tab-mode-editor');
   const tabSplit = document.getElementById('tab-mode-split');
   const tabPreview = document.getElementById('tab-mode-preview');
   const splitContainer = document.getElementById('editor-split');
+  const wasTrashPreview = state.trashPreviewId !== null;
+  state.trashPreviewId = null;
 
-  function setViewMode(mode) {
-    state.viewMode = mode;
-    [tabEditor, tabSplit, tabPreview].forEach(t => t && t.classList.remove('active'));
-    splitContainer.className = 'editor-split mode-' + mode;
+  state.viewMode = mode;
+  [tabEditor, tabSplit, tabPreview].forEach(t => t && t.classList.remove('active'));
+  splitContainer.className = 'editor-split mode-' + mode;
 
-    const iconSpan = tabSplit ? tabSplit.querySelector('.split-tab-icon') : null;
+  const iconSpan = tabSplit ? tabSplit.querySelector('.split-tab-icon') : null;
 
-    if (mode === 'editor') {
-      tabEditor && tabEditor.classList.add('active');
-      if (iconSpan) iconSpan.innerHTML = ICONS.elementSplit; // lin-element-4.svg
-    } else if (mode.startsWith('split')) {
-      tabSplit && tabSplit.classList.add('active');
-      if (iconSpan) {
-        // Option A: lin-element-3.svg for Side-by-Side (Left/Right) and lin-element-2.svg for Top/Bottom
-        iconSpan.innerHTML = mode === 'split-horizontal' ? ICONS.element3 : ICONS.element2;
-      }
-      tabSplit.title = mode === 'split-horizontal' ? 'Split View (Side-by-Side Left/Right — Click to switch to Top/Bottom)' : 'Split View (Top/Bottom — Click to switch to Left/Right)';
-    } else if (mode === 'preview') {
-      tabPreview && tabPreview.classList.add('active');
-      if (iconSpan) iconSpan.innerHTML = ICONS.elementSplit; // lin-element-4.svg
+  if (mode === 'editor') {
+    tabEditor && tabEditor.classList.add('active');
+    if (iconSpan) iconSpan.innerHTML = ICONS.elementSplit; // lin-element-4.svg
+  } else if (mode.startsWith('split')) {
+    tabSplit && tabSplit.classList.add('active');
+    if (iconSpan) {
+      // Option A: lin-element-3.svg for Side-by-Side (Left/Right) and lin-element-2.svg for Top/Bottom
+      iconSpan.innerHTML = mode === 'split-horizontal' ? ICONS.element3 : ICONS.element2;
     }
-
-    localStorage.setItem('lucid-view-mode', mode);
+    tabSplit.title = mode === 'split-horizontal' ? 'Split View (Side-by-Side Left/Right — Click to switch to Top/Bottom)' : 'Split View (Top/Bottom — Click to switch to Left/Right)';
+  } else if (mode === 'preview') {
+    tabPreview && tabPreview.classList.add('active');
+    if (iconSpan) iconSpan.innerHTML = ICONS.elementSplit; // lin-element-4.svg
   }
 
+  localStorage.setItem('lucid-view-mode', mode);
+  if (wasTrashPreview) { renderActiveNote(); renderTOC(); renderTags(); renderMetrics(); }
+}
+
+function initViewModeTabs() {
+  const tabEditor = document.getElementById('tab-mode-editor');
+  const tabSplit = document.getElementById('tab-mode-split');
+  const tabPreview = document.getElementById('tab-mode-preview');
+
   if (tabEditor) tabEditor.addEventListener('click', () => setViewMode('editor'));
-  
+
   if (tabSplit) {
     tabSplit.addEventListener('click', () => {
       if (state.viewMode === 'split-horizontal') {
@@ -1519,7 +1821,7 @@ function initViewModeTabs() {
       }
     });
   }
-  
+
   if (tabPreview) tabPreview.addEventListener('click', () => setViewMode('preview'));
 
   // First-run default: split with preview ON, stacked top/bottom (works on any screen width).
@@ -1564,6 +1866,43 @@ function initThemeToggle() {
     const current = localStorage.getItem('lucid-theme') || 'dusk-ember';
     const next = current === 'dusk-ember' ? 'warm-linen' : 'dusk-ember';
     applyTheme(next);
+  });
+}
+
+// ─── FONT SET PICKER ───────────────────────────────
+// Four locally-vendored sets; the choice is a UI preference exactly like the
+// theme: stored in localStorage, applied by swapping the two font tokens via
+// data-fontset. Browsers download only the active set's files, so the three
+// unchosen sets cost nothing at runtime.
+const FONT_SETS = [
+  { id: 'geist',  label: 'Geist + Geist Mono' },
+  { id: 'plex',   label: 'IBM Plex Sans + IBM Plex Mono' },
+  { id: 'source', label: 'Source Sans 3 + Source Code Pro' },
+  { id: 'inter',  label: 'Inter + JetBrains Mono' },
+];
+const DEFAULT_FONT_SET = 'geist';
+
+function applyFontSet(id) {
+  if (!FONT_SETS.some(s => s.id === id)) id = DEFAULT_FONT_SET;
+  document.documentElement.setAttribute('data-fontset', id);
+  document.body.setAttribute('data-fontset', id);
+  localStorage.setItem('lucid-fontset', id);
+}
+
+function initFontPicker() {
+  applyFontSet(localStorage.getItem('lucid-fontset') || DEFAULT_FONT_SET);
+  const btn = document.getElementById('btn-fontset');
+  if (!btn) return;
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const current = localStorage.getItem('lucid-fontset') || DEFAULT_FONT_SET;
+    const rect = btn.getBoundingClientRect();
+    const items = FONT_SETS.map(s => ({
+      label: s.label,
+      icon: s.id === current ? ICONS.tickCircle : '<span class="menu-icon-blank"></span>',
+      action: () => applyFontSet(s.id)
+    }));
+    showTreeContextMenu(rect.left, rect.top, items);
   });
 }
 
@@ -1734,9 +2073,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   marked.setOptions({
     breaks: true,
     gfm: true,
-    headerIds: false,
-    mangle: false,
   });
+  // GitHub-style alerts (> [!NOTE] etc). Degrades to a plain blockquote if the
+  // vendored extension is missing, mirroring the sanitizer's fail-safe posture.
 
   document.getElementById('app').classList.add('hidden');
 
@@ -1746,6 +2085,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initViewModeTabs();
   initTreeKeyboard();
   initThemeToggle();
+  initFontPicker();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
   updateRuntimeIndicator();
@@ -1778,6 +2118,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnToggleRight.addEventListener('click', () => { sidebarRight.classList.add('collapsed'); syncRight(); });
     btnExpandRight.addEventListener('click', () => { sidebarRight.classList.remove('collapsed'); syncRight(); });
     syncRight(); // collapsed by default → expand button visible on load
+  }
+
+  // ── Trash row: click toggles the panel above it; right-click offers Empty ──
+  const trashBtn = document.getElementById('btn-mode-trash');
+  const trashPanel = document.getElementById('trash-panel');
+  if (trashBtn && trashPanel) {
+    // The lid opens whenever the can is "in use": panel open, or a live note
+    // hovering over the row mid-drag. Same closed/open glyph convention as
+    // folders; the open glyph is lin-trash-open, derived from lin-trash.
+    const trashIcon = document.getElementById('trash-row-icon');
+    const syncTrashIcon = () => {
+      const open = !trashPanel.hasAttribute('hidden') || trashBtn.classList.contains('drop-target');
+      if (trashIcon) trashIcon.innerHTML = open ? ICONS.trashOpen : ICONS.trash;
+    };
+    trashBtn.addEventListener('click', () => {
+      const opening = trashPanel.hasAttribute('hidden');
+      if (opening) trashPanel.removeAttribute('hidden');
+      else trashPanel.setAttribute('hidden', '');
+      trashBtn.classList.toggle('open', opening);
+      trashBtn.setAttribute('aria-expanded', String(opening));
+      if (opening) renderTrashPanel();
+      // Closing the panel while previewing a trashed note ends the preview; the
+      // user's persisted view mode re-applies via renderActiveNote.
+      if (!opening && state.trashPreviewId) { state.trashPreviewId = null; renderAll(); }
+      syncTrashIcon();
+    });
+    trashBtn.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      const n = state.folders.filter(f => f.trashed).length + state.notes.filter(x => x.trashed).length;
+      if (!n) return;
+      showTreeContextMenu(e.clientX, e.clientY, [
+        { label: 'Empty Trash', icon: ICONS.trash, danger: true, action: () => emptyTrash() }
+      ]);
+    });
+    // Drag a LIVE note onto the row to delete it — the counterpart of dragging
+    // a trashed note onto a folder to restore it. Row fills with --bg-drop and
+    // the lid opens while the note hovers, mirroring the folder drop convention.
+    trashBtn.addEventListener('dragover', e => {
+      if (!state.dragNoteId) return;
+      const dragged = state.notes.find(n => n.id === state.dragNoteId);
+      if (!dragged || dragged.trashed) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      trashBtn.classList.add('drop-target');
+      syncTrashIcon();
+    });
+    trashBtn.addEventListener('dragleave', () => {
+      trashBtn.classList.remove('drop-target');
+      syncTrashIcon();
+    });
+    trashBtn.addEventListener('drop', async e => {
+      e.preventDefault();
+      const noteId = state.dragNoteId;
+      clearDragState();
+      trashBtn.classList.remove('drop-target');
+      syncTrashIcon();
+      const note = state.notes.find(n => n.id === noteId);
+      if (!note || note.trashed) return;
+      await trashNote(note);
+      syncTrashIcon();
+    });
   }
 
   // EXPANDABLE SEARCH BELOW EXPLORER HEADER ROW
@@ -1832,15 +2233,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const btnAddTag = document.getElementById('btn-add-tag');
   if (btnAddTag) {
     btnAddTag.addEventListener('click', async () => {
+      if (state.trashPreviewId) return;   // trash preview is read-only, tags included
       const note = state.notes.find(n => n.id === state.activeNoteId);
       if (!note) return;
-      const tag = await showPromptModal('Add Tag', 'Enter tag name (without #):');
+      const tag = await showPromptModal('Add Tag', 'Enter tag name (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
       if (!tag) return;
       if (!note.tags) note.tags = [];
       const cleanTag = tag.replace(/^#/, '').trim().toLowerCase();
       if (cleanTag && !note.tags.includes(cleanTag)) {
         note.tags.push(cleanTag);
-        triggerAutoSave();
+        note.updatedAt = new Date().toISOString();
+        await saveStore();
         renderTags();
         renderExplorer();
       }
@@ -1864,7 +2267,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // New folder button
   document.getElementById('btn-new-folder').addEventListener('click', async () => {
-    const name = await showPromptModal('New Folder', 'Enter a name for the new folder:');
+    const name = await showPromptModal('New Folder', 'Enter a name for the new folder:', '', { placeholder: 'Folder name' });
     if (!name || !name.trim()) return;
     const folder = { id: newId('f'), name: name.trim(), parentId: null };
     state.folders.push(folder);
@@ -1955,6 +2358,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function unlockVault() {
+    // J-10: in unreachable mode the button reads Retry — attempt the fetch again.
+    if (!state.storeLoaded) {
+      lockBtn.textContent = 'Retrying…';
+      lockBtn.disabled = true;
+      await fetchStore();
+      updateLockScreenUI();
+      return;
+    }
     const pass = lockInput ? lockInput.value : '';
     const confirmPass = lockConfirmInput ? lockConfirmInput.value : '';
 
@@ -2015,6 +2426,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const plain = await decryptVaultIntoState(src, derived);
         state.folders = plain.folders;
         state.notes = plain.notes;
+        // J-12: refresh the title cache from the now-PLAINTEXT notes. fetchStore
+        // primed it before unlock, when every title was still ciphertext, and
+        // nothing re-primed it here — so the cache held ENC: strings for the whole
+        // session and each renderer quietly fell back to note.title to cover it.
+        // The session-restore path already did this; the passphrase path did not.
+        await preloadDecryptedTitles();
       }
 
       await persistSessionKey(derived);   // stores the non-extractable key, not the passphrase
@@ -2074,7 +2491,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
-  function lockVault() {
+  async function lockVault() {
+    await flushPendingSave();   // J-02's last gap: a lock inside the debounce window must not drop the edit
     clearSessionKey();          // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
     document.getElementById('app').classList.add('hidden');

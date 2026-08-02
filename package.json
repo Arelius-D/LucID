@@ -2,6 +2,11 @@
   "name": "lucid",
   "version": "2.2.0-dev",
   "description": "100% Free, E2EE, 3-Pane Web Note-Taking Application",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -12,8 +17,16 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@fontsource/geist": "^5.3.0",
+    "@fontsource/geist-mono": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/source-code-pro": "^5.3.0",
+    "@fontsource/source-sans-3": "^5.3.0",
+    "@highlightjs/cdn-assets": "^11.11.1",
     "dompurify": "^3.4.12",
-    "marked": "^18.0.7",
-    "@highlightjs/cdn-assets": "^11.11.1"
+    "marked": "^18.0.7"
   }
 }

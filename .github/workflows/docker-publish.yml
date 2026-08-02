@@ -2,10 +2,10 @@ name: Build & Publish LucID Docker Container
 
 on:
   push:
-    branches: [ "main", "master", "dev" ]
+    branches: [ "main", "dev" ]
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "main", "master", "dev" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build-and-push:
@@ -33,6 +33,26 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+
+      - name: Build image for boot smoke test
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: lucid-smoke:ci
+
+      - name: Boot smoke test (image must start and serve /health and /api/version)
+        run: |
+          docker run -d --rm --name lucid-smoke -p 127.0.0.1:3000:3000 lucid-smoke:ci
+          ok=0
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/health >/dev/null 2>&1; then ok=1; break; fi
+            sleep 1
+          done
+          if [ "$ok" != "1" ]; then docker logs lucid-smoke; docker stop lucid-smoke; exit 1; fi
+          curl -fsS http://127.0.0.1:3000/health
+          curl -fsS http://127.0.0.1:3000/api/version
+          docker stop lucid-smoke
 
       - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'

@@ -1,1 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M14.83 9.17l-5.66 5.66M14.83 14.83L9.17 9.17"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+  <!-- Derived from authentic lin-tag-cross: body rotated 45deg about (12,12) to match the lin-tag / lin-tag-2 tilt; cross strokes kept unrotated so the X stays an X (a rotated X reads as a plus). Path data unmodified. -->
+  <g transform="rotate(45 12 12)">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.28 20.25H17c2.76 0 5-2.24 5-5v-6.5c0-2.76-2.24-5-5-5h-6.72c-1.41 0-2.75.59-3.7 1.64L3.05 9.27a4.053 4.053 0 000 5.46l3.53 3.88a4.978 4.978 0 003.7 1.64z"/>
+  </g>
+  <path stroke-linecap="round" stroke-width="1.5" d="M16 14.47l-4.94-4.94M11.06 14.47L16 9.53"/>
+</svg>

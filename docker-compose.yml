@@ -3,6 +3,7 @@ services:
     image: assarelius/lucid:latest
     container_name: lucid-app
     restart: unless-stopped
+    user: "${LUCID_UID:-1000}:${LUCID_GID:-1000}"
     ports:
       - "127.0.0.1:58243:3000"
     volumes:
