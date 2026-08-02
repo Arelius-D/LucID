@@ -40,7 +40,7 @@ However, **the implementation as a whole has not been reviewed by an independent
 
 - **A compromised endpoint.** If your device has malware, a keylogger, or a hostile browser extension, the passphrase can be captured as you type it. No client-side encryption survives a compromised client.
 - **A weak passphrase.** Key strength derives from your passphrase. 600,000 PBKDF2 iterations raise the cost per guess, but a short or common passphrase remains brute-forceable.
-- **Metadata.** Record identifiers, timestamps, and the count and structure of notes and folders are stored in plaintext. Identifiers are deliberately non-descriptive — randomly generated for the seeded vault, timestamp-derived for anything you create — so they reveal nothing about content, but they are readable. An observer with server access can see *that* you have 40 notes across 5 folders and when they were modified, never *what* they contain.
+- **Metadata.** Record identifiers, timestamps, and the count and structure of notes and folders are stored in plaintext. Identifiers are deliberately non-descriptive — randomly generated — so they reveal nothing about content, but they are readable. An observer with server access can see *that* you have 40 notes across 5 folders and when they were modified, never *what* they contain.
 - **Lost passphrases.** There is no backdoor, no recovery key, no reset. If you lose your passphrase your notes are permanently unreadable. This is a deliberate consequence of zero-knowledge encryption, not an oversight.
 - **An attacker who already controls the server binary.** A modified server could serve modified client JavaScript. Verify the image you deploy, and prefer published tags over unverified builds.
 

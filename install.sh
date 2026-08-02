@@ -31,6 +31,13 @@ REAL_USER="${SUDO_USER:-$USER}"
 REAL_HOME=$(eval echo "~${REAL_USER}")
 INSTALL_DIR="${LUCID_DIR:-${REAL_HOME}/lucid}"
 
+# The app container runs as the INSTALLING user - detected, never guessed.
+# Compose reads these from .env, so vault files are created with the user's own
+# ownership and normal permissions instead of a world-writable workaround.
+LUCID_UID="$(id -u "${REAL_USER}" 2>/dev/null || id -u)"
+LUCID_GID="$(id -g "${REAL_USER}" 2>/dev/null || id -g)"
+export LUCID_UID LUCID_GID
+
 # Determine Docker CLI wrapper (auto-detect sudo requirement)
 DOCKER_CMD="docker"
 if ! docker info >/dev/null 2>&1; then
@@ -111,22 +118,25 @@ if [ "$PURGE" -eq 1 ]; then
         fi
       done < "${INSTALL_DIR}/.ufw_rules"
     else
-      # Fallback teardown for default LucID stack ports (never touching Port 22)
-      for rule in "${PORT:-58243}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
-        if [[ ! "${rule}" =~ ^22(/|$) ]]; then
-          sudo ufw delete allow "${rule}" >/dev/null 2>&1 || true
-        fi
-      done
+      # No ledger means no proof this installer added anything. Purge restores
+      # the firewall to its pre-install state and nothing else - without the
+      # record, the only correct move is to leave the firewall alone.
+      echo "  - No .ufw_rules ledger found; firewall left untouched."
     fi
   fi
   echo -e "${GREEN}[OK]${NC}"
   
   echo -n "[TEARDOWN] Removing LucID Docker images... "
-  ${DOCKER_CMD} rmi -f assarelius/lucid:latest assarelius/lucid:dev "assarelius/lucid:${IMAGE_TAG}" caddy:latest qmcgaw/ddns-updater:latest >/dev/null 2>&1 || true
+  # Only LucID's own images. caddy:latest and qmcgaw/ddns-updater:latest are
+  # shared bases another stack on the host may be using.
+  ${DOCKER_CMD} rmi -f assarelius/lucid:latest assarelius/lucid:dev "assarelius/lucid:${IMAGE_TAG}" >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
-  
-  echo -n "[TEARDOWN] Pruning unused Docker system caches and volumes... "
-  ${DOCKER_CMD} system prune -af --volumes >/dev/null 2>&1 || true
+
+  echo -n "[TEARDOWN] Removing LucID's named volumes... "
+  # compose down -v already removed them when the compose file was present; this
+  # covers the case where it was not. Scoped to this project - a purge must never
+  # touch volumes, images or caches belonging to anything else on the host.
+  ${DOCKER_CMD} volume rm lucid_caddy_data lucid_caddy_config >/dev/null 2>&1 || true
   echo -e "${GREEN}[OK]${NC}"
 
   echo -n "[TEARDOWN] Cleaning local directory (${INSTALL_DIR})... "
@@ -219,10 +229,20 @@ if command -v ufw >/dev/null 2>&1; then
   UFW_STATUS=$(sudo ufw status 2>/dev/null | grep -i "Status:" | awk '{print $2}' || echo "inactive")
   echo "  - UFW Status: ${UFW_STATUS}"
   if [ "${UFW_STATUS}" = "active" ]; then
-    echo "  - Ensuring firewall rules for ports ${PORT}/tcp, 80/tcp, 443/tcp, 8000/tcp..."
-    for rule in "${PORT}/tcp" "80/tcp" "443/tcp" "8000/tcp"; do
+    # Only Caddy's ingress needs firewall rules. The app port and the DDNS UI are
+    # published on 127.0.0.1 in docker-compose.yml, so the kernel refuses outside
+    # connections to them no matter what the firewall says - allowing them would
+    # add rules that serve nothing.
+    echo "  - Ensuring firewall rules for ports 80/tcp and 443/tcp (Caddy ingress)..."
+    for rule in "80/tcp" "443/tcp"; do
       # SAFETY GUARD: Never touch port 22
-      if [[ ! "${rule}" =~ ^22(/|$) ]]; then
+      if [[ "${rule}" =~ ^22(/|$) ]]; then continue; fi
+      # The ledger records only rules THIS install ADDS. Purge restores the
+      # firewall to its pre-install state - an allowance the user already had
+      # (their own web server, another stack) is never recorded, never removed.
+      if sudo ufw status | grep -qE "^${rule}[[:space:]]+ALLOW"; then
+        echo "  - ${rule} already allowed (pre-existing; purge will not touch it)"
+      else
         sudo ufw allow "${rule}" >/dev/null 2>&1 || true
         echo "${rule}" >> .ufw_rules
       fi
@@ -274,7 +294,7 @@ EOF
 else
   # Force reading interactive prompts from /dev/tty if available
   TTY_DEV="/dev/tty"
-  if [ -c "$TTY_DEV" ] && [ "$1" != "-y" ]; then
+  if [ -c "$TTY_DEV" ]; then
     echo ""
     echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
     echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
@@ -389,6 +409,10 @@ pull_with_backoff() {
 if [ -f docker-compose.yml ]; then
   sed -i "s|image: assarelius/lucid:.*|image: assarelius/lucid:${IMAGE_TAG}|g" docker-compose.yml
 fi
+
+# Persist the detected uid/gid for compose (idempotent across re-runs).
+grep -q '^LUCID_UID=' .env 2>/dev/null || echo "LUCID_UID=${LUCID_UID}" >> .env
+grep -q '^LUCID_GID=' .env 2>/dev/null || echo "LUCID_GID=${LUCID_GID}" >> .env
 pull_with_backoff "assarelius/lucid:${IMAGE_TAG}"
 pull_with_backoff "caddy:latest"
 pull_with_backoff "qmcgaw/ddns-updater:latest"
@@ -398,11 +422,14 @@ echo ""
 echo -e "${BLUE}[DEPLOY] Launching LucID stack using ${COMPOSE_EXEC}...${NC}"
 ${COMPOSE_EXEC} up -d
 
-# Fix permissions again post-container launch (ensure data files are readable by host user)
+# Ownership post-launch: the container now writes as the installing user, so no
+# permission workaround is needed. Existing installs upgraded from versions where
+# the container wrote as uid 1000 get their data realigned to the user - best
+# effort, a no-op on fresh installs and wherever the uid already matches.
 if [ -n "$SUDO_USER" ]; then
   chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR" 2>/dev/null || true
 fi
-chmod 666 ./data/store.json 2>/dev/null || true
+sudo chown -R "${LUCID_UID}:${LUCID_GID}" ./data 2>/dev/null || chown -R "${LUCID_UID}:${LUCID_GID}" ./data 2>/dev/null || true
 
 # 12. Post-Deploy Health Check & DNS Resolution Audit
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
@@ -432,12 +459,12 @@ echo -e "${GREEN}  LucID Production E2EE Web Application is Online!${NC}"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════${NC}"
 echo ""
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
-  echo -e "  ${BOLD}${MAGENTA}🔒 PRIMARY PRODUCTION URL (Caddy + Let's Encrypt TLS):${NC}"
-  echo -e "     👉 ${CYAN}${BOLD}https://${DOMAIN_NAME}${NC}"
+  echo -e "  ${BOLD}${MAGENTA}[URL]  Primary production URL (Caddy + Let's Encrypt TLS):${NC}"
+  echo -e "         ${CYAN}${BOLD}https://${DOMAIN_NAME}${NC}"
   echo ""
 fi
-echo -e "  📁 Installed Directory:   ${GREEN}${INSTALL_DIR}${NC}"
-echo -e "  🔌 Server Public IP:       ${GREEN}${DETECTED_IP}${NC}"
-echo -e "  🌐 Direct Web Access:      http://${DOMAIN_NAME}:${PORT}"
-echo -e "  🔄 DDNS Updater Web UI:    http://${DOMAIN_NAME}:8000"
+echo -e "  [DIR]  Installed directory:    ${GREEN}${INSTALL_DIR}${NC}"
+echo -e "  [IP]   Server public IP:       ${GREEN}${DETECTED_IP}${NC}"
+echo -e "  [APP]  App API, host-only:     http://127.0.0.1:${PORT}   (loopback bind; reach via the host or an SSH tunnel)"
+echo -e "  [DDNS] Updater UI, host-only:  http://127.0.0.1:8000    (loopback bind; never published to the internet)"
 echo -e "${GREEN}═══════════════════════════════════════════════════════════════════════${NC}"
