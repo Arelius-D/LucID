@@ -121,7 +121,7 @@ LucID combines zero-trust client cryptography with transport-layer security:
 - **Automated dynamic DNS stack.** Integrates [DDNS Updater](https://github.com/qdm12/ddns-updater) for free domain IP syncing, with zero-touch [Caddy](https://github.com/caddyserver/caddy) Let's Encrypt TLS.
 - **Native Markdown.** Full support for code blocks, tables, task lists, blockquotes, and GitHub-style alerts, with syntax highlighting.
 - **Dual split views.** Toggle between side-by-side and top-bottom editor layouts.
-- **Folders and tags.** Organised hierarchy with instant fuzzy search across notes and tags.
+- **Folders and tags.** Organised hierarchy, with a third view for pinned notes and instant search across note titles and tags.
 - **Idle auto-lock.** Configurable inactivity timeout (off, 5, 15, or 30 minutes) with a fixed 60-minute hard ceiling that applies even when the timeout is disabled.
 - **Dual themes.** Dusk Ember (dark) and Warm Linen (light).
 

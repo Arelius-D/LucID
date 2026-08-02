@@ -189,15 +189,6 @@ body {
   flex-shrink: 0;
 }
 
-@keyframes iconSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.icon-spin {
-  animation: iconSpin 1.1s linear infinite;
-}
-
 ::selection {
   background: var(--accent-subtle);
   color: var(--text-primary);
@@ -230,6 +221,9 @@ body {
   overflow: hidden;
   background: var(--bg-base);
 }
+/* The app is hidden while the vault is locked. A class rather than an inline style,
+   so the display value lives here with the rule that defines it. */
+.app-container.hidden { display: none; }
 
 /* ─── SIDEBAR RESIZERS ──────────────────────────── */
 .sidebar-resizer {
@@ -412,7 +406,6 @@ body {
                             held two pills of three buttons and needed only 180px. */
   max-width: 30rem;
   flex-shrink: 0;
-  container-type: inline-size;   /* enables the icon-only container query below */
 }
 
 .right-pane {
@@ -1225,7 +1218,7 @@ select:focus-visible,
   color: var(--bg-base);
 }
 
-.toc-container {
+.toc-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-2xs);
@@ -1590,6 +1583,8 @@ select:focus-visible,
   margin-bottom: var(--space-md);
   font-weight: 500;
 }
+.lock-error.hidden { display: none; }
+
 .lock-btn {
   width: 100%;
   display: block;
@@ -1680,8 +1675,7 @@ select:focus-visible,
    to reduce motion keep the colour and glyph change and lose only the movement. */
 @media (prefers-reduced-motion: reduce) {
   .footer-github-link.update-available,
-  .sync-status-badge.saving,
-  .icon-spin {
+  .sync-status-badge.saving {
     animation: none;
   }
 }
