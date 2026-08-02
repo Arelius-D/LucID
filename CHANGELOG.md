@@ -6,8 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.1.0-dev] - unreleased
-
+## [2.1.0] - 2026-08-02
 ### Added
 - **Pin a note**: right-click any note and pin it. Pinned notes carry a marker on their row and appear together under a third explorer view alongside Folders and Tags. Only notes pin — a folder is a container, and pinning one would mean deciding whether its contents came with it. The pinned view is a flat list: there is no hierarchy among pinned notes and nothing to expand.
 - **Pinned state is encrypted**: the flag rides in the vault so it follows you between devices, but it is encrypted rather than sent as a plain boolean. A bare `pinned: true` would travel in clear alongside `folderId` and hand the server the list of notes you consider most important — precisely the metadata the vault exists to hide. Vaults written before pinning existed have no such field and are treated as unpinned, so they open unchanged.
