@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.2.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.1.0] - 2026-08-02
 ### Added
 - **Pin a note**: right-click any note and pin it. Pinned notes carry a marker on their row and appear together under a third explorer view alongside Folders and Tags. Only notes pin — a folder is a container, and pinning one would mean deciding whether its contents came with it. The pinned view is a flat list: there is no hierarchy among pinned notes and nothing to expand.
