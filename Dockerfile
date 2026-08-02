@@ -7,7 +7,7 @@
 # 2026-06-01 with no further security patches, so taking the higher number would
 # have shipped users an unpatched runtime. v24 (Krypton) is Active LTS and is
 # supported to 2028-04-30. Next move is v26, which becomes LTS on 2026-10-28.
-FROM node:24-alpine
+FROM node:26-alpine
 
 WORKDIR /app
 
