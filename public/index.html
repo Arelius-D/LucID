@@ -46,7 +46,7 @@
                 <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M7 7h.01"/></svg>
               </button>
               <button id="btn-mode-pinned" class="explorer-pill-btn" title="Pinned Notes" aria-label="Pinned Notes">
-                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2c2 0 3 1.01 3 3.03v7.05c0 1.99-1.41 2.76-3.14 1.72l-1.32-.8c-.3-.18-.78-.18-1.08 0l-1.32.8C8.41 14.84 7 14.07 7 12.08V5.03C7 3.01 8 2 10 2h4z"/><path d="M6.82 4.99C3.41 5.56 2 7.66 2 11.9v3.03C2 19.98 4 22 9 22h6c5 0 7-2.02 7-7.07V11.9c0-4.31-1.46-6.42-5-6.94"/></svg>
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86v14.09c0 1.8 1.29 2.56 2.87 1.69l4.88-2.71c.52-.29 1.36-.29 1.87 0l4.88 2.71c1.58.88 2.87.12 2.87-1.69V5.86C20.68 3.74 18.95 2 16.82 2z"/><path d="M9.59 11l1.5 1.5 4-4"/></svg>
               </button>
               <span class="toolbar-divider" aria-hidden="true"></span>
               <button id="btn-new-note" class="icon-btn action-pill-btn" title="New Note" aria-label="New Note">
@@ -89,7 +89,7 @@
           <div class="footer-actions-row">
             <div class="footer-status-cluster">
               <a href="https://github.com/Arelius-D/LucID" target="_blank" rel="noopener noreferrer" class="footer-github-link" title="View LucID Repository on GitHub" aria-label="View LucID Repository on GitHub">
-                <svg class="icon-svg github-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                 </svg>
               </a>
@@ -130,7 +130,10 @@
               <span>Editor</span>
             </button>
             <button id="tab-mode-split" class="view-tab" title="Toggle Split Orientation (Side-by-Side ↔ Top-Bottom)" aria-label="Toggle Split Orientation (Side-by-Side ↔ Top-Bottom)">
-              <span class="split-tab-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3H3v18h7V3zM21 3h-7v18h7V3z"/></svg></span>
+              <!-- Must be the geometry of ICONS.element2, the icon setViewMode() injects
+                   for DEFAULT_VIEW_MODE ('split-vertical'). Markup that disagrees with
+                   what JS writes over it flashes the wrong glyph on first paint. -->
+              <span class="split-tab-icon"><svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10V3h18v7H3zM3 21v-7h18v7H3z"/></svg></span>
               <span>Split</span>
             </button>
             <button id="tab-mode-preview" class="view-tab" title="Preview Only" aria-label="Preview Only">
@@ -262,7 +265,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M18.07 9.57L12 3.5 5.93 9.57M12 20.5V3.67"/></svg>
         <span>Caps Lock is on</span>
       </div>
-      <div id="lock-error" class="lock-error" role="alert" aria-live="assertive" style="display:none"></div>
+      <div id="lock-error" class="lock-error hidden" role="alert" aria-live="assertive"></div>
       <button id="lock-unlock-btn" class="lock-btn">Unlock</button>
       <small class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
     </div>

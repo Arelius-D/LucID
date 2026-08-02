@@ -18,11 +18,10 @@ const ICONS = {
   tagCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3H6C4.34 3 3 4.34 3 6v4c0 .8.32 1.56.88 2.12l8 8c1.17 1.17 3.07 1.17 4.24 0l4-4c1.17-1.17 1.17-3.07 0-4.24l-8-8C11.56 3.32 10.8 3 10 3z"/><path d="M14.83 9.17l-5.66 5.66M14.83 14.83L9.17 9.17"/></svg>`,
   sun: `<svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
   moon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`,
-  tickCircle: `<svg class="icon-svg check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
+  tickCircle: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   // Sync state uses one icon family so the three states read as one indicator.
   // The glyph itself changes on failure, so colour is reinforcement rather than
   // the only signal (WCAG 1.4.1).
-  bookmark2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M14 2c2 0 3 1.01 3 3.03v7.05c0 1.99-1.41 2.76-3.14 1.72l-1.32-.8c-.3-.18-.78-.18-1.08 0l-1.32.8C8.41 14.84 7 14.07 7 12.08V5.03C7 3.01 8 2 10 2h4z"/><path d="M6.82 4.99C3.41 5.56 2 7.66 2 11.9v3.03C2 19.98 4 22 9 22h6c5 0 7-2.02 7-7.07V11.9c0-4.31-1.46-6.42-5-6.94"/></svg>`,
   archiveTick: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M16.82 2H7.18C5.05 2 3.32 3.74 3.32 5.86v14.09c0 1.8 1.29 2.56 2.87 1.69l4.88-2.71c.52-.29 1.36-.29 1.87 0l4.88 2.71c1.58.88 2.87.12 2.87-1.69V5.86C20.68 3.74 18.95 2 16.82 2z"/><path d="M9.59 11l1.5 1.5 4-4"/></svg>`,
   cloudConnection: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M6.37 9.51c-4.08.29-4.07 6.2 0 6.49h9.66c1.17.01 2.3-.43 3.17-1.22 2.86-2.5 1.33-7.5-2.44-7.98C15.41-1.34 3.62 1.75 6.41 9.51M12 16v3M12 23a2 2 0 100-4 2 2 0 000 4zM18 21h-4M10 21H6"/></svg>`,
   cloudCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M16.61 20c1.34.01 2.63-.49 3.62-1.39 3.27-2.86 1.52-8.6-2.79-9.14C15.9.13 2.43 3.67 5.62 12.56"/><path d="M7.28 12.97c-.53-.27-1.12-.41-1.71-.4-4.66.33-4.65 7.11 0 7.44M15.82 9.89c.52-.26 1.08-.4 1.66-.41M12.39 18.59l-2.83 2.82M12.39 21.41l-2.83-2.82"/></svg>`,
@@ -57,7 +56,7 @@ const state = {
   treeFocusId: null,
   dragNoteId: null,
   viewMode: DEFAULT_VIEW_MODE, // see DEFAULT_VIEW_MODE — single source of truth (J-07)
-  explorerMode: 'folders', // 'folders' or 'tags'
+  explorerMode: 'folders', // a key of EXPLORER_MODES: 'folders' | 'tags' | 'pinned'
   activeTagFilter: null,
   decryptedTitleCache: new Map(),
 };
@@ -66,6 +65,18 @@ const state = {
 function apiPath(endpoint) {
   const base = window.location.pathname.replace(/\/+$/, '');
   return base + '/' + endpoint;
+}
+
+// --- RECORD IDS ---
+// Random, not `Date.now()`. Record ids are the one thing in the vault that is NOT
+// encrypted — the server has to be able to address a note without reading it — so
+// anything encoded in an id is handed over in clear. A timestamp id publishes the
+// exact creation time of every note and folder, which is precisely the metadata the
+// rest of the vault boundary exists to withhold. It also collides for two records
+// created in the same millisecond. Mirrors server.js newId(), byte width included.
+function newId(prefix) {
+  const bytes = crypto.getRandomValues(new Uint8Array(8));
+  return prefix + '-' + [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // ─── MODAL FOCUS MANAGEMENT (A-02) ─────────────────
@@ -176,9 +187,9 @@ function showPromptModal(title, message, defaultValue = '') {
 const KDF_DEFAULTS = { algo: 'PBKDF2-SHA256', iterations: 600000, hash: 'SHA-256' };
 const SCHEMA_VERSION = 2;
 
-// Candidate glyph for pinning, used in all three places at once: the row marker,
-// the context-menu item, and the toolbar mode button. 'bookmark2' or 'archiveTick'.
-let PIN_GLYPH = 'archiveTick';
+// The glyph that marks a pinned note: on its row, in its context menu, and on the
+// toolbar button. One constant so the three can never disagree.
+const PIN_GLYPH = 'archiveTick';
 
 function bytesToB64(bytes) { return btoa(String.fromCharCode(...bytes)); }
 function b64ToBytes(b64) {
@@ -544,8 +555,7 @@ function triggerAutoSave() {
     commitEditorToNote(targetId);
     state.pendingNoteId = null;
     await saveStore();
-    if (state.explorerMode === 'folders') renderTree();
-    else renderTagTree();
+    renderExplorer();
     renderTOC();
   }, 500);
 }
@@ -616,26 +626,37 @@ async function updateRuntimeIndicator() {
 }
 
 // ─── RENDERERS ─────────────────────────────────────
+// The three views over the same notes, as data rather than as branches. Module
+// scope on purpose: the mode toggle, the keyboard handler and every renderer
+// need the same list, and when this was three separate `if (mode === 'folders')`
+// chains the third view was missed by four of them — edits and searches went on
+// rendering the tag tree into a hidden container while the pinned list sat
+// stale. A fourth view is now a row here, not another branch in five places.
+const EXPLORER_MODES = {
+  folders: { btn: 'btn-mode-folders', tree: 'folder-tree', render: renderTree },
+  tags:    { btn: 'btn-mode-tags',    tree: 'tag-tree',    render: renderTagTree },
+  pinned:  { btn: 'btn-mode-pinned',  tree: 'pinned-tree', render: renderPinnedTree }
+};
+
+// Show the container belonging to the active mode, hide the other two, and
+// render it. The single entry point for "the note list changed".
+function renderExplorer() {
+  if (!EXPLORER_MODES[state.explorerMode]) state.explorerMode = 'folders';
+  const active = state.explorerMode;
+  Object.entries(EXPLORER_MODES).forEach(([name, m]) => {
+    const btn = document.getElementById(m.btn);
+    const tree = document.getElementById(m.tree);
+    if (btn) {
+      btn.classList.toggle('active', name === active);
+      btn.setAttribute('aria-pressed', String(name === active));
+    }
+    if (tree) tree.classList.toggle('hidden', name !== active);
+  });
+  EXPLORER_MODES[active].render();
+}
+
 function renderAll() {
-  const folderTree = document.getElementById('folder-tree');
-  const tagTree = document.getElementById('tag-tree');
-  const pinnedTree = document.getElementById('pinned-tree');
-  if (state.explorerMode === 'folders') {
-    if (tagTree) tagTree.classList.add('hidden');
-    if (pinnedTree) pinnedTree.classList.add('hidden');
-    if (folderTree) folderTree.classList.remove('hidden');
-    renderTree();
-  } else if (state.explorerMode === 'pinned') {
-    if (folderTree) folderTree.classList.add('hidden');
-    if (tagTree) tagTree.classList.add('hidden');
-    if (pinnedTree) pinnedTree.classList.remove('hidden');
-    renderPinnedTree();
-  } else {
-    if (folderTree) folderTree.classList.add('hidden');
-    if (pinnedTree) pinnedTree.classList.add('hidden');
-    if (tagTree) tagTree.classList.remove('hidden');
-    renderTagTree();
-  }
+  renderExplorer();
   renderActiveNote();
   renderTOC();
   renderMetrics();
@@ -643,13 +664,6 @@ function renderAll() {
   updateE2EEUI();
 }
 
-// Cleanup for a finished drag. This lives here, and is called by the DROP handler,
-// because `dragend` is unreachable after a successful drop: the drop calls
-// renderAll(), which rebuilds the tree and destroys the very element the drag
-// started on, so the browser has nothing left to fire dragend at. Measured on a
-// live session: 20 dragstarts, 18 drops, 2 dragends — the two being the drags that
-// were abandoned without dropping. Cleanup therefore has to belong to the path that
-// actually runs, not to the one that only runs when the user changes their mind.
 // Move focus onto a row that has just been rendered, so the keyboard lands where
 // the user's attention already is and focus is not left sitting on the button that
 // created the thing.
@@ -662,6 +676,13 @@ function focusTreeItem(treeId) {
   el.focus();
 }
 
+// Cleanup for a finished drag. It is called by the DROP handler, and not left to
+// `dragend`, because dragend is unreachable after a successful drop: the drop calls
+// renderAll(), which rebuilds the tree and destroys the very element the drag
+// started on, so the browser has nothing left to fire dragend at. Measured on a
+// live session: 20 dragstarts, 18 drops, 2 dragends — the two being the drags that
+// were abandoned without dropping. Cleanup therefore has to belong to the path that
+// actually runs, not to the one that only runs when the user changes their mind.
 function clearDragState() {
   state.dragNoteId = null;
   document.querySelectorAll('.tree-note.dragging').forEach(el => el.classList.remove('dragging'));
@@ -888,7 +909,7 @@ function renderTagTree() {
   });
 
   if (!tagMap.size) {
-    container.innerHTML = '<div class="empty-state" style="padding:1rem;text-align:center">No matching tags</div>';
+    container.innerHTML = '<div class="empty-state empty-state-pane">No matching tags</div>';
     return;
   }
 
@@ -985,7 +1006,10 @@ function refocusTree(container) {
   if (el) { all.forEach(i => i.tabIndex = -1); el.tabIndex = 0; el.focus(); }
 }
 function initTreeKeyboard() {
-  ['folder-tree', 'tag-tree'].forEach(id => {
+  // Driven off EXPLORER_MODES so a view cannot be given rows, roving tabindex and
+  // role="tree" and then be left without arrow keys, which is what happened to the
+  // pinned view while this was a hand-written list of two ids.
+  Object.values(EXPLORER_MODES).map(m => m.tree).forEach(id => {
     const container = document.getElementById(id);
     if (!container) return;
     container.addEventListener('keydown', e => {
@@ -1058,12 +1082,13 @@ document.addEventListener('click', closeContextMenu);
 // Context menu actions
 async function createNoteInFolder(folderId) {
   const newNote = {
-    id: 'n-' + Date.now(),
+    id: newId('n'),
     folderId,
     title: 'New Note',
     content: '# New Note\n\nStart writing here...',
     isEncrypted: !!state.encryptionKey,
     tags: [],
+    pinned: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   };
@@ -1180,15 +1205,6 @@ async function deleteNote(note) {
   renderAll();
 }
 
-async function manageNoteTags(note) {
-  const tagStr = (note.tags || []).join(', ');
-  const input = await showPromptModal('Manage Tags', 'Enter tags separated by commas:', tagStr);
-  if (input === null) return;
-  note.tags = input.split(',').map(t => t.trim().replace(/^#/, '').toLowerCase()).filter(Boolean);
-  triggerAutoSave();
-  renderTags();
-  renderTagTree();
-}
 
 async function renameTagGlobal(oldTag) {
   const newTag = await showPromptModal('Rename Tag', `Rename tag #${oldTag} to:`, oldTag);
@@ -1214,7 +1230,11 @@ async function removeTagGlobal(tag) {
   renderAll();
 }
 
-async function renderActiveNote() {
+// Not async: the vault is decrypted into memory on unlock, so this reads plaintext
+// straight out of state. It awaited a per-note decrypt before that boundary moved,
+// and the leftover keyword advertised an ordering guarantee its one caller does not
+// take and does not need.
+function renderActiveNote() {
   const note = state.notes.find(n => n.id === state.activeNoteId);
   const textarea = document.getElementById('markdown-textarea');
   const preview = document.getElementById('markdown-preview');
@@ -1293,7 +1313,7 @@ function renderTags() {
       note.tags.splice(idx, 1);
       triggerAutoSave();
       renderTags();
-      renderTagTree();
+      renderExplorer();
     });
 
     container.appendChild(chip);
@@ -1547,40 +1567,17 @@ function initThemeToggle() {
   });
 }
 
-// ─── EXPLORER DUAL MODE PILL TOGGLE (Folders vs Tags) ─
+// ─── EXPLORER MODE PILL TOGGLE (Folders / Tags / Pinned) ─
 function initExplorerModeToggle() {
-  // Three views over the same notes. Each owns one container and one pill button,
-  // so adding a fourth later is a row in this table rather than another branch.
-  const MODES = {
-    folders: { btn: 'btn-mode-folders', tree: 'folder-tree', render: renderTree },
-    tags:    { btn: 'btn-mode-tags',    tree: 'tag-tree',    render: renderTagTree },
-    pinned:  { btn: 'btn-mode-pinned',  tree: 'pinned-tree', render: renderPinnedTree }
-  };
-
   const pinBtn = document.getElementById('btn-mode-pinned');
   if (pinBtn) pinBtn.innerHTML = ICONS[PIN_GLYPH];
 
-  function updateExplorerUI(mode) {
-    if (!MODES[mode]) mode = 'folders';
-    state.explorerMode = mode;
-    Object.entries(MODES).forEach(([name, m]) => {
-      const btn = document.getElementById(m.btn);
-      const tree = document.getElementById(m.tree);
-      if (btn) {
-        btn.classList.toggle('active', name === mode);
-        btn.setAttribute('aria-pressed', String(name === mode));
-      }
-      if (tree) tree.classList.toggle('hidden', name !== mode);
-    });
-    MODES[mode].render();
-  }
-
-  Object.entries(MODES).forEach(([name, m]) => {
+  Object.entries(EXPLORER_MODES).forEach(([name, m]) => {
     const btn = document.getElementById(m.btn);
-    if (btn) btn.addEventListener('click', () => updateExplorerUI(name));
+    if (btn) btn.addEventListener('click', () => { state.explorerMode = name; renderExplorer(); });
   });
 
-  updateExplorerUI(state.explorerMode);
+  renderExplorer();
 }
 // ─── REPOSITORY / UPDATE INDICATOR ─────────────────
 // Two requests, once per page load, held in memory. Nothing polls and nothing
@@ -1741,7 +1738,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     mangle: false,
   });
 
-  document.getElementById('app').style.display = 'none';
+  document.getElementById('app').classList.add('hidden');
 
   await fetchStore();
   initSidebarResizers();
@@ -1827,8 +1824,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     searchInput.addEventListener('input', e => {
       state.searchQuery = e.target.value;
-      if (state.explorerMode === 'folders') renderTree();
-      else renderTagTree();
+      renderExplorer();
     });
   }
 
@@ -1846,7 +1842,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         note.tags.push(cleanTag);
         triggerAutoSave();
         renderTags();
-        renderTagTree();
+        renderExplorer();
       }
     });
   }
@@ -1870,7 +1866,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-new-folder').addEventListener('click', async () => {
     const name = await showPromptModal('New Folder', 'Enter a name for the new folder:');
     if (!name || !name.trim()) return;
-    const folder = { id: 'f-' + Date.now(), name: name.trim(), parentId: null };
+    const folder = { id: newId('f'), name: name.trim(), parentId: null };
     state.folders.push(folder);
     state.activeFolderId = folder.id;
     state.openFolderIds.add(folder.id);
@@ -1894,7 +1890,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const v1 = lockInput ? lockInput.value : '';
     const v2 = lockConfirmInput ? lockConfirmInput.value : '';
 
-    if (lockError) lockError.style.display = 'none';
+    if (lockError) lockError.classList.add('hidden');
 
     // 1. Either empty -> Neutral disabled state
     if (!v1 || !v2) {
@@ -1949,7 +1945,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     if (lockError) {
       lockError.textContent = 'Passphrases do not match. Please try again.';
-      lockError.style.display = 'block';
+      lockError.classList.remove('hidden');
     }
     if (lockBtn) {
       lockBtn.classList.remove('is-ready');
@@ -1964,7 +1960,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!pass) {
       lockError.textContent = 'Please enter a passphrase.';
-      lockError.style.display = 'block';
+      lockError.classList.remove('hidden');
       return;
     }
 
@@ -1972,19 +1968,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!state.authVerifier) {
       if (!confirmPass) {
         lockError.textContent = 'Please confirm your master passphrase.';
-        lockError.style.display = 'block';
+        lockError.classList.remove('hidden');
         return;
       }
       if (pass !== confirmPass) {
         lockError.textContent = 'Passphrases do not match. Please try again.';
-        lockError.style.display = 'block';
+        lockError.classList.remove('hidden');
         return;
       }
     }
 
     lockBtn.textContent = !state.authVerifier ? 'Creating Vault…' : 'Verifying Passphrase…';
     lockBtn.disabled = true;
-    lockError.style.display = 'none';
+    lockError.classList.add('hidden');
 
     try {
       // First-time setup mints fresh per-vault KDF params (random salt).
@@ -1997,7 +1993,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const check = await tryDecryptText(state.authVerifier, derived);
         if (check !== AUTH_MAGIC_SENTINEL) {
           lockError.textContent = 'Invalid master passphrase. Access denied.';
-          lockError.style.display = 'block';
+          lockError.classList.remove('hidden');
           lockBtn.textContent = 'Unlock';
           lockBtn.disabled = false;
           state.encryptionKey = null;
@@ -2023,7 +2019,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       await persistSessionKey(derived);   // stores the non-extractable key, not the passphrase
       lockScreen.classList.add('hidden');
-      document.getElementById('app').style.display = 'flex';
+      document.getElementById('app').classList.remove('hidden');
       updateE2EEUI();
       renderAll();
     } catch (err) {
@@ -2032,7 +2028,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         lockError.textContent = 'Authentication error. Access denied.';
       }
-      lockError.style.display = 'block';
+      lockError.classList.remove('hidden');
       lockBtn.textContent = !state.authVerifier ? 'Next' : 'Unlock';
       lockBtn.disabled = !state.authVerifier;
     }
@@ -2081,10 +2077,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function lockVault() {
     clearSessionKey();          // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
-    document.getElementById('app').style.display = 'none';
+    document.getElementById('app').classList.add('hidden');
     lockScreen.classList.remove('hidden');
     lockInput.value = '';
-    if (lockError) lockError.style.display = 'none';
+    if (lockError) lockError.classList.add('hidden');
     updateLockScreenUI();
     lockBtn.disabled = false;
   }
@@ -2153,7 +2149,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (restored) {
     await preloadDecryptedTitles();
     lockScreen.classList.add('hidden');
-    document.getElementById('app').style.display = 'flex';
+    document.getElementById('app').classList.remove('hidden');
     updateE2EEUI();
     renderAll();
   } else {
