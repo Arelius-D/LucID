@@ -1,6 +1,6 @@
 {
   "name": "lucid",
-  "version": "2.1.0",
+  "version": "2.2.0-dev",
   "description": "100% Free, E2EE, 3-Pane Web Note-Taking Application",
   "main": "server.js",
   "scripts": {
