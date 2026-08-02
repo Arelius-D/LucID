@@ -1,6 +1,13 @@
 # Pinned major version for reproducible builds (was: node:alpine, a floating tag
 # that could jump Node majors between two identical builds).
-FROM node:22-alpine
+#
+# Even-numbered lines only, and only while they are Active LTS. Odd majors are
+# Current releases with roughly seven months of life and no LTS phase at all:
+# Dependabot proposed node:25-alpine here, and v25 reached end of life on
+# 2026-06-01 with no further security patches, so taking the higher number would
+# have shipped users an unpatched runtime. v24 (Krypton) is Active LTS and is
+# supported to 2028-04-30. Next move is v26, which becomes LTS on 2026-10-28.
+FROM node:24-alpine
 
 WORKDIR /app
 
