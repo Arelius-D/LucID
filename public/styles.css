@@ -1122,6 +1122,10 @@ select:focus-visible,
   overflow: hidden;
   min-height: 0;
   background: var(--bg-base);
+  /* The content area draws the same hairline the tree's indent guide draws, so the
+     whole middle section has a real top edge at the 3.25rem band boundary — the one
+     horizontal line every other pane's edge can be measured against. */
+  border-top: var(--hairline) solid var(--border);
 }
 
 /* MODE 1: EDITOR ONLY */
@@ -1997,6 +2001,8 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
   .editor-split.mode-preview .split-handle,
   .editor-split.mode-split-vertical .split-handle,
   .editor-split.mode-split-horizontal .split-handle { display: none; }
+
+  .editor-split { border-top: none; }
 
   .app-container,
   .center-pane,
