@@ -351,10 +351,10 @@ body {
 }
 
 .brand-header {
-  /* No dividing borders — the header blends into the sidebar as one continuous
-     surface, the same way the footer does. (Panel/center separation is the
-     resizer.) Horizontal inset matches the body/footer so edges line up. */
-  border-bottom: none;
+  /* Draws the same hairline as the content area and the inspector header, so the
+     3.25rem band closes with ONE line running the full width of the window rather
+     than a line that exists only over the centre pane. */
+  border-bottom: var(--hairline) solid var(--border);
   border-right: none;
   padding-left: var(--space-md);
   padding-right: var(--space-md);
@@ -415,13 +415,13 @@ body {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-xs) var(--space-sm);
-  gap: var(--space-sm);
+  padding: var(--space-3xs) var(--space-xs);
+  gap: var(--space-2xs);
 }
 .view-tab {
   font-size: var(--text-sm);
   font-weight: 500;
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-2xs) var(--space-md);
   border-radius: var(--radius-md);
   border: var(--hairline) solid transparent;
   background: transparent;
@@ -508,6 +508,7 @@ body {
 .inspector-header {
   height: 3.25rem;
   min-height: 3.25rem;
+  border-bottom: var(--hairline) solid var(--border);
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -540,7 +541,9 @@ body {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 0.875rem var(--space-md);
+  /* Top inset chosen to put the pill row the same distance BELOW the band line as
+     the toolbar contents sit above it. It used to be 18px against their 1px. */
+  padding: var(--space-sm) var(--space-md) 0.875rem;
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
