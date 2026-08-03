@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.5.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.4.0] - 2026-08-03
 ### Added
 - **Tags are chosen, not retyped**: the note's right-click menu and the inspector's **+** now open one **Tags…** picker listing every tag in your vault with a toggle per row — on where the note carries it, off where the tag is available to apply. Click to flip; the menu stays open so tagging several at once costs one open. Typing is reserved for the single **New tag…** entry, so a typo can no longer silently mint a near-duplicate, and removing a tag never means typing it back from memory. Long lists scroll inside the menu.
