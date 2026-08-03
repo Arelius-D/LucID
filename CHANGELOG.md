@@ -16,6 +16,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Focus mode**: the maximise button puts LucID into real fullscreen — no tab strip, no bookmarks bar, no OS chrome — with both side panes out of the way, so the note is the only thing on the display. Escape leaves, and the button follows the browser's own fullscreen state rather than assuming, so it can never claim focus mode while you are out of it.
 
 ### Fixed
+- **Setup fields stop competing for attention**: a mismatch used to paint BOTH passphrase boxes red — one problem shown twice, when the first field is only the reference and is never the thing that is wrong — while the focused box added an accent ring on top, so two colours argued over one control. A mismatch now marks the confirm field alone, a match still marks the pair, and when focus lands on a field that already carries a state the ring adopts that state's colour instead of the accent.
+- The copy confirmation on code blocks uses the ticked square rather than the ticked circle, leaving the circle as what it is everywhere else: the selected marker in single-choice menus.
 
 ---
 
