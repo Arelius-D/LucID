@@ -1649,6 +1649,34 @@ select:focus-visible,
   object-fit: cover;
   box-shadow: var(--shadow-lg);
 }
+/* A refused passphrase shakes the field instead of pushing a line into the card:
+   nothing moves except the input itself, so the button stays where the cursor
+   already is. Six keyframes, no JS animation loop.
+   The message still exists for screen readers (role=alert), just visually hidden,
+   and prefers-reduced-motion trades the shake back for the visible line, because
+   without motion the red edge alone would be colour-only signalling. */
+@keyframes lock-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-0.375rem); }
+  40% { transform: translateX(0.375rem); }
+  60% { transform: translateX(-0.25rem); }
+  80% { transform: translateX(0.125rem); }
+}
+.lock-input.shake { animation: lock-shake var(--motion-slow) var(--ease-standard); }
+
+@media (prefers-reduced-motion: reduce) {
+  .lock-input.shake { animation: none; }
+  .lock-error.visually-hidden {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+  }
+}
+
 /* Fixed-height row for failure messages. Reserved so the card cannot shift under
    the cursor when one appears. */
 .lock-msg-slot {

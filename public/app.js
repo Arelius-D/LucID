@@ -537,7 +537,7 @@ function refreshLockGate() {
   // Existing vault: one field, and correctness cannot be known until it is
   // tried. The only honest gate is "something was typed".
   if (state.authVerifier) {
-    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
+    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch', 'shake');
     if (lockBtn) {
       lockBtn.textContent = 'Unlock';
       lockBtn.disabled = !v1;
@@ -552,7 +552,7 @@ function refreshLockGate() {
   const setGlow = cls => {
     [lockInput, lockConfirmInput].forEach(el => {
       if (!el) return;
-      el.classList.remove('is-matched', 'is-mismatch');
+      el.classList.remove('is-matched', 'is-mismatch', 'shake');
       if (cls) el.classList.add(cls);
     });
   };
@@ -2527,8 +2527,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         // STRICT PASSPHRASE VERIFICATION: must decrypt the sentinel exactly.
         const check = await tryDecryptText(state.authVerifier, derived);
         if (check !== AUTH_MAGIC_SENTINEL) {
+          // Shake the field and keep the words for assistive tech only: the
+          // visible line would cost a row of height on every failure.
           lockError.textContent = 'Wrong passphrase';
           lockError.classList.remove('hidden');
+          lockError.classList.add('visually-hidden');
+          if (lockInput) {
+            lockInput.classList.remove('shake');
+            void lockInput.offsetWidth;          // restart the animation
+            lockInput.classList.add('shake');
+            lockInput.classList.add('is-mismatch');
+            lockInput.addEventListener('animationend', () => lockInput.classList.remove('shake'), { once: true });
+            lockInput.select();
+          }
           lockBtn.textContent = 'Unlock';
           lockBtn.disabled = false;
           state.encryptionKey = null;
@@ -2632,7 +2643,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('app').classList.add('hidden');
     lockScreen.classList.remove('hidden');
     lockInput.value = '';
-    if (lockError) lockError.classList.add('hidden');
+    if (lockError) { lockError.classList.add('hidden'); lockError.classList.remove('visually-hidden'); }
     updateLockScreenUI();
     lockBtn.disabled = false;
   }

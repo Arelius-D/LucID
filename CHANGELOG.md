@@ -16,6 +16,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Server-unreachable state no longer offers a passphrase box**. Retry re-fetches the vault and never tested a passphrase, so the field, the eye and the footer are hidden and the only control is the one that does something. Its glyph is a stopped heartbeat, matching the runtime badge in the footer.
 
 ### Fixed
+- **A refused passphrase shakes the field** instead of pushing a message line into the card. The field jolts once and its edge turns red; nothing else moves, so the button stays exactly where your cursor already is. The words *Wrong passphrase* remain in the page for screen readers, and if you have reduced motion switched on the visible line comes back instead of the shake — without motion, a red edge alone would be colour-only signalling. Typing again clears all of it.
+
 - **One gate for the button and the Enter key**. Enter used to bypass the disabled button, which is why "Please enter a passphrase", "Please confirm your master passphrase" and "Passphrases do not match" existed at all. The button and Enter now share a single gate, so those three messages became unreachable and were deleted: the field glow and the button state already say it.
 - **Glow on glow**: a matched field painted a coloured edge, a tinted fill *and* an outer ring, while focus painted its own edge and ring on top. The two channels are now separate — focus owns the ring, validation owns the edge and fill — so only the field you are actually in wears a ring.
 - **The card no longer shifts under the cursor**: messages appear in a reserved row of fixed height instead of being inserted into the layout, which used to slide the button at the moment you clicked it.
