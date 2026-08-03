@@ -529,6 +529,16 @@ async function fetchStore() {
 // it can be pressed, in every state. Enter routes through the same gate, so the
 // old guard messages (empty field, missing confirm, mismatch) are unreachable by
 // construction and no longer exist.
+let refusalTimer = null;
+// The shake's duration lives in --motion-slow. Read it rather than restating it,
+// so the hold and the animation stay one decision.
+function refusalHoldMs() {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--motion-slow').trim();
+  const n = parseFloat(raw);
+  if (!Number.isFinite(n)) return 350;
+  return raw.endsWith('ms') ? n : n * 1000;
+}
+
 function refreshLockGate() {
   const lockInput = document.getElementById('lock-passphrase');
   const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
@@ -548,7 +558,7 @@ function refreshLockGate() {
   // Existing vault: one field, and correctness cannot be known until it is
   // tried. The only honest gate is "something was typed".
   if (state.authVerifier) {
-    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch', 'shake');
+    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch', 'is-refused', 'shake');
     if (lockBtn) {
       lockBtn.textContent = 'Unlock';
       lockBtn.disabled = !v1;
@@ -563,7 +573,7 @@ function refreshLockGate() {
   const setGlow = (cls, onlyConfirm) => {
     [lockInput, lockConfirmInput].forEach(el => {
       if (!el) return;
-      el.classList.remove('is-matched', 'is-mismatch', 'shake');
+      el.classList.remove('is-matched', 'is-mismatch', 'is-refused', 'shake');
       if (!cls) return;
       // A match belongs to the PAIR, so both fields carry it. A mismatch belongs to
       // the confirm field alone: the first field is the reference and is never the
@@ -2665,18 +2675,24 @@ document.addEventListener('DOMContentLoaded', async () => {
           lockError.classList.remove('hidden');
           lockError.classList.add('visually-hidden');
           if (lockInput) {
-            // Clear the field and shake it. Nothing else: an empty box needs no
-            // red edge, so a refusal reads as one gesture instead of a colour
-            // pile-up. Retyping is the only next step anyway.
+            // Clear the field, then say refused twice over in one gesture: the
+            // edge turns danger and the box shakes, together, for one beat.
             lockInput.value = '';
-            lockInput.classList.remove('shake', 'is-mismatch', 'is-matched');
+            lockInput.classList.remove('shake', 'is-mismatch', 'is-matched', 'is-refused');
             // Gate FIRST: it repaints the button for the now-empty field and it
-            // also strips the shake class, so adding the class after it is the
-            // only order that survives.
+            // also strips these classes, so adding them after it is the only
+            // order that survives.
             refreshLockGate();
             void lockInput.offsetWidth;          // restart the animation
-            lockInput.classList.add('shake');
-            lockInput.addEventListener('animationend', () => lockInput.classList.remove('shake'), { once: true });
+            lockInput.classList.add('shake', 'is-refused');
+            // A timer, not animationend: with reduced motion there is no
+            // animation to end, and a throttled background tab never fires it
+            // either. Duration comes from the same token that drives the shake,
+            // so the two can never drift apart.
+            clearTimeout(refusalTimer);
+            refusalTimer = setTimeout(() => {
+              lockInput.classList.remove('shake', 'is-refused');
+            }, refusalHoldMs());
             lockInput.focus();
           }
           lockBtn.textContent = 'Unlock';
@@ -2812,8 +2828,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Auto-lock timeout picker (footer) ──
   const AUTOLOCK_OPTIONS = [
-    // TEMPORARY, for verifying the idle sweep end to end. Remove once proven.
-    { min: 5 / 60, label: '5 seconds (test)' },
     { min: 0,  label: 'Off (60 minutes)' },
     { min: 5,  label: '5 minutes' },
     { min: 15, label: '15 minutes' },

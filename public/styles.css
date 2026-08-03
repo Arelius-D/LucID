@@ -1822,6 +1822,13 @@ select:focus-visible,
    owns the edge and the fill (what the app thinks of what you typed). Before
    this, a focused matched field carried a ring, a tint and a coloured edge at
    once, which read as glow on glow. */
+/* A refused passphrase. Same single line as focus and state, held for exactly as
+   long as the shake plays: colour says WHAT happened, motion says THAT it
+   happened, and neither survives into the next attempt. No fill, because the box
+   is empty by then and a wash over nothing reads as a stain rather than a state. */
+.lock-input.is-refused {
+  border-color: var(--danger);
+}
 .lock-input.is-matched {
   border-color: var(--success);
   background: var(--accent-subtle);
