@@ -415,7 +415,10 @@ body {
   background: var(--bg-surface);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-3xs) var(--space-2xs);
+  /* Matches the explorer pill container's inset: an active tab sits the same
+     distance inside its container as an active pill does, which is what makes the
+     two toolbars read as the same component family. */
+  padding: var(--space-2xs) var(--space-xs);
   gap: var(--space-3xs);
 }
 .view-tab {

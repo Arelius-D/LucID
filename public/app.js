@@ -2797,7 +2797,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const AUTOLOCK_HARD_CEILING_MIN = 60;
   let idleLastActivity = Date.now();
   function getAutolockMs() {
-    const raw = parseInt(localStorage.getItem('lucid-autolock-min'), 10);
+    const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
     const soft = Number.isFinite(raw) ? raw : 5;              // default 5 min
     const eff = soft > 0 ? Math.min(soft, AUTOLOCK_HARD_CEILING_MIN) : AUTOLOCK_HARD_CEILING_MIN;
     return eff * 60 * 1000;
@@ -2812,16 +2812,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Auto-lock timeout picker (footer) ──
   const AUTOLOCK_OPTIONS = [
-    { min: 0,  label: 'Off' },
+    // TEMPORARY, for verifying the idle sweep end to end. Remove once proven.
+    { min: 5 / 60, label: '5 seconds (test)' },
+    { min: 0,  label: 'Off (60 minutes)' },
     { min: 5,  label: '5 minutes' },
     { min: 15, label: '15 minutes' },
     { min: 30, label: '30 minutes' },
   ];
   const btnAutolock = document.getElementById('btn-autolock');
   function autolockLabel() {
-    const raw = parseInt(localStorage.getItem('lucid-autolock-min'), 10);
+    const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
     const soft = Number.isFinite(raw) ? raw : 5;
-    return soft > 0 ? `Auto-lock: ${soft} min` : 'Auto-lock: Off (still locks after 60 min idle)';
+    if (soft <= 0) return 'Auto-lock: Off (60 minutes)';
+    return soft < 1 ? `Auto-lock: ${Math.round(soft * 60)} seconds` : `Auto-lock: ${soft} min`;
   }
   if (btnAutolock) {
     const syncAutolockLabel = () => {
@@ -2831,7 +2834,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     syncAutolockLabel();
     btnAutolock.addEventListener('click', e => {
       e.stopPropagation();
-      const raw = parseInt(localStorage.getItem('lucid-autolock-min'), 10);
+      const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
       const current = Number.isFinite(raw) ? raw : 5;
       const rect = btnAutolock.getBoundingClientRect();
       const items = AUTOLOCK_OPTIONS.map(o => ({
