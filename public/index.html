@@ -11,7 +11,10 @@
        This meta is defense in depth and must stay identical to CSP_HEADER in server.js,
        which is the ENFORCING copy: browsers ignore frame-ancestors in a meta policy
        (S-12), so clickjacking protection comes from the header alone. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZMl5Q4bsZIF4pDz2yEQ03V8J2tcYWAFBcZl4acDp6Yw='; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'">
+  <!-- Theme before first paint: reads the stored choice and stamps <html> so no
+       frame renders in the wrong theme. Hashed in the CSP (header + meta). -->
+  <script>try{var t=localStorage.getItem("lucid-theme");if(t)document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
   <link rel="stylesheet" href="styles.css?v=2.3.0-dev">
   <!-- Vendored locally (pinned): no third-party CDN can inject code into this origin (S-08/S-09/S-10) -->
   <link id="hljs-theme" rel="stylesheet" href="vendor/hljs-styles/github-dark.min.css">
@@ -88,16 +91,16 @@
       <!-- SIDEBAR FOOTER CONTAINING E2EE STATUS, SYNC INDICATOR & LOCK BUTTON -->
       <footer class="sidebar-footer">
         <div class="e2ee-card" id="e2ee-card">
+          <!-- Comfort row: theme, font, auto-lock — the user-preference controls -->
           <div class="e2ee-row">
-            <div id="e2ee-badge" class="e2ee-badge" title="E2EE Active · AES-256-GCM" aria-label="E2EE Active · AES-256-GCM" role="status">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.49 2.23L5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0z"/><path d="M9.05 11.87l1.61 1.61 4.3-4.3"/></svg>
-              <span class="visually-hidden">E2EE Active · AES-256-GCM</span>
-            </div>
-            <button id="btn-autolock" class="autolock-btn" title="Auto-lock timeout" aria-label="Auto-lock timeout">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.24 2H8.76C5 2 4.71 5.38 6.74 7.22l10.52 9.56C19.29 18.62 19 22 15.24 22H8.76C5 22 4.71 18.62 6.74 16.78l10.52-9.56C19.29 5.38 19 2 15.24 2z"/></svg>
+            <button id="btn-theme" class="footer-pref-btn" title="Theme" aria-label="Theme">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 19.5V18h-5c-.55 0-1.05-.22-1.41-.59-.37-.36-.59-.86-.59-1.41 0-1.03.8-1.89 1.81-1.99.06-.01.12-.01.19-.01h15c.07 0 .13 0 .19.01.48.04.9.25 1.22.58.41.4.63.97.58 1.59-.09 1.05-1.04 1.82-2.1 1.82H14.5v1.5a2.5 2.5 0 01-5 0z"/><path d="M20.17 5.3l-.48 8.71c-.06-.01-.12-.01-.19-.01h-15c-.07 0-.13 0-.19.01L3.83 5.3A2.996 2.996 0 016.81 2h10.38c1.77 0 3.16 1.53 2.98 3.3zM7.99 2v5M12 2v2"/></svg>
             </button>
-            <button id="btn-fontset" class="fontset-btn" title="Interface font" aria-label="Interface font">
+            <button id="btn-fontset" class="footer-pref-btn" title="Interface font" aria-label="Interface font">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.99 5.93V4.42c0-1.02.83-1.85 1.85-1.85h12.92c1.02 0 1.85.83 1.85 1.85v1.51M10.3 18.1V3.32M6.9 18.1h5.58M13.68 10.34h7.01c.73 0 1.32.59 1.32 1.32v.8M16.08 21.43V10.87M13.94 21.43h4.28"/></svg>
+            </button>
+            <button id="btn-autolock" class="footer-pref-btn" title="Auto-lock timeout" aria-label="Auto-lock timeout">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.24 2H8.76C5 2 4.71 5.38 6.74 7.22l10.52 9.56C19.29 18.62 19 22 15.24 22H8.76C5 22 4.71 18.62 6.74 16.78l10.52-9.56C19.29 5.38 19 2 15.24 2z"/></svg>
             </button>
           </div>
           <div class="footer-actions-row">
@@ -107,18 +110,25 @@
                   <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
                 </svg>
               </a>
-              <div id="save-indicator" class="sync-status-badge" title="Synced to vault" aria-label="Synced to vault" role="status" aria-live="polite">
+              <div id="save-indicator" class="sync-status-badge" title="Synced to vault" aria-label="Synced to vault" role="button" tabindex="0" aria-live="polite">
                 <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.5"><path d="M6.37 9.51c-4.08.29-4.07 6.2 0 6.49h9.66c1.17.01 2.3-.43 3.17-1.22 2.86-2.5 1.33-7.5-2.44-7.98C15.41-1.34 3.62 1.75 6.41 9.51M12 16v3M12 23a2 2 0 100-4 2 2 0 000 4zM18 21h-4M10 21H6"/></svg>
                 <span class="visually-hidden">Synced</span>
               </div>
-              <div id="runtime-indicator" class="runtime-badge" title="Checking server runtime" aria-label="Checking server runtime" role="status">
+              <div id="runtime-indicator" class="runtime-badge" title="Checking server runtime" aria-label="Checking server runtime" role="button" tabindex="0">
                 <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.33 14.49l2.38-3.09c.34-.44.97-.52 1.41-.18l1.83 1.44c.44.34 1.07.26 1.41-.17l2.31-2.98"/></svg>
               </div>
             </div>
-            <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault" aria-label="Lock Encrypted Vault">
+            <!-- Security corner: E2EE state beside the action that enforces it -->
+            <div class="footer-security-cluster">
+              <div id="e2ee-badge" class="e2ee-badge" title="E2EE Active · AES-256-GCM" aria-label="E2EE Active · AES-256-GCM" role="status">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.49 2.23L5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0z"/><path d="M9.05 11.87l1.61 1.61 4.3-4.3"/></svg>
+                <span class="visually-hidden">E2EE Active · AES-256-GCM</span>
+              </div>
+              <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault" aria-label="Lock Encrypted Vault">
               <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 11.12c0 4.89-3.55 9.47-8.4 10.81-.33.09-.69.09-1.02 0-4.85-1.34-8.4-5.92-8.4-10.81V6.73c0-.82.62-1.75 1.39-2.06l5.57-2.28c1.25-.51 2.66-.51 3.91 0l5.57 2.28c.76.31 1.39 1.24 1.39 2.06l-.01 4.39z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>
               <span>Lock</span>
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       </footer>
@@ -158,11 +168,6 @@
         </div>
 
         <div class="top-bar-right">
-          <!-- SEAMLESS GLOWING SUN / MOON THEME TOGGLE BUTTON -->
-          <button id="btn-theme-toggle" class="theme-glow-btn" title="Toggle Theme" aria-label="Toggle Theme">
-            <span id="theme-toggle-icon"></span>
-          </button>
-
           <!-- DOCKED EXPAND INSPECTOR BUTTON — mirrors the left docked-expand;
                only visible when the inspector is collapsed -->
           <button id="btn-expand-right" class="icon-btn docked-expand-btn dock-right" title="Expand Inspector" aria-label="Expand Inspector">

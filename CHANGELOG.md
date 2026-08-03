@@ -9,8 +9,20 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.3.0-dev] - unreleased
 
 ### Added
+- **Third theme: Amber Hour (twilight)** — the in-between: mid-dark warm bronze (bg L≈0.40) with light text and the gold accent pulled between the two shipped themes. Same token names, zero component changes needed.
+- **Theme picker in the footer** — the top-bar sun/moon toggle retires; a brush button joins the comfort controls (theme, font, auto-lock) and opens a menu like the auto-lock one: Dusk Ember (moon), Amber Hour (sun-fog), Warm Linen (sun), tick on the active choice. Same mechanism as the font picker: stored per browser, unknown values fall back to the default.
+- **No more wrong-theme first paint**: a tiny hashed inline script stamps the stored theme on `<html>` before anything renders; the hash is carried in both the CSP header and its meta twin, so the strict `script-src 'self'` policy stays intact.
+- **Sync and runtime badges are now buttons**: click the cloud to flush and sync now, click the activity badge to re-check server health immediately — the hover they always had finally points at something real. Keyboard-reachable (Enter/Space).
+
+### Changed
+- **License: MIT → AGPL-3.0-only** (from this release forward; all releases up to v2.2.0 remain MIT). LucID stays free to run, self-host and modify — but operating a modified LucID as a network service now requires publishing those modifications. LICENSE, package metadata and README updated; every vendored dependency (OFL fonts, BSD highlight.js, MIT marked/DOMPurify, MIT/ISC server deps) is AGPL-compatible. FOSSA license & dependency analysis added to CI (runs on pushes with the `FOSSA_API_KEY` secret).
+- **Footer regrouped by purpose**: comfort controls (theme, font, auto-lock) in the top row; system row below with the GitHub link + sync + runtime cluster bottom-left and a security corner bottom-right (E2EE shield beside the Lock button that enforces it). The shield no longer paints a hover it can't honor.
+- **One glyph scale in the footer**: the 0.9375rem override on the old autolock/fontset pair (a leftover balancing the deleted E2EE text line) is gone — every footer glyph renders at the family size.
+- **The update pulse whispers now**: 4s slow breath at scale 1.04 on the system easing curve, instead of a 2s throb — awareness for a self-hosted install that may see it for days, not a rave.
 
 ### Fixed
+- **One easing curve everywhere**: 15 transition declarations (footer Lock button, toolbar pills, view tabs, tree rows, modals, search) declared literal `ease` beside the motion-duration tokens; all now use the system's `--ease-standard` curve, so every hover and state change in the app moves with the same feel.
+- **Dependabot no longer proposes runtime majors**: node major bumps in the Docker image are ignored by config — runtime majors are a deliberate LTS-day decision, not bot noise; patch/minor image updates still flow.
 
 ---
 

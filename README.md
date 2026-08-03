@@ -3,7 +3,7 @@
   <h1>LucID</h1>
   <p><strong>Ultra-lightweight, self-hosted, open-source note application with client-side AES-256-GCM end-to-end encryption, native Markdown, and zero subscriptions.</strong></p>
 
-  [![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](LICENSE)
+  [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-gold.svg)](LICENSE)
   [![Docker Hub Image](https://img.shields.io/badge/Docker_Hub-assarelius%2Flucid%3Alatest-blue.svg)](https://hub.docker.com/r/assarelius/lucid)
   [![GHCR Image](https://img.shields.io/badge/GHCR-ghcr.io%2Farelius--d%2Flucid%3Alatest-purple.svg)](https://github.com/Arelius-D/LucID/pkgs/container/lucid)
   [![Client-Side E2EE](https://img.shields.io/badge/Encryption-AES--256--GCM-emerald.svg)](#security--architecture)
@@ -123,7 +123,7 @@ LucID combines zero-trust client cryptography with transport-layer security:
 - **Dual split views.** Toggle between side-by-side and top-bottom editor layouts.
 - **Folders and tags.** Organised hierarchy, with a third view for pinned notes and instant search across note titles and tags.
 - **Idle auto-lock.** Configurable inactivity timeout (off, 5, 15, or 30 minutes) with a fixed 60-minute hard ceiling that applies even when the timeout is disabled.
-- **Dual themes.** Dusk Ember (dark) and Warm Linen (light).
+- **Three themes.** Dusk Ember (dark), Amber Hour (twilight) and Warm Linen (light) — picked from the footer, applied before first paint.
 
 ---
 
@@ -456,4 +456,4 @@ DOMPurify, marked, and highlight.js are vendored into `public/vendor/` and serve
 
 ## License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
+Distributed under the GNU Affero General Public License v3.0. Run it, self-host it, modify it freely — but if you offer a modified LucID to others over a network, you must publish your modifications under the same license. See [`LICENSE`](LICENSE) for the full text. Releases up to and including v2.2.0 were published under MIT and remain so.

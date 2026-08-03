@@ -180,6 +180,52 @@
   --scrollbar-thumb: oklch(0.862 0.038 83.0);
 }
 
+/* ─── THEME: Amber Hour (twilight) ───
+   The in-between: mid-dark, not a midpoint — bg L≈0.40 keeps light text at AA
+   while reading warmer and softer than dusk. Hue pulled to bronze (70-72);
+   accent sits between dusk's bright gold and linen's muted brown-gold. */
+[data-theme="amber-hour"] {
+  color-scheme: dark;
+
+  --bg-base:      oklch(0.395 0.018 70);
+  --bg-surface:   oklch(0.430 0.021 71);
+  --bg-elevated:  oklch(0.468 0.024 72);
+  --bg-input:     oklch(0.370 0.016 70);
+  --bg-hover:     oklch(0.740 0.110 80 / 0.14);
+  --bg-active:    oklch(0.740 0.110 80 / 0.22);
+  --bg-drop:      oklch(0.740 0.110 80 / 0.34);
+  --surface-hover: oklch(0.468 0.024 72);
+
+  --accent:        oklch(0.740 0.110 80);
+  --accent-hover:  oklch(0.690 0.108 79);
+  --accent-subtle: oklch(0.740 0.110 80 / 0.15);
+  --on-accent:     oklch(0.280 0.020 75);
+
+  --text-primary:   oklch(0.955 0.008 85);
+  --text-secondary: oklch(0.845 0.010 85);
+  --text-muted:     oklch(0.755 0.012 85);
+
+  --border:        oklch(0.955 0.008 85 / 0.14);
+  --border-hover:  oklch(0.955 0.008 85 / 0.26);
+  --shadow:        0 0.25rem 1rem oklch(0 0 0 / 0.22);
+  --shadow-sm:     0 0.0625rem 0.1875rem oklch(0 0 0 / 0.16);
+  --shadow-md:     0 0.125rem 0.5rem oklch(0 0 0 / 0.18);
+  --shadow-lg:     0 0.5rem 1.5rem oklch(0 0 0 / 0.28);
+  --scrim:         oklch(0 0 0 / 0.55);
+  --accent-glow:   oklch(0.740 0.110 80 / 0.40);
+  --on-danger:     oklch(0.220 0.020 25);
+
+  --danger:        oklch(0.640 0.168 26);
+  --save-ok:       var(--accent);
+  --success:       var(--accent);
+  --success-glow:  oklch(0.740 0.110 80 / 0.32);
+  --danger-glow:   oklch(0.640 0.168 26 / 0.28);
+  --danger-subtle: oklch(0.640 0.168 26 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: oklch(0.468 0.024 72);
+}
+
 /* ─── FONT SETS — user-selectable, mirrors the theme mechanism ───
    The picker in the sidebar footer sets data-fontset; each set assigns the
    two font tokens. Geist is the out-of-the-box default (:root). */
@@ -228,7 +274,7 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   line-height: 1.5;
-  transition: background var(--motion-base) ease, color var(--motion-base) ease;
+  transition: background var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
 }
 
 .icon-svg {
@@ -402,8 +448,7 @@ body {
 }
 
 /* ICON BUTTONS (ANIMATES ICON ITSELF — NO HARSH HOVER BACKGROUND BOX) */
-.icon-btn,
-.theme-glow-btn {
+.icon-btn {
   background: transparent;
   border: none;
   box-shadow: none;
@@ -412,29 +457,17 @@ body {
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
   opacity: 0.75;
-  transition: transform var(--motion-base) ease, opacity var(--motion-base) ease, filter var(--motion-base) ease, color var(--motion-base) ease;
+  transition: transform var(--motion-base) var(--ease-standard), opacity var(--motion-base) var(--ease-standard), filter var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
   color: inherit;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.icon-btn:hover,
-.theme-glow-btn:hover {
+.icon-btn:hover {
   opacity: 1;
   background: transparent;
   transform: translateY(-0.125rem) scale(1.15);
   color: var(--accent);
-}
-.theme-glow-btn {
-  color: var(--accent);
-  filter: drop-shadow(0 0 0.5rem var(--accent-glow));
-}
-/* When the inspector is open the theme toggle is the rightmost control, so
-   offset its own right padding to land the glyph on the 32px content edge —
-   mirroring how the left view-tabs sit flush at 32px. When the inspector is
-   collapsed the expand chevron follows it (not .hidden) and owns that edge. */
-.top-bar-right #btn-theme-toggle:has(+ .docked-expand-btn.hidden) {
-  margin-right: calc(-1 * var(--space-xs));
 }
 
 /* ─── SIDEBARS ──────────────────────────────────── */
@@ -443,7 +476,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   user-select: none;
-  transition: width var(--motion-fast) ease, opacity var(--motion-base) ease;
+  transition: width var(--motion-fast) var(--ease-standard), opacity var(--motion-base) var(--ease-standard);
   background: var(--bg-surface);
 }
 
@@ -570,7 +603,7 @@ body {
   color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--radius-sm);
-  transition: color var(--motion-fast) ease, background var(--motion-fast) ease;
+  transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
 }
 .search-close:hover {
   color: var(--accent);
@@ -645,7 +678,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  transition: color var(--motion-base) ease, background var(--motion-base) ease, border-color var(--motion-base) ease;
+  transition: color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
 }
 .explorer-pill-btn:hover {
   color: var(--accent);
@@ -653,7 +686,7 @@ body {
 }
 .explorer-pill-btn:hover .icon-svg {
   transform: scale(1.15);
-  transition: transform var(--motion-fast) ease;
+  transition: transform var(--motion-fast) var(--ease-standard);
 }
 .explorer-pill-btn.active {
   background: var(--bg-elevated);
@@ -677,7 +710,7 @@ body {
   align-items: center;
   justify-content: center;
   transform: none; /* PREVENT translateY(-2px) MISALIGNMENT */
-  transition: background var(--motion-fast) ease, color var(--motion-fast) ease;
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
 }
 .action-pill-btn:hover {
   transform: none; /* KEEP OUTER HOVER BOX STRICTLY FLUSH AND ALIGNED */
@@ -687,7 +720,7 @@ body {
 }
 .action-pill-btn:hover .icon-svg {
   transform: scale(1.15); /* SCALE ICON ITSELF SMOOTHLY WITHOUT SHIFTING OUTER CONFINEMENT BOX */
-  transition: transform var(--motion-fast) ease;
+  transition: transform var(--motion-fast) var(--ease-standard);
 }
 
 /* ─── FOLDER & NOTE TREE HIERARCHY INDENTATION & SPACING ──── */
@@ -751,7 +784,7 @@ body {
   flex-direction: column;
   gap: var(--space-xs);
   overflow: hidden;
-  transition: max-height var(--motion-slow) ease;
+  transition: max-height var(--motion-slow) var(--ease-standard);
 }
 .tree-notes.collapsed { max-height: 0; margin-top: 0; padding-top: 0; }
 
@@ -879,7 +912,7 @@ select:focus-visible,
 .trash-row:hover .icon-svg {
   color: var(--accent);
   transform: scale(1.15);
-  transition: transform var(--motion-fast) ease;
+  transition: transform var(--motion-fast) var(--ease-standard);
 }
 .trash-row.open {
   color: var(--accent);
@@ -930,9 +963,9 @@ select:focus-visible,
   font-weight: 600;
   color: var(--text-primary);
 }
-/* auto-lock timeout and font-set pickers, top-right of the footer card */
-.autolock-btn,
-.fontset-btn {
+/* Comfort controls — theme, font, auto-lock. One family, one glyph scale
+   (INC-42: the old 0.9375rem override died with the text line it balanced). */
+.footer-pref-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -946,12 +979,7 @@ select:focus-visible,
   border-radius: var(--radius-sm);
   transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
 }
-.autolock-btn { margin-left: auto; }
-.fontset-btn { margin-left: var(--space-3xs); }
-.autolock-btn:hover,
-.fontset-btn:hover { color: var(--accent); background: var(--surface-hover); }
-.autolock-btn svg,
-.fontset-btn svg { width: 0.9375rem; height: 0.9375rem; }
+.footer-pref-btn:hover { color: var(--accent); background: var(--surface-hover); }
 .menu-icon-blank { display: inline-block; width: 0.875rem; height: 0.875rem; }
 /* E2EE state is a glyph, not a sentence: the shield carries the state, the
    tooltip carries the detail — same control family as the sync/runtime badges. */
@@ -965,8 +993,13 @@ select:focus-visible,
   color: var(--save-ok);
   transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
 }
-.e2ee-badge:hover { background: var(--surface-hover); }
 .e2ee-badge.error { color: var(--danger); }
+/* Security corner: state beside the action that enforces it */
+.footer-security-cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
 
 .footer-actions-row {
   display: flex;
@@ -1004,10 +1037,20 @@ select:focus-visible,
   color: var(--text-secondary);
   transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
 }
+/* Sync and runtime are CLICKABLE (INC-43b: sync now / recheck health) — the
+   hover they always had is now an honest affordance. The shield stays a pure
+   status and paints no hover. */
 .sync-status-badge:hover,
 .runtime-badge:hover {
   color: var(--accent);
   background: var(--surface-hover);
+}
+.sync-status-badge,
+.runtime-badge { cursor: pointer; }
+.sync-status-badge:focus-visible,
+.runtime-badge:focus-visible {
+  outline: var(--hairline) solid var(--accent);
+  outline-offset: 0.125rem;
 }
 .sync-status-badge.saving {
   color: var(--accent);
@@ -1034,7 +1077,7 @@ select:focus-visible,
   align-items: center;
   gap: var(--space-xs);
   cursor: pointer;
-  transition: color var(--motion-fast) ease, background var(--motion-fast) ease, border-color var(--motion-fast) ease;
+  transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
 }
 .lock-action-btn:hover {
   border-color: var(--accent);
@@ -1600,7 +1643,7 @@ select:focus-visible,
   outline: none;
   text-align: center;
   letter-spacing: 0.125rem;
-  transition: color var(--motion-base) ease, background var(--motion-base) ease, border-color var(--motion-base) ease;
+  transition: color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
 }
 .lock-input.hidden { display: none; }
 
@@ -1708,7 +1751,7 @@ select:focus-visible,
   border-radius: var(--radius-md);
   cursor: pointer;
   margin-bottom: var(--space-lg);
-  transition: color var(--motion-base) ease, background var(--motion-base) ease, border-color var(--motion-base) ease;
+  transition: color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
 }
 .lock-btn:hover:not(:disabled) {
   opacity: 0.92;
@@ -1755,14 +1798,16 @@ select:focus-visible,
   color: var(--accent);
   background: var(--surface-hover);
 }
+/* Update available: awareness, not a rave — a faint slow breath (INC-45).
+   Self-hosted means this can stay on screen for days; it must whisper. */
 .footer-github-link.update-available {
   color: var(--accent);
-  animation: pulse-update 2s infinite ease-in-out;
+  animation: pulse-update 4s infinite var(--ease-standard);
 }
 @keyframes pulse-update {
-  0% { transform: scale(1); filter: drop-shadow(0 0 0.125rem var(--accent)); }
-  50% { transform: scale(1.08); filter: drop-shadow(0 0 0.375rem var(--accent)); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 0.125rem var(--accent)); }
+  0% { transform: scale(1); filter: drop-shadow(0 0 0.0625rem var(--accent)); }
+  50% { transform: scale(1.04); filter: drop-shadow(0 0 0.25rem var(--accent)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0.0625rem var(--accent)); }
 }
 
 /* Dragging a note onto a folder header moves it there. The dragged row fades;

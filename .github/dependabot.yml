@@ -16,6 +16,9 @@ updates:
     schedule:
       interval: "daily"
     labels: ["dependencies", "docker"]
+    ignore:
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
     commit-message:
       prefix: "deps(docker)"
 
