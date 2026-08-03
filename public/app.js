@@ -30,6 +30,7 @@ const ICONS = {
   lock: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5z"/><path stroke-width="2" d="M15.996 16h.01M11.995 16h.01M7.995 16h.008"/></svg>`,
   passwordCheck: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M11.02 19.5H7.5c-.62 0-1.17-.02-1.66-.09-2.63-.29-3.34-1.53-3.34-4.91v-5c0-3.38.71-4.62 3.34-4.91.49-.07 1.04-.09 1.66-.09h3.46M15.02 4.5h1.48c.62 0 1.17.02 1.66.09 2.63.29 3.34 1.53 3.34 4.91v5c0 3.38-.71 4.62-3.34 4.91-.49.07-1.04.09-1.66.09h-1.48M15 2v20"/><path stroke-width="2" d="M11.095 12h.008M7.094 12h.01"/></svg>`,
   heartSlash: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.11 17.5C3.9 15.43 2 12.48 2 8.68c0-3.09 2.49-5.59 5.56-5.59 1.82 0 3.43.88 4.44 2.24a5.53 5.53 0 014.44-2.24c1.15 0 2.22.35 3.11.96M21.74 7c.17.53.26 1.1.26 1.69 0 7-6.48 11.13-9.38 12.13-.34.12-.9.12-1.24 0-.65-.22-1.47-.6-2.36-1.13M22 2L2 22"/></svg>`,
+  tickSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   copy: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"/><path d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"/></svg>`,
   brush: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 19.5V18h-5c-.55 0-1.05-.22-1.41-.59-.37-.36-.59-.86-.59-1.41 0-1.03.8-1.89 1.81-1.99.06-.01.12-.01.19-.01h15c.07 0 .13 0 .19.01.48.04.9.25 1.22.58.41.4.63.97.58 1.59-.09 1.05-1.04 1.82-2.1 1.82H14.5v1.5a2.5 2.5 0 01-5 0z"/><path d="M20.17 5.3l-.48 8.71c-.06-.01-.12-.01-.19-.01h-15c-.07 0-.13 0-.19.01L3.83 5.3A2.996 2.996 0 016.81 2h10.38c1.77 0 3.16 1.53 2.98 3.3zM7.99 2v5M12 2v2"/></svg>`,
   sunFog: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M18.5 12a6.5 6.5 0 10-13 0"/><path stroke-width="2" d="M4.99 4.99l-.13-.13m14.15.13l.13-.13-.13.13zM12 2.08V2v.08zM2.08 12H2h.08zM22 12h-.08.08z"/><path stroke-width="1.5" stroke-miterlimit="10" d="M4 15h16M6 18h12M9 21h6"/></svg>`,
@@ -550,11 +551,15 @@ function refreshLockGate() {
   // First run: the two fields carry the state by glow, the button carries
   // readiness. Enter goes through this same gate, so no message is needed to
   // say what the colours already say.
-  const setGlow = cls => {
+  const setGlow = (cls, onlyConfirm) => {
     [lockInput, lockConfirmInput].forEach(el => {
       if (!el) return;
       el.classList.remove('is-matched', 'is-mismatch', 'shake');
-      if (cls) el.classList.add(cls);
+      if (!cls) return;
+      // A match belongs to the PAIR, so both fields carry it. A mismatch belongs to
+      // the confirm field alone: the first field is the reference and is never the
+      // thing that is wrong, so painting it red was one problem shown twice.
+      if (!onlyConfirm || el === lockConfirmInput) el.classList.add(cls);
     });
   };
   const setBtn = (label, ready) => {
@@ -567,7 +572,7 @@ function refreshLockGate() {
   if (!v1 || !v2) { setGlow(null); setBtn('Next', false); return; }
   if (v1 === v2)  { setGlow('is-matched'); setBtn('Continue', true); return; }
   if (v1.startsWith(v2)) { setGlow(null); setBtn('Next', false); return; }
-  setGlow('is-mismatch'); setBtn('Next', false);
+  setGlow('is-mismatch', true); setBtn('Next', false);
 }
 
 function updateLockScreenUI() {
@@ -1820,7 +1825,7 @@ function addCodeCopyButtons(scope) {
     btn.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(code.textContent);
-        btn.innerHTML = ICONS.tickCircle;
+        btn.innerHTML = ICONS.tickSquare;
         btn.classList.add('done');
         btn.title = 'Copied';
         setTimeout(() => {

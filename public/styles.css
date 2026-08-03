@@ -1811,6 +1811,10 @@ select:focus-visible,
   border-color: var(--danger);
   background: var(--danger-subtle);
 }
+/* When a state and focus land on the same field the ring takes the state's colour
+   instead of the accent, so two colours never argue over one box. */
+.lock-input.is-mismatch:focus { box-shadow: 0 0 0 0.1875rem var(--danger-glow); }
+.lock-input.is-matched:focus { box-shadow: 0 0 0 0.1875rem var(--success-glow); }
 .lock-error {
   font-size: var(--text-sm);
   color: var(--danger);
