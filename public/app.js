@@ -177,6 +177,7 @@ function showPromptModal(title, message, defaultValue = '', opts = {}) {
     titleEl.textContent = title;
     msgEl.textContent = message;
     inputEl.placeholder = opts.placeholder || 'Name';
+    inputEl.setAttribute('aria-label', opts.placeholder || 'Name');
     if (iconEl) iconEl.innerHTML = (opts.icon && ICONS[opts.icon])
       ? ICONS[opts.icon].replace('icon-svg', 'modal-prompt-svg')
       : PROMPT_FOLDER_ICON;

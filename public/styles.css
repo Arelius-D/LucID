@@ -1649,16 +1649,6 @@ select:focus-visible,
   object-fit: cover;
   box-shadow: var(--shadow-lg);
 }
-.lock-card h2 {
-  font-size: var(--text-2xl);
-  margin-bottom: var(--space-2xs);
-  color: var(--text-primary);
-}
-.lock-card p {
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-  margin-bottom: var(--space-md);
-}
 /* Fixed-height row for failure messages. Reserved so the card cannot shift under
    the cursor when one appears. */
 .lock-msg-slot {
