@@ -1926,6 +1926,33 @@ select:focus-visible,
   .left-pane { width: 0; min-width: 0; overflow: hidden; border: none; }
 }
 
+/* Copy control on fenced code blocks. Present but quiet until the block is hovered
+   or the button focused, so it never competes with the code it sits on. */
+.preview-content pre { position: relative; }
+.preview-content .code-copy {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+}
+.preview-content pre:hover .code-copy,
+.preview-content .code-copy:focus-visible { opacity: 1; }
+.preview-content .code-copy:hover { color: var(--accent); border-color: var(--accent); }
+.preview-content .code-copy.done { opacity: 1; color: var(--save-ok); border-color: var(--save-ok); }
+.preview-content .code-copy svg { width: 0.875rem; height: 0.875rem; }
+
 /* ─── FOCUS MODE ────────────────────────────────────
    Real fullscreen (Fullscreen API) with both side panes out of the way. The class
    is applied by the fullscreenchange handler, never by the click, so Escape and
@@ -1952,7 +1979,8 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
   .center-pane > .top-bar,
   .lock-screen,
   .modal-backdrop,
-  .context-menu { display: none; }
+  .context-menu,
+  .preview-content .code-copy { display: none; }
 
   /* The editor pane and the split handle must be hidden at the SAME specificity as
      the mode rules that show them, or Editor mode wins and prints the raw markdown
