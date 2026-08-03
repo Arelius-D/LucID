@@ -2227,8 +2227,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     breaks: true,
     gfm: true,
   });
-  // GitHub-style alerts (> [!NOTE] etc). Degrades to a plain blockquote if the
-  // vendored extension is missing, mirroring the sanitizer's fail-safe posture.
+  // Task lists: marked emits <input type="checkbox">, which the sanitizer forbids
+  // (S-04), so the boxes were silently stripped and task lists rendered as plain
+  // bullets. Rendering them as a themed span keeps the feature without letting
+  // form controls into rendered markdown — no sanitizer relaxation.
+  marked.use({
+    renderer: {
+      checkbox({ checked }) {
+        return `<span class="task-check${checked ? ' on' : ''}" role="img" aria-label="${checked ? 'done' : 'to do'}"></span>`;
+      }
+    }
+  });
 
   document.getElementById('app').classList.add('hidden');
 

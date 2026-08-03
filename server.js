@@ -67,27 +67,41 @@ function newId(prefix) {
 
 // Initial default data if store file doesn't exist
 function buildInitialData() {
-  const generalId = newId('f');
+  const startedId = newId('f');
   const now = new Date().toISOString();
   return {
     schemaVersion: 2,
     kdf: null,
     folders: [
-      { id: generalId, name: 'General', parentId: null },
+      { id: startedId, name: 'Getting Started', parentId: null },
       { id: newId('f'), name: 'Personal', parentId: null }
     ],
     notes: [
       {
         id: newId('n'),
-        folderId: generalId,
-        title: 'Welcome to LucID',
-        content: '# Welcome to LucID\n\nLucID is a self-hosted, privacy-focused note-taking application with client-side **AES-256-GCM end-to-end encryption**.\n\n## Capabilities\n- **Client-side E2EE**: your passphrase encrypts note titles, contents, tags and folder names in the browser before anything is stored. The server holds ciphertext it cannot read.\n- **Dual split view**: toggle between side-by-side and top-bottom layouts.\n- **Theme engine**: Dusk Ember (dark), Amber Hour (twilight) and Warm Linen (light).\n- **Folders and tags**: expandable hierarchy with instant search.\n\nDelete this note whenever you like. Nothing depends on it.',
+        folderId: startedId,
+        title: 'Start here',
+        content: "# Start here\n\nA tour of what isn't obvious.\n\n## Layout\n\n**Editor**, **Split** and **Preview** sit above the centre pane. Click **Split** again while it is already active and the layout flips between side-by-side and top-and-bottom. That choice sticks per browser, including across locks.\n\nThe arrows in the top corners collapse either side pane, and any divider can be dragged to resize. The inspector on the right carries the note's outline, its tags and its metrics. Click an outline entry to jump to that heading.\n\n## The three explorer views\n\nThe pills above your folders switch the left pane between **folders**, **tags** and **pinned**. Search covers titles and tags, filtering as you type.\n\nThis note is pinned, which is why it has a view of its own. Right-click any note for pin, tags, rename and delete.\n\n## Tags are a library, not labels\n\nRight-click a note and choose **Tags…**. Every tag in the vault is listed with a toggle: on where this note carries it, off where it is yours to apply. The menu stays open, so tagging several notes takes a few clicks instead of a few dialogs.\n\n`#ideas` is here, attached to nothing. Switch it on for this note, then switch it off. It stays in the list, because a tag belongs to the vault rather than to one note. It will still be there when you want it back months from now. **New tag…** is the only place you type a name, which is what keeps `#meeting` and `#meetings` from both existing. Renaming a tag renames it everywhere at once.\n\n## Delete is reversible until you say otherwise\n\nNotes and folders move to **Trash** at the bottom left with no confirmation, because nothing is lost yet. Click a trashed note to read it: it opens read-only, so you can identify something before deciding its fate. Drag a note onto the trash to delete it, drag it out onto a folder to restore it there, or use the right-click menu. The trash empties only when you empty it.\n\n## Footer\n\n- **Brush** — three themes: Dusk Ember, Amber Hour, Warm Linen.\n- **Aa** — four typefaces, all served from this machine, never a font CDN.\n- **Hourglass** — idle auto-lock, five minutes by default. One hour is the hard ceiling: the vault locks then whatever you set.\n- **Octocat** — the repository. It breathes when a newer release exists.\n- **Cloud** — saves are automatic and debounced. Click to flush and sync now.\n- **Pulse** — server health, re-checked every minute or on click.\n- **Shield** — encryption is live. It turns red when the browser has no Web Crypto, which in practice means the page is not on HTTPS.\n- **Lock** — locks the vault. Unlocking needs the passphrase, or the session key if the browser has stayed open.\n\n## The one irreversible thing\n\nYour passphrase derives the key that encrypts every title, body, tag and folder name before any of it is sent. The key never leaves the browser and is stored nowhere, so there is no reset and no recovery. Root access to the machine running this does not help either: the vault on disk is ciphertext, and the passphrase is not in it. Back the passphrase up the way you would back up a key to a safe.\n\n## Worth trying now\n\n- [ ] Click **Split** twice to flip the orientation\n- [ ] Switch `#ideas` on for this note, then off\n- [ ] Delete this note and restore it from the trash\n- [ ] Change theme and typeface in the footer\n",
         isEncrypted: false,
-        tags: ['welcome', 'lucid'],
+        tags: ['guide'],
+        pinned: true,
+        createdAt: now,
+        updatedAt: now
+      },
+      {
+        id: newId('n'),
+        folderId: startedId,
+        title: 'Markdown playground',
+        content: "# Markdown playground\n\nStandard markdown, rendered live. Open **Split** and edit the left side.\n\n**Bold**, *italic*, ~~struck~~, `inline code`, and a [link](https://github.com/Arelius-D/LucID) that opens in a new tab.\n\n1. Ordered lists\n2. And nested ones\n   - like this\n   - and this\n\n- [x] Task lists render as checkboxes\n- [ ] Including unticked ones\n\n| Shortcut | Does |\n| :--- | :--- |\n| `Ctrl`/`Cmd` + `S` | Flush the pending save |\n| `Esc` | Close search |\n| Arrows / `Enter` | Move and open in the tree |\n\n```js\n// Fenced blocks are highlighted, and the highlight theme follows the app theme.\nconst carried = notes.filter(n => !n.trashed);\nconsole.log(`${carried.length} notes, encrypted before any of them leaves the browser`);\n```\n\n> Blockquotes for the thing you want to find again.\n\n---\n\nThe outline on the right is built from the headings above. Metrics under it count words and characters as you type.\n",
+        isEncrypted: false,
+        tags: ['guide', 'markdown'],
         createdAt: now,
         updatedAt: now
       }
     ],
+    // The tag library ships with one tag applied to nothing, so a fresh vault
+    // shows the off state of the tag toggles without the user creating anything.
+    tags: ['guide', 'ideas', 'markdown'],
     authVerifier: null
   };
 }

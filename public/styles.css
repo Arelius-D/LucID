@@ -1320,6 +1320,34 @@ select:focus-visible,
   color: var(--text-secondary);
 }
 
+/* Task-list boxes. Drawn rather than input elements: the sanitizer forbids form
+   controls in rendered markdown, and a span themes correctly. */
+.preview-content .task-check {
+  display: inline-block;
+  position: relative;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-right: var(--space-xs);
+  vertical-align: text-top;
+  border: var(--hairline) solid var(--border-hover);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+}
+.preview-content .task-check.on {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+.preview-content .task-check.on::after {
+  content: '';
+  position: absolute;
+  left: 0.1875rem;
+  top: 0.0625rem;
+  width: 0.25rem;
+  height: 0.5rem;
+  border-right: 0.125rem solid var(--accent);
+  border-bottom: 0.125rem solid var(--accent);
+  transform: rotate(45deg);
+}
 .preview-content hr {
   border: none;
   border-top: var(--hairline) solid var(--border);
