@@ -168,6 +168,14 @@
         </div>
 
         <div class="top-bar-right">
+          <!-- Occasional actions, kept beside the view tabs because that is where
+               the eyes and the cursor already are while writing or reading. -->
+          <button id="btn-print" class="icon-btn" title="Print or save the note as PDF" aria-label="Print or save the note as PDF">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>
+          </button>
+          <button id="btn-focus" class="icon-btn" title="Focus mode (fullscreen)" aria-label="Focus mode (fullscreen)" aria-pressed="false">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7zM18 6L6 18"/><path d="M18 10V6h-4M6 14v4h4"/></svg>
+          </button>
           <!-- DOCKED EXPAND INSPECTOR BUTTON — mirrors the left docked-expand;
                only visible when the inspector is collapsed -->
           <button id="btn-expand-right" class="icon-btn docked-expand-btn dock-right" title="Expand Inspector" aria-label="Expand Inspector">
