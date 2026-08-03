@@ -12,7 +12,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Changed
 - **The lock screen says each thing once**: it used to state "this vault is locked" four times over (heading, chip, paragraph, button) and "this is a passphrase field" up to five. What remains is a logo, one status line, the field, and the button. The line carries the state with its own glyph — *Set a passphrase to initialize your LucID*, *Vault locked*, or *Server unreachable* — the heading and the AES-256-GCM paragraph are gone, and the "cannot be recovered" warning now appears only on first run, where that choice is actually made.
-- **Caps Lock warns inside the field**, opposite the reveal eye, instead of pushing a line into the card. There is no counterpart glyph for the off state: its absence is the off state.
+- **Caps Lock warns inside the field**, opposite the reveal eye, instead of pushing a line into the card. There is no counterpart glyph for the off state: its absence is the off state. It also notices the key properly now — the old version only listened inside the field, so Caps Lock switched on *before* clicking into the box stayed silent until the first character was typed.
 - **Server-unreachable state no longer offers a passphrase box**. Retry re-fetches the vault and never tested a passphrase, so the field, the eye and the footer are hidden and the only control is the one that does something. Its glyph is a stopped heartbeat, matching the runtime badge in the footer.
 
 ### Fixed
