@@ -118,14 +118,11 @@
                 <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.33 14.49l2.38-3.09c.34-.44.97-.52 1.41-.18l1.83 1.44c.44.34 1.07.26 1.41-.17l2.31-2.98"/></svg>
               </div>
             </div>
-            <!-- Security corner: E2EE state beside the action that enforces it -->
+            <!-- Security corner: the lock button carries the vault's posture in its
+                 own glyph, so no separate badge restates it -->
             <div class="footer-security-cluster">
-              <div id="e2ee-badge" class="e2ee-badge" title="E2EE Active · AES-256-GCM" aria-label="E2EE Active · AES-256-GCM" role="status">
-                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.49 2.23L5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0z"/><path d="M9.05 11.87l1.61 1.61 4.3-4.3"/></svg>
-                <span class="visually-hidden">E2EE Active · AES-256-GCM</span>
-              </div>
               <button id="btn-lock-vault" class="icon-btn lock-action-btn" title="Lock Encrypted Vault" aria-label="Lock Encrypted Vault">
-              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.91 11.12c0 4.89-3.55 9.47-8.4 10.81-.33.09-.69.09-1.02 0-4.85-1.34-8.4-5.92-8.4-10.81V6.73c0-.82.62-1.75 1.39-2.06l5.57-2.28c1.25-.51 2.66-.51 3.91 0l5.57 2.28c.76.31 1.39 1.24 1.39 2.06l-.01 4.39z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>
+              <span class="lock-glyph"></span>
               <span>Lock</span>
               </button>
             </div>

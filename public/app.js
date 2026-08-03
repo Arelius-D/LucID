@@ -26,6 +26,12 @@ const ICONS = {
   toggleOn: `<svg class="icon-svg menu-toggle on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4h4c4.42 0 8 3.58 8 8s-3.58 8-8 8h-4c-4.42 0-8-3.58-8-8s3.58-8 8-8z"/><path d="M14 16a4 4 0 100-8 4 4 0 000 8z"/></svg>`,
   toggleOff: `<svg class="icon-svg menu-toggle off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4h4c4.42 0 8 3.58 8 8s-3.58 8-8 8h-4c-4.42 0-8-3.58-8-8s3.58-8 8-8z"/><path d="M10 16a4 4 0 100-8 4 4 0 000 8z"/></svg>`,
   // Lock-card status glyphs: one per state, so the line reads before the text does.
+  // Vault posture: one silhouette, three marks, all from Iconsax's own shield
+  // family — which turns out to share an outline with the deleted shield-tick, not
+  // with lin-security-safe. Every inline copy matches its file in public/icons/.
+  shieldSecurity: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.49 2.23L5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0z"/><path d="M12 12.5a2 2 0 100-4 2 2 0 000 4zM12 12.5v3"/></svg>`,
+  shield: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.49 2.23L5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0z"/></svg>`,
+  shieldCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.49 2.23L5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0z"/><path d="M14.15 13.44L9.9 9.19M14.1 9.24l-4.25 4.25"/></svg>`,
   lock: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5z"/><path stroke-width="2" d="M15.996 16h.01M11.995 16h.01M7.995 16h.008"/></svg>`,
   passwordCheck: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M11.02 19.5H7.5c-.62 0-1.17-.02-1.66-.09-2.63-.29-3.34-1.53-3.34-4.91v-5c0-3.38.71-4.62 3.34-4.91.49-.07 1.04-.09 1.66-.09h3.46M15.02 4.5h1.48c.62 0 1.17.02 1.66.09 2.63.29 3.34 1.53 3.34 4.91v5c0 3.38-.71 4.62-3.34 4.91-.49.07-1.04.09-1.66.09h-1.48M15 2v20"/><path stroke-width="2" d="M11.095 12h.008M7.094 12h.01"/></svg>`,
   heartSlash: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.11 17.5C3.9 15.43 2 12.48 2 8.68c0-3.09 2.49-5.59 5.56-5.59 1.82 0 3.43.88 4.44 2.24a5.53 5.53 0 014.44-2.24c1.15 0 2.22.35 3.11.96M21.74 7c.17.53.26 1.1.26 1.69 0 7-6.48 11.13-9.38 12.13-.34.12-.9.12-1.24 0-.65-.22-1.47-.6-2.36-1.13M22 2L2 22"/></svg>`,
@@ -925,7 +931,7 @@ function renderAll() {
   renderMetrics();
   renderTags();
   renderTrashPanel();
-  updateE2EEUI();
+  updateVaultShield();
 }
 
 // Move focus onto a row that has just been rendered, so the keyboard lands where
@@ -1925,17 +1931,61 @@ function renderMetrics() {
 // An indicator must be able to say something other than "fine". The one condition
 // this badge can truthfully detect is Web Crypto being unavailable (plain HTTP to
 // an IP) — the same condition the unlock path reports as SECURE_CONTEXT_REQUIRED.
-function updateE2EEUI() {
-  const badge = document.getElementById('e2ee-badge');
-  if (!badge) return;
-  const ok = !!(window.crypto && window.crypto.subtle);
-  const msg = ok ? 'E2EE Active · AES-256-GCM' : 'E2EE unavailable · needs HTTPS';
-  badge.classList.toggle('error', !ok);
-  badge.title = msg;
-  badge.setAttribute('aria-label', msg);
-  const sr = badge.querySelector('.visually-hidden');
-  if (sr) sr.textContent = msg;
+// ── VAULT POSTURE ─────────────────────────────────
+// The deleted E2EE badge reported whether crypto.subtle exists. That can only be
+// true where the badge lived: reaching the app requires deriveKey(), which throws
+// SECURE_CONTEXT_REQUIRED without it, so the badge's false state was unreachable
+// and its role="status" announced a value with one possible value. The honest
+// report of that failure already lives on the lock screen, where it blocks entry.
+//
+// What DOES vary while you are inside is how long the key will sit in memory, and
+// nothing reported it. The lock button carries that in its own glyph now.
+const AUTOLOCK_HARD_CEILING_MIN = 60;
+const VAULT_SHIELD_WARN_MS = 60000;    // one 15s sweep, with room to spare
+let idleLastActivity = Date.now();
+
+function autolockSoftMin() {
+  const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
+  return Number.isFinite(raw) ? raw : 5;                       // default 5 min
 }
+function getAutolockMs() {
+  const soft = autolockSoftMin();
+  const eff = soft > 0 ? Math.min(soft, AUTOLOCK_HARD_CEILING_MIN) : AUTOLOCK_HARD_CEILING_MIN;
+  return eff * 60 * 1000;
+}
+
+function updateVaultShield() {
+  const btn = document.getElementById('btn-lock-vault');
+  if (!btn) return;
+  const glyph = btn.querySelector('.lock-glyph');
+  const soft = autolockSoftMin();
+  const left = getAutolockMs() - (Date.now() - idleLastActivity);
+
+  let mark, icon, msg;
+  if (state.encryptionKey && left <= VAULT_SHIELD_WARN_MS) {
+    mark = 'warn';
+    icon = ICONS.shieldCross;
+    msg = 'Locking in under a minute \u00b7 move or type to stay \u00b7 click to lock now';
+  } else if (soft > 0) {
+    mark = 'armed';
+    icon = ICONS.shieldSecurity;
+    msg = `Lock vault \u00b7 AES-256-GCM \u00b7 auto-locks after ${soft} min idle`;
+  } else {
+    mark = 'open';
+    icon = ICONS.shield;
+    msg = `Lock vault \u00b7 AES-256-GCM \u00b7 auto-lock off, hard ceiling ${AUTOLOCK_HARD_CEILING_MIN} min`;
+  }
+
+  btn.classList.toggle('is-warning', mark === 'warn');
+  btn.title = msg;
+  btn.setAttribute('aria-label', msg);
+  // Repaint only on a real change: this runs every 15 seconds.
+  if (glyph && glyph.dataset.mark !== mark) {
+    glyph.dataset.mark = mark;
+    glyph.innerHTML = icon;
+  }
+}
+
 
 function escapeHtml(str) {
   const div = document.createElement('div');
@@ -2729,7 +2779,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       await persistSessionKey(derived);   // stores the non-extractable key, not the passphrase
       lockScreen.classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
-      updateE2EEUI();
+      updateVaultShield();
       renderAll();
     } catch (err) {
       if (err && err.message === 'SECURE_CONTEXT_REQUIRED') {
@@ -2810,20 +2860,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Idle auto-lock ──
   // Soft timeout is user-chosen (Off/5/15/30 min, default 5); a fixed 60-min
   // hard ceiling always locks even when soft is Off. Only in-tab activity counts.
-  const AUTOLOCK_HARD_CEILING_MIN = 60;
-  let idleLastActivity = Date.now();
-  function getAutolockMs() {
-    const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
-    const soft = Number.isFinite(raw) ? raw : 5;              // default 5 min
-    const eff = soft > 0 ? Math.min(soft, AUTOLOCK_HARD_CEILING_MIN) : AUTOLOCK_HARD_CEILING_MIN;
-    return eff * 60 * 1000;
-  }
   const markActivity = () => { idleLastActivity = Date.now(); };
   ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt =>
     document.addEventListener(evt, markActivity, { passive: true }));
   setInterval(() => {
     if (!state.encryptionKey) return;                          // only while unlocked
-    if (Date.now() - idleLastActivity >= getAutolockMs()) lockVault();
+    if (Date.now() - idleLastActivity >= getAutolockMs()) { lockVault(); return; }
+    updateVaultShield();     // the warning mark has to be able to appear on its own
   }, 15000);
 
   // ── Auto-lock timeout picker (footer) ──
@@ -2835,9 +2878,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   ];
   const btnAutolock = document.getElementById('btn-autolock');
   function autolockLabel() {
-    const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
-    const soft = Number.isFinite(raw) ? raw : 5;
-    if (soft <= 0) return 'Auto-lock: Off (60 minutes)';
+    const soft = autolockSoftMin();
+    if (soft <= 0) return `Auto-lock: Off (${AUTOLOCK_HARD_CEILING_MIN} minutes)`;
     return soft < 1 ? `Auto-lock: ${Math.round(soft * 60)} seconds` : `Auto-lock: ${soft} min`;
   }
   if (btnAutolock) {
@@ -2848,8 +2890,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     syncAutolockLabel();
     btnAutolock.addEventListener('click', e => {
       e.stopPropagation();
-      const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
-      const current = Number.isFinite(raw) ? raw : 5;
+      const current = autolockSoftMin();
       const rect = btnAutolock.getBoundingClientRect();
       const items = AUTOLOCK_OPTIONS.map(o => ({
         label: o.label,
@@ -2861,6 +2902,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           localStorage.setItem('lucid-autolock-min', String(o.min));
           idleLastActivity = Date.now();
           syncAutolockLabel();
+          updateVaultShield();
         }
       }));
       showTreeContextMenu(rect.left, rect.top, items);
@@ -2890,7 +2932,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await settleVaultOnEntry();
     lockScreen.classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
-    updateE2EEUI();
+    updateVaultShield();
     renderAll();
   } else {
     lockScreen.classList.remove('hidden');

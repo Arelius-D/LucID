@@ -1003,18 +1003,16 @@ select:focus-visible,
 .menu-icon-blank { display: inline-block; width: 0.875rem; height: 0.875rem; }
 /* E2EE state is a glyph, not a sentence: the shield carries the state, the
    tooltip carries the detail — same control family as the sync/runtime badges. */
-.e2ee-badge {
+/* The lock button is the security corner now: one control that both reports the
+   vault's posture and acts on it. Trash joins it here later (see HANDOFF). */
+.lock-glyph {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: var(--radius-sm);
-  color: var(--save-ok);
-  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
 }
-.e2ee-badge.error { color: var(--danger); }
-/* Security corner: state beside the action that enforces it */
+.lock-glyph .icon-svg {
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+.lock-action-btn.is-warning { color: var(--danger); }
 .footer-security-cluster {
   display: flex;
   align-items: center;
@@ -1099,8 +1097,16 @@ select:focus-visible,
   cursor: pointer;
   transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
 }
+/* Hover like everything else: the surface tints and the colour shifts. It used to
+   light the whole border accent instead, and since this is the only footer control
+   with a resting border, hovering lit the brightest, largest outline on the page —
+   louder than any ACTIVE state elsewhere, for a mere hover. The border stays at
+   --border: it is this button's resting identity as the one action among
+   indicators, not a hover channel. No glyph scale either, unlike the icon-only
+   pills: this button has a label beside the glyph, and growing one would shove the
+   other. */
 .lock-action-btn:hover {
-  border-color: var(--accent);
+  background: var(--bg-hover);
   color: var(--accent);
 }
 
