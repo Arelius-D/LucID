@@ -818,6 +818,66 @@ const EXPLORER_MODES = {
 
 // Show the container belonging to the active mode, hide the other two, and
 // render it. The single entry point for "the note list changed".
+// Search is its own view, not a filter applied to three others. While a query is
+// live the explorer shows ONE flat list of matches: no folder headers, no tag
+// groups, no pinned scaffolding to read around. Clearing the search puts the
+// previous view back untouched, because the mode was never changed.
+function noteMatchesQuery(n, q) {
+  if (n.trashed) return false;
+  const title = state.decryptedTitleCache.get(n.id) || n.title || '';
+  return (title && title.toLowerCase().includes(q)) ||
+         (n.tags && n.tags.some(t => t.toLowerCase().includes(q))) ||
+         (typeof n.content === 'string' && !n.content.startsWith('ENC:') && n.content.toLowerCase().includes(q));
+}
+
+function renderSearchResults() {
+  const mode = EXPLORER_MODES[state.explorerMode];
+  const container = document.getElementById(mode.tree);
+  if (!container) return;
+  const q = state.searchQuery.trim().toLowerCase();
+  container.innerHTML = '';
+  container.setAttribute('role', 'tree');
+  container.setAttribute('aria-label', 'Search results');
+
+  const hits = state.notes.filter(n => noteMatchesQuery(n, q));
+  if (!hits.length) {
+    container.innerHTML = '<div class="empty-state empty-state-pane">No notes match</div>';
+    return;
+  }
+
+  hits.forEach(note => {
+    const noteEl = document.createElement('div');
+    noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
+    noteEl.setAttribute('role', 'treeitem');
+    noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
+    noteEl.tabIndex = -1;
+    noteEl.dataset.treeId = 'note:' + note.id;
+
+    let displayTitle = state.decryptedTitleCache.get(note.id);
+    if (!displayTitle || displayTitle.startsWith('ENC:')) {
+      displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
+    }
+    noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
+      (note.pinned ? `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>` : '');
+
+    noteEl.addEventListener('click', async e => {
+      e.stopPropagation();
+      await flushPendingSave();
+      state.trashPreviewId = null;
+      state.activeNoteId = note.id;
+      state.activeFolderId = note.folderId;
+      renderAll();
+    });
+    noteEl.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
+    });
+    container.appendChild(noteEl);
+  });
+
+  updateTreeRoving(container);
+}
+
 function renderExplorer() {
   if (!EXPLORER_MODES[state.explorerMode]) state.explorerMode = 'folders';
   const active = state.explorerMode;
@@ -830,7 +890,8 @@ function renderExplorer() {
     }
     if (tree) tree.classList.toggle('hidden', name !== active);
   });
-  EXPLORER_MODES[active].render();
+  if (state.searchQuery.trim()) renderSearchResults();
+  else EXPLORER_MODES[active].render();
 }
 
 function renderAll() {
@@ -884,18 +945,8 @@ function renderTree() {
   container.innerHTML = '';
   container.setAttribute('role', 'tree');
   container.setAttribute('aria-label', 'Folders');
-  const q = state.searchQuery.toLowerCase();
-
   state.folders.filter(f => !f.trashed).forEach(folder => {
-    const folderNotes = state.notes.filter(n => {
-      if (n.trashed) return false;
-      if (n.folderId !== folder.id) return false;
-      if (!q) return true;
-      const title = state.decryptedTitleCache.get(n.id) || n.title || '';
-      return (title && title.toLowerCase().includes(q)) ||
-             (n.tags && n.tags.some(t => t.toLowerCase().includes(q))) ||
-             (typeof n.content === 'string' && !n.content.startsWith('ENC:') && n.content.toLowerCase().includes(q));
-    });
+    const folderNotes = state.notes.filter(n => !n.trashed && n.folderId === folder.id);
 
     const isOpen = state.openFolderIds.has(folder.id);
     const isActive = state.activeFolderId === folder.id;
@@ -1039,21 +1090,9 @@ function renderPinnedTree() {
   container.innerHTML = '';
   container.setAttribute('role', 'tree');
   container.setAttribute('aria-label', 'Pinned notes');
-  const q = state.searchQuery.toLowerCase();
-
-  const pinned = state.notes.filter(n => n.pinned && !n.trashed);
-  const matching = pinned.filter(n => {
-    if (!q) return true;
-    const title = state.decryptedTitleCache.get(n.id) || n.title || '';
-    return title.toLowerCase().includes(q) ||
-           (n.tags && n.tags.some(t => t.toLowerCase().includes(q))) ||
-           (typeof n.content === 'string' && !n.content.startsWith('ENC:') && n.content.toLowerCase().includes(q));
-  });
-
+  const matching = state.notes.filter(n => n.pinned && !n.trashed);
   if (!matching.length) {
-    container.innerHTML = pinned.length
-      ? '<div class="empty-state empty-state-pane">No matching pinned notes</div>'
-      : '<div class="empty-state empty-state-pane">Nothing pinned yet. Right-click a note to pin it.</div>';
+    container.innerHTML = '<div class="empty-state empty-state-pane">Nothing pinned yet. Right-click a note to pin it.</div>';
     return;
   }
 
@@ -1098,23 +1137,18 @@ function renderTagTree() {
   container.innerHTML = '';
   container.setAttribute('role', 'tree');
   container.setAttribute('aria-label', 'Tags');
-  const q = state.searchQuery.toLowerCase();
 
   const tagMap = new Map();
   state.notes.filter(n => !n.trashed).forEach(n => {
-    if (n.tags && n.tags.length) {
-      n.tags.forEach(t => {
-        if (!q || t.toLowerCase().includes(q)) {
-          const list = tagMap.get(t) || [];
-          list.push(n);
-          tagMap.set(t, list);
-        }
-      });
-    }
+    (n.tags || []).forEach(t => {
+      const list = tagMap.get(t) || [];
+      list.push(n);
+      tagMap.set(t, list);
+    });
   });
 
   if (!tagMap.size) {
-    container.innerHTML = '<div class="empty-state empty-state-pane">No matching tags</div>';
+    container.innerHTML = '<div class="empty-state empty-state-pane">No tags yet. Right-click a note to add one.</div>';
     return;
   }
 
