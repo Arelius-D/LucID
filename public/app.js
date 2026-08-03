@@ -20,6 +20,8 @@ const ICONS = {
   sun: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M12 18.5a6.5 6.5 0 100-13 6.5 6.5 0 000 13z"/><path stroke-width="2" d="M19.14 19.14l-.13-.13m0-14.02l.13-.13-.13.13zM4.86 19.14l.13-.13-.13.13zM12 2.08V2v.08zM12 22v-.08.08zM2.08 12H2h.08zM22 12h-.08.08zM4.99 4.99l-.13-.13.13.13z"/></svg>`,
   moon: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.03 12.42c.36 5.15 4.73 9.34 9.96 9.57 3.69.16 6.99-1.56 8.97-4.27.82-1.11.38-1.85-.99-1.6-.67.12-1.36.17-2.08.14C13 16.06 9 11.97 8.98 7.14c-.01-1.3.26-2.53.75-3.65.54-1.24-.11-1.83-1.36-1.3C4.41 3.86 1.7 7.85 2.03 12.42z"/></svg>`,
   tickCircle: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
+  brush: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 19.5V18h-5c-.55 0-1.05-.22-1.41-.59-.37-.36-.59-.86-.59-1.41 0-1.03.8-1.89 1.81-1.99.06-.01.12-.01.19-.01h15c.07 0 .13 0 .19.01.48.04.9.25 1.22.58.41.4.63.97.58 1.59-.09 1.05-1.04 1.82-2.1 1.82H14.5v1.5a2.5 2.5 0 01-5 0z"/><path d="M20.17 5.3l-.48 8.71c-.06-.01-.12-.01-.19-.01h-15c-.07 0-.13 0-.19.01L3.83 5.3A2.996 2.996 0 016.81 2h10.38c1.77 0 3.16 1.53 2.98 3.3zM7.99 2v5M12 2v2"/></svg>`,
+  sunFog: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M18.5 12a6.5 6.5 0 10-13 0"/><path stroke-width="2" d="M4.99 4.99l-.13-.13m14.15.13l.13-.13-.13.13zM12 2.08V2v.08zM2.08 12H2h.08zM22 12h-.08.08z"/><path stroke-width="1.5" stroke-miterlimit="10" d="M4 15h16M6 18h12M9 21h6"/></svg>`,
   // Sync state uses one icon family so the three states read as one indicator.
   // The glyph itself changes on failure, so colour is reinforcement rather than
   // the only signal (WCAG 1.4.1).
@@ -1838,34 +1840,36 @@ function applyTheme(themeId) {
   // Swap the highlight.js code theme to match the app theme
   const hljsTheme = document.getElementById('hljs-theme');
   if (hljsTheme) {
-    const style = themeId === 'warm-linen' ? 'github' : 'github-dark';
-    hljsTheme.href = `vendor/hljs-styles/${style}.min.css`;
+    const t = THEMES.find(x => x.id === themeId);
+    hljsTheme.href = `vendor/hljs-styles/${(t && t.hljs) || 'github-dark'}.min.css`;
   }
 
-  const iconEl = document.getElementById('theme-toggle-icon');
-  const btn = document.getElementById('btn-theme-toggle');
-  if (iconEl && btn) {
-    if (themeId === 'warm-linen') {
-      iconEl.innerHTML = ICONS.moon;
-      btn.title = "Switch to Dark Theme (Dusk Ember)";
-    } else {
-      iconEl.innerHTML = ICONS.sun;
-      btn.title = "Switch to Light Theme (Warm Linen)";
-    }
-  }
 }
 
-function initThemeToggle() {
-  const btn = document.getElementById('btn-theme-toggle');
-  if (!btn) return;
-  
-  const saved = localStorage.getItem('lucid-theme') || 'dusk-ember';
-  applyTheme(saved);
+// Three themes, one mechanism — mirrors the font-set picker exactly: a table,
+// a footer button, a menu, localStorage, unknown values fall back to default.
+const THEMES = [
+  { id: 'dusk-ember', label: 'Dusk Ember', icon: 'moon',   hljs: 'github-dark' },
+  { id: 'amber-hour', label: 'Amber Hour', icon: 'sunFog', hljs: 'github-dark' },
+  { id: 'warm-linen', label: 'Warm Linen', icon: 'sun',    hljs: 'github' }
+];
+const DEFAULT_THEME = 'dusk-ember';
 
-  btn.addEventListener('click', () => {
-    const current = localStorage.getItem('lucid-theme') || 'dusk-ember';
-    const next = current === 'dusk-ember' ? 'warm-linen' : 'dusk-ember';
-    applyTheme(next);
+function initThemePicker() {
+  const btn = document.getElementById('btn-theme');
+  if (!btn) return;
+  const saved = localStorage.getItem('lucid-theme');
+  applyTheme(THEMES.some(t => t.id === saved) ? saved : DEFAULT_THEME);
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const current = localStorage.getItem('lucid-theme') || DEFAULT_THEME;
+    const rect = btn.getBoundingClientRect();
+    const items = THEMES.map(t => ({
+      label: t.label,
+      icon: t.id === current ? ICONS.tickCircle : ICONS[t.icon],
+      action: () => applyTheme(t.id)
+    }));
+    showTreeContextMenu(rect.left, rect.top, items);
   });
 }
 
@@ -2084,7 +2088,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initSplitHandle();
   initViewModeTabs();
   initTreeKeyboard();
-  initThemeToggle();
+  initThemePicker();
   initFontPicker();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
@@ -2560,6 +2564,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }));
       showTreeContextMenu(rect.left, rect.top, items);
+    });
+  }
+
+  // INC-43b: the status badges earn their hover — sync now / recheck health.
+  const syncBadge = document.getElementById('save-indicator');
+  if (syncBadge) {
+    const syncNow = () => { flushPendingSave(); saveStore(); };
+    syncBadge.addEventListener('click', syncNow);
+    syncBadge.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); syncNow(); }
+    });
+  }
+  const runtimeBadge = document.getElementById('runtime-indicator');
+  if (runtimeBadge) {
+    runtimeBadge.addEventListener('click', updateRuntimeIndicator);
+    runtimeBadge.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); updateRuntimeIndicator(); }
     });
   }
 

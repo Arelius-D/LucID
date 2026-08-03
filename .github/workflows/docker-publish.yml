@@ -28,6 +28,12 @@ jobs:
           git diff --exit-code -- public/vendor \
             || (echo "::error::public/vendor is out of date — run 'npm run vendor' and commit." && exit 1)
 
+      - name: FOSSA license & dependency analysis
+        if: github.event_name != 'pull_request'
+        uses: fossas/fossa-action@v1
+        with:
+          api-key: ${{ secrets.FOSSA_API_KEY }}
+
       - name: Set up QEMU (Multi-Architecture Support)
         uses: docker/setup-qemu-action@v4
 

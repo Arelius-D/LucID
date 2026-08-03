@@ -2,7 +2,7 @@
   "name": "lucid",
   "version": "2.3.0-dev",
   "description": "100% Free, E2EE, 3-Pane Web Note-Taking Application",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "private": true,
   "engines": {
     "node": ">=20"

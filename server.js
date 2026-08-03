@@ -31,7 +31,7 @@ if (CORS_ORIGIN) {
 // strips style attributes from rendered markdown, and CSSOM writes are not CSP-gated.
 const CSP_HEADER = [
   "default-src 'self'",
-  "script-src 'self'",
+  "script-src 'self' 'sha256-ZMl5Q4bsZIF4pDz2yEQ03V8J2tcYWAFBcZl4acDp6Yw='",
   "style-src 'self'",
   "font-src 'self'",
   "img-src 'self' data: blob:",
@@ -81,7 +81,7 @@ function buildInitialData() {
         id: newId('n'),
         folderId: generalId,
         title: 'Welcome to LucID',
-        content: '# Welcome to LucID\n\nLucID is a self-hosted, privacy-focused note-taking application with client-side **AES-256-GCM end-to-end encryption**.\n\n## Capabilities\n- **Client-side E2EE**: your passphrase encrypts note titles, contents, tags and folder names in the browser before anything is stored. The server holds ciphertext it cannot read.\n- **Dual split view**: toggle between side-by-side and top-bottom layouts.\n- **Theme engine**: Dusk Ember (dark) and Warm Linen (light).\n- **Folders and tags**: expandable hierarchy with instant search.\n\nDelete this note whenever you like. Nothing depends on it.',
+        content: '# Welcome to LucID\n\nLucID is a self-hosted, privacy-focused note-taking application with client-side **AES-256-GCM end-to-end encryption**.\n\n## Capabilities\n- **Client-side E2EE**: your passphrase encrypts note titles, contents, tags and folder names in the browser before anything is stored. The server holds ciphertext it cannot read.\n- **Dual split view**: toggle between side-by-side and top-bottom layouts.\n- **Theme engine**: Dusk Ember (dark), Amber Hour (twilight) and Warm Linen (light).\n- **Folders and tags**: expandable hierarchy with instant search.\n\nDelete this note whenever you like. Nothing depends on it.',
         isEncrypted: false,
         tags: ['welcome', 'lucid'],
         createdAt: now,
