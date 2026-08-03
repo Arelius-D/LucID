@@ -2456,6 +2456,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Interactive Tag Add Button
+  // Print: always the rendered note, never the editor. The @media print block does
+  // the work, so this is one call and no state — and the browser's own dialog
+  // supplies Save-as-PDF for free.
+  const btnPrint = document.getElementById('btn-print');
+  if (btnPrint) btnPrint.addEventListener('click', () => window.print());
+
+  // Focus mode: real fullscreen via the Fullscreen API, with both side panes out
+  // of the way. The class and the button state follow the fullscreenchange EVENT,
+  // not the click, because Escape and the browser's own exit are outside our
+  // control and would otherwise leave the UI lying about where it is.
+  const btnFocus = document.getElementById('btn-focus');
+  if (btnFocus) {
+    btnFocus.addEventListener('click', async () => {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+      } catch (err) {
+        console.warn('Fullscreen refused:', err);
+        showSave('Focus mode unavailable in this browser', 'error');
+      }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      const on = !!document.fullscreenElement;
+      document.body.classList.toggle('focus-mode', on);
+      btnFocus.classList.toggle('active', on);
+      btnFocus.setAttribute('aria-pressed', String(on));
+      btnFocus.title = on ? 'Leave focus mode' : 'Focus mode (fullscreen)';
+      btnFocus.setAttribute('aria-label', btnFocus.title);
+    });
+  }
+
   const btnAddTag = document.getElementById('btn-add-tag');
   if (btnAddTag) {
     btnAddTag.addEventListener('click', e => {

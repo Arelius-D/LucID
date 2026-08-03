@@ -1925,3 +1925,80 @@ select:focus-visible,
 @media (max-width: 40rem) {
   .left-pane { width: 0; min-width: 0; overflow: hidden; border: none; }
 }
+
+/* ─── FOCUS MODE ────────────────────────────────────
+   Real fullscreen (Fullscreen API) with both side panes out of the way. The class
+   is applied by the fullscreenchange handler, never by the click, so Escape and
+   the browser's own exit keep the UI honest. Specificity beats .sidebar's own
+   display rule without reaching for !important. */
+body.focus-mode .app-container > .sidebar,
+body.focus-mode .app-container > .sidebar-resizer,
+body.focus-mode .app-container > .center-pane .docked-expand-btn {
+  display: none;
+}
+#btn-focus.active { color: var(--accent); opacity: 1; }
+
+/* ─── PRINT ─────────────────────────────────────────
+   Print the NOTE, not the application: every pane and control is hidden and the
+   rendered preview is promoted to the page, whatever view mode is on screen.
+   These rules sit last in the file deliberately — they match the mode-class
+   selectors at equal specificity and win by order, so no !important is needed.
+   Colour is forced to ink-on-paper because both themes would otherwise print
+   their backgrounds. */
+@media print {
+  body { background: none; }
+  .app-container > .sidebar,
+  .app-container > .sidebar-resizer,
+  .center-pane > .top-bar,
+  .editor-split .editor-pane,
+  .editor-split .split-handle,
+  .lock-screen,
+  .modal-backdrop,
+  .context-menu { display: none; }
+
+  .app-container,
+  .center-pane,
+  .editor-split.mode-editor,
+  .editor-split.mode-preview,
+  .editor-split.mode-split-vertical,
+  .editor-split.mode-split-horizontal {
+    display: block;
+    height: auto;
+    overflow: visible;
+  }
+  .editor-split.mode-editor .preview-pane,
+  .editor-split.mode-preview .preview-pane,
+  .editor-split.mode-split-vertical .preview-pane,
+  .editor-split.mode-split-horizontal .preview-pane {
+    display: block;
+    width: 100%;
+    height: auto;
+    flex: none;
+    overflow: visible;
+  }
+  .preview-content {
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    color: oklch(0.15 0 0);
+    background: none;
+  }
+  .preview-content a { color: oklch(0.15 0 0); text-decoration: underline; }
+  .preview-content h1,
+  .preview-content h2,
+  .preview-content h3 { color: oklch(0.15 0 0); break-after: avoid; }
+  .preview-content pre,
+  .preview-content blockquote,
+  .preview-content table,
+  .preview-content img { break-inside: avoid; }
+  .preview-content pre,
+  .preview-content code {
+    color: oklch(0.15 0 0);
+    background: none;
+    border: var(--hairline) solid oklch(0.75 0 0);
+  }
+  .preview-content table th,
+  .preview-content table td { border: var(--hairline) solid oklch(0.75 0 0); }
+  .preview-content .task-check { border-color: oklch(0.35 0 0); background: none; }
+  .preview-content .task-check.on::after { border-color: oklch(0.15 0 0); }
+}
