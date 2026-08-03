@@ -66,6 +66,7 @@ const state = {
   schemaVersion: null,
   openFolderIds: new Set(),
   openTagNames: new Set(),
+  tagLibrary: [],          // declared tags; survive having no carrier
   treeFocusId: null,
   dragNoteId: null,
   trashPreviewId: null,    // trashed note shown READ-ONLY in the center pane; never the editor
@@ -331,6 +332,7 @@ async function restoreKeyFromSession() {
         const plain = await decryptVaultIntoState(src, rec.key);
         state.folders = plain.folders;
         state.notes = plain.notes;
+        state.tagLibrary = plain.tags;
         return true;
       }
     }
@@ -407,7 +409,12 @@ async function decryptVaultIntoState(raw, key) {
       trashed: n.trashed === undefined ? false : (await decryptText(n.trashed, key)) === 'y'
     });
   }
-  return { folders, notes };
+  // The tag library rides encrypted like every other user string. A tag exists
+  // independently of the notes carrying it, so removing it from its last note
+  // does not destroy it — it stays available to re-apply.
+  const tags = [];
+  for (const t of (raw.tags || [])) tags.push(await decryptText(t, key));
+  return { folders, notes, tags };
 }
 
 async function encryptVaultFromState(key) {
@@ -440,7 +447,15 @@ async function encryptVaultFromState(key) {
       isEncrypted: true
     });
   }
-  return { folders, notes };
+  // Library = every declared tag plus every tag actually in use, so a vault
+  // written by an older version gains its library on first save here.
+  const library = new Set(state.tagLibrary || []);
+  state.notes.forEach(n => (n.tags || []).forEach(t => library.add(t)));
+  const tags = [];
+  for (const t of [...library].sort((a, b) => a.localeCompare(b))) {
+    tags.push(await encryptText(t, key));
+  }
+  return { folders, notes, tags };
 }
 
 // ─── PERSISTENCE ───────────────────────────────────
@@ -564,7 +579,7 @@ async function saveStore() {
   }
   try {
     showSave('Syncing changes to vault', 'saving');
-    const { folders, notes } = await encryptVaultFromState(state.encryptionKey);
+    const { folders, notes, tags } = await encryptVaultFromState(state.encryptionKey);
     const res = await fetch(apiPath('api/store'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -573,6 +588,7 @@ async function saveStore() {
         kdf: state.kdf,
         folders,
         notes,
+        tags,
         authVerifier: state.authVerifier
       })
     });
@@ -588,6 +604,12 @@ async function saveStore() {
 // encrypted flag: a deleted note must never become the editable active note
 // (that rendered a trashed note in an editable pane with an empty tree, and
 // autosave would have written to it).
+// Runs on both entry paths, after decryption: repair strandings, then select.
+async function settleVaultOnEntry() {
+  if (adoptOrphanNotes()) await saveStore();
+  selectFirstLiveNote();
+}
+
 function selectFirstLiveNote() {
   const live = state.notes.filter(n => !n.trashed);
   const current = live.find(n => n.id === state.activeNoteId);
@@ -1194,7 +1216,43 @@ function closeContextMenu() {
 document.addEventListener('click', closeContextMenu);
 
 // Context menu actions
+// A note is only reachable through a LIVE folder, so every creation path must
+// resolve to one. Without this a note could be filed into a trashed folder (or
+// none at all) and existed in the vault while being invisible in every view.
+function liveFolderId() {
+  const live = state.folders.filter(f => !f.trashed);
+  const active = live.find(f => f.id === state.activeFolderId);
+  return (active || live[0] || null)?.id || null;
+}
+
+// No live folder anywhere: recreate General, the same convention the trash
+// restore path uses when a note's folder is gone for good.
+function ensureLiveFolderId() {
+  const existing = liveFolderId();
+  if (existing) return existing;
+  const folder = { id: newId('f'), name: 'General', parentId: null, trashed: false };
+  state.folders.push(folder);
+  state.activeFolderId = folder.id;
+  state.openFolderIds.add(folder.id);
+  return folder.id;
+}
+
+// Repair for vaults that already contain stranded notes (a note filed into a
+// folder that was trashed or permanently deleted): give them a live home so
+// they stop being invisible. Trashed notes are left alone — their folderId is
+// the restore memory.
+function adoptOrphanNotes() {
+  const liveIds = new Set(state.folders.filter(f => !f.trashed).map(f => f.id));
+  const orphans = state.notes.filter(n => !n.trashed && !liveIds.has(n.folderId));
+  if (!orphans.length) return false;
+  const home = ensureLiveFolderId();
+  orphans.forEach(n => { n.folderId = home; });
+  return true;
+}
+
 async function createNoteInFolder(folderId) {
+  const liveIds = new Set(state.folders.filter(f => !f.trashed).map(f => f.id));
+  if (!liveIds.has(folderId)) folderId = ensureLiveFolderId();
   const newNote = {
     id: newId('n'),
     folderId,
@@ -1327,9 +1385,11 @@ function normalizeTag(raw) {
     .slice(0, TAG_MAX_LENGTH);
 }
 
-// The vault's tag vocabulary: every tag in use on a live note, sorted.
+// The vault's tag vocabulary: the declared library UNION every tag in use.
+// A tag survives losing its last carrier — that is what makes it re-appliable
+// instead of forcing the user to retype a tag they already created.
 function tagVocabulary() {
-  const all = new Set();
+  const all = new Set(state.tagLibrary || []);
   state.notes.forEach(n => {
     if (n.trashed) return;
     (n.tags || []).forEach(t => all.add(t));
@@ -1373,7 +1433,11 @@ function openTagMenu(note, x, y) {
       const input = await showPromptModal('New Tag', 'Name the new tag (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
       if (input === null) return;
       const clean = normalizeTag(input);
-      if (!clean || (note.tags || []).includes(clean)) return;
+      if (!clean) return;
+      // Declare it even if the note already carries it: creating a tag adds it
+      // to the vault's library, which is what keeps it re-appliable later.
+      if (!(state.tagLibrary || []).includes(clean)) state.tagLibrary.push(clean);
+      if ((note.tags || []).includes(clean)) { await saveStore(); return; }
       await toggleTagOnNote(note, clean);
     }
   });
@@ -1521,22 +1585,26 @@ async function renameTagGlobal(oldTag) {
   const clean = normalizeTag(input);
   if (!clean || clean === oldTag) return;
   state.notes.forEach(n => {
-    if (!n.tags || !n.tags.includes(oldTag)) return;
+    if (!n.tags || !n.tags.includes(oldTag)) return;   // library renamed below
     // Set-dedupe: renaming #a to #b on a note that already has #b must not
     // leave ['b','b'] behind.
     n.tags = [...new Set(n.tags.map(t => (t === oldTag ? clean : t)))];
     n.updatedAt = new Date().toISOString();
   });
+  // The library follows the rename, or the old name would linger as a ghost.
+  state.tagLibrary = [...new Set((state.tagLibrary || []).map(t => (t === oldTag ? clean : t)))];
   await saveStore();   // immediate, like every other tag mutation (one idiom)
   renderAll();
 }
 
 async function removeTagGlobal(tag) {
-  const ok = await showConfirmModal('Remove Tag', `Remove tag #${tag} from all notes in vault?`);
+  const ok = await showConfirmModal('Delete Tag', `Delete tag #${tag} from the vault? It is removed from every note and from your tag list.`);
   if (!ok) return;
   state.notes.forEach(n => {
     if (n.tags) n.tags = n.tags.filter(t => t !== tag);
   });
+  // This is the one action that destroys a tag: it leaves the library too.
+  state.tagLibrary = (state.tagLibrary || []).filter(t => t !== tag);
   await saveStore();
   renderAll();
 }
@@ -2321,10 +2389,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // New note button
-  document.getElementById('btn-new-note').addEventListener('click', async () => {
-    const folderId = state.activeFolderId || (state.folders.length ? state.folders[0].id : null);
-    if (!folderId) return;
-    createNoteInFolder(folderId);
+  document.getElementById('btn-new-note').addEventListener('click', () => {
+    // Always creates: with no live folder, one is made. The old version picked
+    // state.activeFolderId unchecked, so a note could land in a trashed folder
+    // and never appear in the tree, and with no folders it silently did nothing.
+    createNoteInFolder(ensureLiveFolderId());
   });
 
   // New folder button
@@ -2488,6 +2557,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const plain = await decryptVaultIntoState(src, derived);
         state.folders = plain.folders;
         state.notes = plain.notes;
+        state.tagLibrary = plain.tags;
         // J-12: refresh the title cache from the now-PLAINTEXT notes. fetchStore
         // primed it before unlock, when every title was still ciphertext, and
         // nothing re-primed it here — so the cache held ENC: strings for the whole
@@ -2495,7 +2565,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // The session-restore path already did this; the passphrase path did not.
         await preloadDecryptedTitles();
       }
-      selectFirstLiveNote();
+      await settleVaultOnEntry();
 
       await persistSessionKey(derived);   // stores the non-extractable key, not the passphrase
       lockScreen.classList.add('hidden');
@@ -2646,7 +2716,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const restored = await restoreKeyFromSession();
   if (restored) {
     await preloadDecryptedTitles();
-    selectFirstLiveNote();
+    await settleVaultOnEntry();
     lockScreen.classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     updateE2EEUI();
