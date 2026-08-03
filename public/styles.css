@@ -758,6 +758,11 @@ body {
 }
 /* Disclosure caret — closed/open are two authentic glyphs (lin-arrow-right-1 /
    lin-arrow-down) swapped in JS, same pattern as the folder icon pair. */
+.tree-caret-blank {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
 .tree-caret {
   width: 0.875rem;
   height: 0.875rem;
@@ -1683,7 +1688,7 @@ select:focus-visible,
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 1.125rem;
+  min-height: 0.75rem;
   margin-bottom: 0;
 }
 .lock-msg-slot .lock-error { margin-bottom: 0; }
@@ -1692,17 +1697,18 @@ select:focus-visible,
 .lock-inputs-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
   width: 100%;
   /* No bottom margin: the reserved message row below IS the separation from the
-     button. Stacking both put 50px of dead air under the fields. */
+     button. Stacking both put 3rem of dead air under the fields. */
   margin-bottom: 0;
 }
 .lock-input {
   width: 100%;
-  padding: var(--space-md);
+  min-height: 2.5rem;
+  padding: var(--space-sm) var(--space-md);
   margin-bottom: 0;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-family: var(--font-mono);
   background: var(--bg-input);
   color: var(--text-primary);
@@ -1816,8 +1822,9 @@ select:focus-visible,
 .lock-btn {
   width: 100%;
   display: block;
-  padding: var(--space-md) var(--space-lg);
-  font-size: var(--text-base);
+  min-height: 2.5rem;
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--text-sm);
   font-weight: 600;
   font-family: inherit;
   background: var(--accent);

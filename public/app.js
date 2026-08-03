@@ -904,12 +904,21 @@ function renderTree() {
     const header = document.createElement('div');
     header.className = 'tree-folder-header' + (isActive ? ' active' : '') + (isOpen ? ' open' : '');
     header.setAttribute('role', 'treeitem');
-    header.setAttribute('aria-expanded', String(isOpen));
+    // An empty folder has nothing to expand and nothing to count: no caret, no
+    // badge, and the closed glyph regardless of stored open state. The state is
+    // still remembered — it simply has nothing to paint until a note arrives.
+    const isEmpty = folderNotes.length === 0;
+    if (isEmpty) header.removeAttribute('aria-expanded');
+    else header.setAttribute('aria-expanded', String(isOpen));
     header.tabIndex = -1;
     header.dataset.treeId = 'folder:' + folder.id;
 
-    const folderIconHtml = isOpen ? ICONS.folderOpen : ICONS.folderClosed;
-    header.innerHTML = `${isOpen ? ICONS.chevronOpen : ICONS.chevron}${folderIconHtml} <span>${escapeHtml(folder.name)}</span><span class="count-badge">${folderNotes.length}</span>`;
+    const caretHtml = isEmpty
+      ? '<span class="tree-caret-blank" aria-hidden="true"></span>'
+      : (isOpen ? ICONS.chevronOpen : ICONS.chevron);
+    const folderIconHtml = (isOpen && !isEmpty) ? ICONS.folderOpen : ICONS.folderClosed;
+    const countHtml = isEmpty ? '' : `<span class="count-badge">${folderNotes.length}</span>`;
+    header.innerHTML = `${caretHtml}${folderIconHtml} <span>${escapeHtml(folder.name)}</span>${countHtml}`;
 
     header.addEventListener('click', () => {
       state.activeFolderId = folder.id;
@@ -2533,12 +2542,19 @@ document.addEventListener('DOMContentLoaded', async () => {
           lockError.classList.remove('hidden');
           lockError.classList.add('visually-hidden');
           if (lockInput) {
-            lockInput.classList.remove('shake');
+            // Clear the field and shake it. Nothing else: an empty box needs no
+            // red edge, so a refusal reads as one gesture instead of a colour
+            // pile-up. Retyping is the only next step anyway.
+            lockInput.value = '';
+            lockInput.classList.remove('shake', 'is-mismatch', 'is-matched');
+            // Gate FIRST: it repaints the button for the now-empty field and it
+            // also strips the shake class, so adding the class after it is the
+            // only order that survives.
+            refreshLockGate();
             void lockInput.offsetWidth;          // restart the animation
             lockInput.classList.add('shake');
-            lockInput.classList.add('is-mismatch');
             lockInput.addEventListener('animationend', () => lockInput.classList.remove('shake'), { once: true });
-            lockInput.select();
+            lockInput.focus();
           }
           lockBtn.textContent = 'Unlock';
           lockBtn.disabled = false;
