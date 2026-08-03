@@ -6,8 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.3.0-dev] - unreleased
-
+## [2.3.0] - 2026-08-03
 ### Added
 - **Third theme: Amber Hour (twilight)** — the in-between: mid-dark warm bronze (bg L≈0.40) with light text and the gold accent pulled between the two shipped themes. Same token names, zero component changes needed.
 - **Theme picker in the footer** — the top-bar sun/moon toggle retires; a brush button joins the comfort controls (theme, font, auto-lock) and opens a menu like the auto-lock one: Dusk Ember (moon), Amber Hour (sun-fog), Warm Linen (sun), tick on the active choice. Same mechanism as the font picker: stored per browser, unknown values fall back to the default.
