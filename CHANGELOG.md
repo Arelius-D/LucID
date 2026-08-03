@@ -6,8 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.6.0-dev] - unreleased
-
+## [2.6.0] - 2026-08-04
 ### Added
 - **Print the note, not the application**: a printer button beside the view tabs prints the rendered note — no sidebars, no toolbars, no footer — and the browser's own dialog gives Save-as-PDF for free. It always prints the preview, whichever view mode is on screen — including Editor mode, where the raw markdown would otherwise have printed above the rendered note — and forces ink-on-paper colour so neither theme prints its background. Code blocks, quotes, tables and images avoid breaking across pages. No library, no new dependency, nothing added to the CSP.
 - **Search reaches inside your notes**: it matched titles and tags only, while the note bodies sat decrypted in memory a line away. Typing now finds notes by their contents too, at no cost — the text was already there, search simply never looked at it.
