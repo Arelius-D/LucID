@@ -67,7 +67,6 @@ const state = {
   trashPreviewId: null,    // trashed note shown READ-ONLY in the center pane; never the editor
   viewMode: DEFAULT_VIEW_MODE, // see DEFAULT_VIEW_MODE — single source of truth (J-07)
   explorerMode: 'folders', // a key of EXPLORER_MODES: 'folders' | 'tags' | 'pinned'
-  activeTagFilter: null,
   decryptedTitleCache: new Map(),
   storeLoaded: false,      // false until GET /api/store succeeds — gates the lock screen mode (J-10)
 };
@@ -784,7 +783,6 @@ function renderTree() {
     const folderNotes = state.notes.filter(n => {
       if (n.trashed) return false;
       if (n.folderId !== folder.id) return false;
-      if (state.activeTagFilter && (!n.tags || !n.tags.includes(state.activeTagFilter))) return false;
       if (!q) return true;
       const title = state.decryptedTitleCache.get(n.id) || n.title || '';
       return (title && title.toLowerCase().includes(q)) ||
@@ -1137,7 +1135,14 @@ function initTreeKeyboard() {
 }
 
 // ─── RIGHT-CLICK CONTEXT MENU SYSTEM ───────────────
+// Where the last menu opened — submenus (the tag picker) reuse it so they land
+// on the same anchor instead of guessing.
+let lastMenuX = 0;
+let lastMenuY = 0;
+
 function showTreeContextMenu(x, y, items) {
+  lastMenuX = x;
+  lastMenuY = y;
   const menu = document.getElementById('tree-context-menu');
   menu.innerHTML = '';
   
@@ -1153,7 +1158,9 @@ function showTreeContextMenu(x, y, items) {
     btn.innerHTML = (item.icon || '') + `<span>${escapeHtml(item.label)}</span>`;
     btn.addEventListener('click', e => {
       e.stopPropagation();
-      closeContextMenu();
+      // keepOpen: multi-select menus (tag picker) refresh themselves instead of
+      // closing, so several toggles cost one open.
+      if (!item.keepOpen) closeContextMenu();
       item.action();
     });
     menu.appendChild(btn);
@@ -1280,40 +1287,80 @@ async function renameNote(note) {
 function noteContextItems(note) {
   const items = [
     { label: note.pinned ? 'Remove Pin' : 'Pin Note', icon: note.pinned ? ICONS.pinRemove : ICONS.pinAdd, action: () => togglePin(note) },
-    { label: 'Add Tag', icon: ICONS.tag, action: () => addTagToNote(note) }
+    { label: 'Tags…', icon: ICONS.tag, keepOpen: true, action: () => openTagMenu(note, lastMenuX, lastMenuY) }
   ];
-  if (note.tags && note.tags.length) {
-    items.push({ label: 'Remove Tag', icon: ICONS.tagCross, action: () => removeTagFromNote(note) });
-  }
   items.push({ label: 'Rename Note', icon: ICONS.edit, action: () => renameNote(note) });
   items.push({ divider: true });
   items.push({ label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => trashNote(note) });
   return items;
 }
 
-async function addTagToNote(note) {
-  const input = await showPromptModal('Add Tag', 'Enter a tag (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
-  if (input === null) return;
-  const tag = input.trim().replace(/^#/, '').toLowerCase();
-  if (!tag) return;
-  note.tags = note.tags || [];
-  if (note.tags.includes(tag)) return;
-  note.tags.push(tag);
-  note.updatedAt = new Date().toISOString();
-  renderAll();
-  await saveStore();
+// ─── TAGS ──────────────────────────────────────────
+// One normalizer, one mutation path, one picker. A tag is an attribute a note
+// carries, so the UI shows the vault's vocabulary and lets you toggle
+// membership; typing is reserved for genuinely NEW tags, which is the only way
+// a typo can no longer silently mint a near-duplicate.
+
+const TAG_MAX_LENGTH = 32;
+
+function normalizeTag(raw) {
+  return String(raw || '')
+    .replace(/^#/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase()
+    .slice(0, TAG_MAX_LENGTH);
 }
 
-async function removeTagFromNote(note) {
-  const current = (note.tags || []).map(t => '#' + t).join('  ');
-  const input = await showPromptModal('Remove Tag', 'On this note: ' + current, '', { placeholder: 'Tag to remove', icon: 'tagCross' });
-  if (input === null) return;
-  const tag = input.trim().replace(/^#/, '').toLowerCase();
-  if (!tag || !note.tags.includes(tag)) return;
-  note.tags = note.tags.filter(t => t !== tag);
+// The vault's tag vocabulary: every tag in use on a live note, sorted.
+function tagVocabulary() {
+  const all = new Set();
+  state.notes.forEach(n => {
+    if (n.trashed) return;
+    (n.tags || []).forEach(t => all.add(t));
+  });
+  return [...all].sort((a, b) => a.localeCompare(b));
+}
+
+// The single tag mutation for a note: on -> off, off -> on.
+async function toggleTagOnNote(note, tag) {
+  const clean = normalizeTag(tag);
+  if (!clean) return;
+  note.tags = note.tags || [];
+  note.tags = note.tags.includes(clean)
+    ? note.tags.filter(t => t !== clean)
+    : [...note.tags, clean];
   note.updatedAt = new Date().toISOString();
-  renderAll();
   await saveStore();
+  renderTags();
+  renderExplorer();
+}
+
+// The picker: vocabulary with ticks on the note's own tags, click to toggle,
+// menu stays open for multi-tagging, plus one entry to create a new tag.
+function openTagMenu(note, x, y) {
+  const items = tagVocabulary().map(tag => ({
+    label: '#' + tag,
+    icon: (note.tags || []).includes(tag) ? ICONS.tickCircle : '<span class="menu-icon-blank"></span>',
+    keepOpen: true,
+    action: async () => {
+      await toggleTagOnNote(note, tag);
+      openTagMenu(note, x, y);   // refresh the ticks in place
+    }
+  }));
+  if (items.length) items.push({ divider: true });
+  items.push({
+    label: 'New tag…',
+    icon: ICONS.tag,
+    action: async () => {
+      const input = await showPromptModal('New Tag', 'Name the new tag (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
+      if (input === null) return;
+      const clean = normalizeTag(input);
+      if (!clean || (note.tags || []).includes(clean)) return;
+      await toggleTagOnNote(note, clean);
+    }
+  });
+  showTreeContextMenu(x, y, items);
 }
 
 async function togglePin(note) {
@@ -1452,9 +1499,9 @@ function renderTrashPanel() {
 async function renameTagGlobal(oldTag) {
   const input = await showPromptModal('Rename Tag', `Rename tag #${oldTag} to:`, oldTag, { placeholder: 'Tag name', icon: 'tag' });
   if (input === null) return;
-  // J-11: normalize BEFORE validating, exactly like addTagToNote — an input of
-  // "#" must not collapse into an empty tag written onto every carrier.
-  const clean = input.replace(/^#/, '').trim().toLowerCase();
+  // J-11: normalize BEFORE validating — an input of "#" must not collapse into
+  // an empty tag written onto every carrier. One normalizer for every path.
+  const clean = normalizeTag(input);
   if (!clean || clean === oldTag) return;
   state.notes.forEach(n => {
     if (!n.tags || !n.tags.includes(oldTag)) return;
@@ -1591,13 +1638,9 @@ function renderTags() {
     chip.innerHTML = `#${escapeHtml(tag)}` + (readOnly ? '' : ` <span class="tag-del-btn" title="Remove Tag">×</span>`);
 
     const del = chip.querySelector('.tag-del-btn');
-    if (del) del.addEventListener('click', async e => {
+    if (del) del.addEventListener('click', e => {
       e.stopPropagation();
-      note.tags.splice(idx, 1);
-      note.updatedAt = new Date().toISOString();
-      await saveStore();
-      renderTags();
-      renderExplorer();
+      toggleTagOnNote(note, tag);   // one mutation path for every tag change
     });
 
     container.appendChild(chip);
@@ -2236,21 +2279,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Interactive Tag Add Button
   const btnAddTag = document.getElementById('btn-add-tag');
   if (btnAddTag) {
-    btnAddTag.addEventListener('click', async () => {
+    btnAddTag.addEventListener('click', e => {
+      // stopPropagation matters: without it this click reaches the document
+      // handler that closes menus, and the picker would open and vanish in the
+      // same tick (same reason the theme/font/auto-lock buttons stop it).
+      e.stopPropagation();
       if (state.trashPreviewId) return;   // trash preview is read-only, tags included
       const note = state.notes.find(n => n.id === state.activeNoteId);
       if (!note) return;
-      const tag = await showPromptModal('Add Tag', 'Enter tag name (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
-      if (!tag) return;
-      if (!note.tags) note.tags = [];
-      const cleanTag = tag.replace(/^#/, '').trim().toLowerCase();
-      if (cleanTag && !note.tags.includes(cleanTag)) {
-        note.tags.push(cleanTag);
-        note.updatedAt = new Date().toISOString();
-        await saveStore();
-        renderTags();
-        renderExplorer();
-      }
+      const rect = btnAddTag.getBoundingClientRect();
+      openTagMenu(note, rect.left, rect.bottom);
     });
   }
 
