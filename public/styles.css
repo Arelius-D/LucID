@@ -1936,6 +1936,19 @@ select:focus-visible,
   .left-pane { width: 0; min-width: 0; overflow: hidden; border: none; }
 }
 
+/* One glyph turned four ways for the pane toggles: lin-grid-4's line marks which
+   side the pane occupies, so hide/show and left/right are all the same drawing at
+   90-degree steps. Same trick as the split tab's rotated centre line. */
+.icon-svg.pane-hide-left { transform: rotate(0deg); }
+.icon-svg.pane-show-left { transform: rotate(90deg); }
+.icon-svg.pane-hide-right { transform: rotate(180deg); }
+.icon-svg.pane-show-right { transform: rotate(270deg); }
+.icon-svg.turn-90 { transform: rotate(90deg); }
+
+/* Menus mark the current entry by colour, keeping each entry's own glyph. A tick
+   replacing the glyph told you which one was chosen but hid WHAT it was. */
+.context-menu-item.active { color: var(--accent); }
+
 /* Copy control on fenced code blocks. Present but quiet until the block is hovered
    or the button focused, so it never competes with the code it sits on. */
 .preview-content pre { position: relative; }
