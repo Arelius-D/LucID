@@ -13,6 +13,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Your tags are a library now**: a tag exists in the vault in its own right (encrypted like everything else), so taking it off its last note no longer destroys it — it stays in the picker, switched off, ready to re-apply months later. Renaming follows it; **Delete Tag** is the one action that removes a tag from every note *and* from the library.
 
 ### Changed
+- **A first run that shows you the app**: a new vault now opens with *Getting Started* and *Personal*, a tag library of `guide`, `markdown` and `ideas` (that last one attached to nothing, so the tag toggles show both states immediately), and two notes. **Start here** is pinned and tours what is not guessable: the Split re-click that flips the layout, the three explorer views, tags as a vault-level library, what the trash actually does, and every footer control by name. **Markdown playground** exercises the renderer. The old welcome note explained encryption three times and the interface never; encryption is now one paragraph, framed by the consequence that matters when you host it yourself.
+- **Task lists have their boxes back**: `marked` renders them as form inputs, which the sanitizer forbids in note content, so they had been silently reduced to plain bullets. They now render as themed boxes — ticked and empty — with no relaxation of the sanitizer.
 - **One tag path, one tag rule**: every tag change in the app — picker, chip ×, new-tag prompt, global rename — now runs through a single mutation and a single normalizer (leading `#` stripped, whitespace collapsed, lowercased, capped at 32 characters). Two divergent add-tag implementations, which normalized in different orders, are gone.
 
 ### Removed
