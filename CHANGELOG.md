@@ -10,6 +10,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Added
 - **Print the note, not the application**: a printer button beside the view tabs prints the rendered note — no sidebars, no toolbars, no footer — and the browser's own dialog gives Save-as-PDF for free. It always prints the preview, whichever view mode is on screen — including Editor mode, where the raw markdown would otherwise have printed above the rendered note — and forces ink-on-paper colour so neither theme prints its background. Code blocks, quotes, tables and images avoid breaking across pages. No library, no new dependency, nothing added to the CSP.
+- **Search reaches inside your notes**: it matched titles and tags only, while the note bodies sat decrypted in memory a line away. Typing now finds notes by their contents too, at no cost — the text was already there, search simply never looked at it.
+- **Copy button on code blocks**: hover a fenced block in the preview and a copy control appears in its corner; it confirms with a tick and steps back out of the way. Nothing is printed with the page, and the button is built from the app's own icons after sanitising, so note content never becomes markup.
 - **Focus mode**: the maximise button puts LucID into real fullscreen — no tab strip, no bookmarks bar, no OS chrome — with both side panes out of the way, so the note is the only thing on the display. Escape leaves, and the button follows the browser's own fullscreen state rather than assuming, so it can never claim focus mode while you are out of it.
 
 ### Fixed
