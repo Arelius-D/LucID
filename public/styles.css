@@ -130,7 +130,6 @@
   --save-ok:       var(--accent);
   --success:       var(--accent);                    /* "matched / ready" reads on-brand */
   --success-glow:  oklch(0.773 0.140 78.6 / 0.32);
-  --danger-glow:   oklch(0.710 0.160 22.8 / 0.28);
   --danger-subtle: oklch(0.710 0.160 22.8 / 0.12);
 
   --scrollbar-track: var(--bg-base);
@@ -173,7 +172,6 @@
   --save-ok:       var(--accent);
   --success:       var(--accent);
   --success-glow:  oklch(0.643 0.055 81.4 / 0.35);
-  --danger-glow:   oklch(0.543 0.174 29.7 / 0.28);
   --danger-subtle: oklch(0.543 0.174 29.7 / 0.12);
 
   --scrollbar-track: var(--bg-base);
@@ -219,7 +217,6 @@
   --save-ok:       var(--accent);
   --success:       var(--accent);
   --success-glow:  oklch(0.740 0.110 80 / 0.32);
-  --danger-glow:   oklch(0.640 0.168 26 / 0.28);
   --danger-subtle: oklch(0.640 0.168 26 / 0.12);
 
   --scrollbar-track: var(--bg-base);
@@ -1803,9 +1800,22 @@ select:focus-visible,
   color: var(--text-muted);
   opacity: 0.7;
 }
+/* ONE LINE, EVER. A text field already draws one line: its own edge. Focus
+   recolours that edge and does nothing else. It used to recolour the edge AND add
+   a 0.1875rem ring hugging it AND inherit the app-wide :focus-visible outline at a
+   0.125rem offset, so clicking a passphrase box drew three concentric rings for
+   one fact. Browsers match :focus-visible on text inputs even for mouse clicks,
+   so this hit every user, not just keyboard ones. */
 .lock-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 0.1875rem var(--accent-subtle);
+}
+/* The detached outline is the right indicator for buttons and tree rows, which
+   have no caret and often no edge of their own. A text field has both, so here it
+   is a second ring saying what the edge already says. Specificity 0,2,0 beats the
+   global input:focus-visible at 0,1,1 — no !important needed. */
+.lock-input:focus-visible,
+.modal-input:focus-visible {
+  outline: none;
 }
 /* matched = gold (the app's success/accent colour), by design */
 /* Two channels, never doubled: FOCUS owns the outer ring (where you are), STATE
@@ -1820,10 +1830,11 @@ select:focus-visible,
   border-color: var(--danger);
   background: var(--danger-subtle);
 }
-/* When a state and focus land on the same field the ring takes the state's colour
-   instead of the accent, so two colours never argue over one box. */
-.lock-input.is-mismatch:focus { box-shadow: 0 0 0 0.1875rem var(--danger-glow); }
-.lock-input.is-matched:focus { box-shadow: 0 0 0 0.1875rem var(--success-glow); }
+/* Focus and state share the single line, and state wins while it lasts: these
+   rules come later at equal specificity, so a mismatched field keeps its red edge
+   when you click into it instead of trading the error away for a focus colour.
+   The fill is state's second voice — a wash, not a line, so it cannot read as a
+   second border. */
 .lock-error {
   font-size: var(--text-sm);
   color: var(--danger);
