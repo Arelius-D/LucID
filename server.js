@@ -169,7 +169,7 @@ function sameOriginOnly(req, res, next) {
 }
 
 app.post('/api/store', sameOriginOnly, (req, res) => {
-  const { folders, notes, authVerifier, kdf, schemaVersion } = req.body || {};
+  const { folders, notes, tags, authVerifier, kdf, schemaVersion } = req.body || {};
   if (!Array.isArray(folders) || !Array.isArray(notes)) {
     return res.status(400).json({ error: 'Invalid payload structure' });
   }
@@ -201,6 +201,11 @@ app.post('/api/store', sameOriginOnly, (req, res) => {
       kdf: kdf !== undefined ? kdf : (existing.kdf || null),
       folders,
       notes,
+      // The tag library: tags exist independently of any note carrying them, so
+      // a tag removed from its last note can still be re-applied later. Absent
+      // from the payload (an older client) means keep what is stored, exactly
+      // like kdf and authVerifier — an old app can never silently drop it.
+      tags: Array.isArray(tags) ? tags : (existing.tags || []),
       authVerifier: authVerifier !== undefined ? authVerifier : (existing.authVerifier || null)
     });
   } catch (err) {
