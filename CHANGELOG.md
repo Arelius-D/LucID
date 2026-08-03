@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.4.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.3.0] - 2026-08-03
 ### Added
 - **Third theme: Amber Hour (twilight)** — the in-between: mid-dark warm bronze (bg L≈0.40) with light text and the gold accent pulled between the two shipped themes. Same token names, zero component changes needed.
