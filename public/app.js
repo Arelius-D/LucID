@@ -2602,17 +2602,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Caps Lock heads-up while typing the passphrase
+  // Caps Lock heads-up. Listened for on the DOCUMENT, not just the field: the
+  // key is usually pressed before anyone clicks into the box, and a field-only
+  // listener showed nothing until the first character was typed. Mouse events
+  // carry the modifier state too, so clicking in with Caps already on reports it
+  // immediately. Only KeyboardEvent and MouseEvent expose getModifierState, which
+  // is why focus events cannot be used for this.
   const lockCaps = document.getElementById('lock-capslock');
   function capsCheck(e) {
     if (!lockCaps || !e.getModifierState) return;
+    if (lockScreen && lockScreen.classList.contains('hidden')) return;
     lockCaps.classList.toggle('hidden', !e.getModifierState('CapsLock'));
   }
+  document.addEventListener('keydown', capsCheck);
+  document.addEventListener('keyup', capsCheck);
+  document.addEventListener('mousedown', capsCheck);
   [lockInput, lockConfirmInput].forEach(el => {
     if (!el) return;
     el.addEventListener('keydown', capsCheck);
     el.addEventListener('keyup', capsCheck);
-    el.addEventListener('blur', () => { if (lockCaps) lockCaps.classList.add('hidden'); });
   });
 
   // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
