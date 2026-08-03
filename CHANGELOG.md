@@ -9,7 +9,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.4.0-dev] - unreleased
 
 ### Added
-- **Tags are chosen, not retyped**: the note's right-click menu and the inspector's **+** now open one **Tags…** picker listing every tag in your vault, ticked where the note carries it. Click to add, click a ticked one to remove, and the menu stays open so tagging several at once costs one open. Typing is reserved for the single **New tag…** entry — so a typo can no longer silently mint a near-duplicate tag, and removing a tag no longer means typing it back from memory. Long vocabularies scroll inside the menu.
+- **Tags are chosen, not retyped**: the note's right-click menu and the inspector's **+** now open one **Tags…** picker listing every tag in your vault with a toggle per row — on where the note carries it, off where the tag is available to apply. Click to flip; the menu stays open so tagging several at once costs one open. Typing is reserved for the single **New tag…** entry, so a typo can no longer silently mint a near-duplicate, and removing a tag never means typing it back from memory. Long lists scroll inside the menu.
+- **Your tags are a library now**: a tag exists in the vault in its own right (encrypted like everything else), so taking it off its last note no longer destroys it — it stays in the picker, switched off, ready to re-apply months later. Renaming follows it; **Delete Tag** is the one action that removes a tag from every note *and* from the library.
 
 ### Changed
 - **One tag path, one tag rule**: every tag change in the app — picker, chip ×, new-tag prompt, global rename — now runs through a single mutation and a single normalizer (leading `#` stripped, whitespace collapsed, lowercased, capped at 32 characters). Two divergent add-tag implementations, which normalized in different orders, are gone.
@@ -19,7 +20,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Fixed
 - **A deleted note could still be sitting in the editor**: if every remaining note was in the trash, unlocking or reloading selected one of them — the tree showed nothing while the centre pane loaded a deleted note in an editable state, where autosave would have written to it. Note selection now happens after decryption (the trashed flag is encrypted, so it cannot be read before), keeps your current note if it is still live, and the editor refuses a trashed note whatever route selected it. The read-only trash preview is unchanged. This also removes the phantom "New Note" that could appear when the last-open note had been deleted.
-- **The tag picker now shows both states**: every tag in the list carries a checkbox — ticked where the note has it, empty where it does not — so the tags you can add are as visible as the ones you already applied.
+- **A new note could land where nothing shows it**: the toolbar's New Note filed into the active folder without checking it was live, so with that folder in the trash the note existed in the vault but appeared in no view, and creating a fresh folder did not adopt it — with no folders at all the button silently did nothing. Every creation path now resolves to a live folder, recreating *General* when none remains, and notes already stranded by this are re-homed on unlock.
 - **The inspector's + button opened a menu that closed itself** in the same click (a missing propagation stop), and the context-menu engine had no height cap — a long tag list would have run off the viewport.
 
 ---
