@@ -10,7 +10,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Added
 
+### Changed
+- **The lock screen says each thing once**: it used to state "this vault is locked" four times over (heading, chip, paragraph, button) and "this is a passphrase field" up to five. What remains is a logo, one status line, the field, and the button. The line carries the state with its own glyph — *Set a passphrase to initialize your LucID*, *Vault locked*, or *Server unreachable* — the heading and the AES-256-GCM paragraph are gone, and the "cannot be recovered" warning now appears only on first run, where that choice is actually made.
+- **Caps Lock warns inside the field**, opposite the reveal eye, instead of pushing a line into the card. There is no counterpart glyph for the off state: its absence is the off state.
+- **Server-unreachable state no longer offers a passphrase box**. Retry re-fetches the vault and never tested a passphrase, so the field, the eye and the footer are hidden and the only control is the one that does something. Its glyph is a stopped heartbeat, matching the runtime badge in the footer.
+
 ### Fixed
+- **One gate for the button and the Enter key**. Enter used to bypass the disabled button, which is why "Please enter a passphrase", "Please confirm your master passphrase" and "Passphrases do not match" existed at all. The button and Enter now share a single gate, so those three messages became unreachable and were deleted: the field glow and the button state already say it.
+- **Glow on glow**: a matched field painted a coloured edge, a tinted fill *and* an outer ring, while focus painted its own edge and ring on top. The two channels are now separate — focus owns the ring, validation owns the edge and fill — so only the field you are actually in wears a ring.
+- **The card no longer shifts under the cursor**: messages appear in a reserved row of fixed height instead of being inserted into the layout, which used to slide the button at the moment you clicked it.
+- **Accessible names**: the dialog names itself with `aria-label` now that the heading is gone, and both passphrase fields carry explicit labels rather than relying on placeholder text alone.
 
 ---
 

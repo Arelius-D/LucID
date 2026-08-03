@@ -1659,16 +1659,15 @@ select:focus-visible,
   color: var(--text-secondary);
   margin-bottom: var(--space-md);
 }
-/* One fixed-height row shared by the caps-lock warning and any failure message.
-   Reserved so the card cannot shift under the cursor when a message appears. */
+/* Fixed-height row for failure messages. Reserved so the card cannot shift under
+   the cursor when one appears. */
 .lock-msg-slot {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 1.375rem;
-  margin-bottom: var(--space-md);
+  min-height: 1.125rem;
+  margin-bottom: 0;
 }
-.lock-msg-slot .lock-capslock,
 .lock-msg-slot .lock-error { margin-bottom: 0; }
 .lock-inputs-group.hidden,
 .lock-footer.hidden { display: none; }
@@ -1677,7 +1676,9 @@ select:focus-visible,
   flex-direction: column;
   gap: var(--space-sm);
   width: 100%;
-  margin-bottom: var(--space-lg);
+  /* No bottom margin: the reserved message row below IS the separation from the
+     button. Stacking both put 50px of dead air under the fields. */
+  margin-bottom: 0;
 }
 .lock-input {
   width: 100%;
@@ -1747,18 +1748,21 @@ select:focus-visible,
 .lock-reveal.revealed .icon-eye-slash { display: inline-flex; }
 
 /* Caps Lock heads-up */
-.lock-capslock {
-  display: flex;
+/* Caps Lock lives INSIDE the field, opposite the reveal eye: a warning that
+   appears where the typing happens, and never moves the card. No counterpart for
+   the off state — the absence of the flag is the off state. */
+.lock-caps-flag {
+  position: absolute;
+  left: var(--space-md);
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-2xs);
-  font-size: var(--text-xs);
-  font-weight: 600;
   color: var(--accent);
-  margin-bottom: var(--space-md);
+  pointer-events: none;
 }
-.lock-capslock svg { width: 0.875rem; height: 0.875rem; }
-.lock-capslock.hidden { display: none; }
+.lock-caps-flag svg { width: 0.9375rem; height: 0.9375rem; }
+.lock-caps-flag.hidden { display: none; }
 .lock-input::placeholder {
   font-family: var(--font-sans);
   letter-spacing: normal;
@@ -1771,14 +1775,16 @@ select:focus-visible,
   box-shadow: 0 0 0 0.1875rem var(--accent-subtle);
 }
 /* matched = gold (the app's success/accent colour), by design */
+/* Two channels, never doubled: FOCUS owns the outer ring (where you are), STATE
+   owns the edge and the fill (what the app thinks of what you typed). Before
+   this, a focused matched field carried a ring, a tint and a coloured edge at
+   once, which read as glow on glow. */
 .lock-input.is-matched {
   border-color: var(--success);
-  box-shadow: 0 0 0 0.1875rem var(--success-glow);
   background: var(--accent-subtle);
 }
 .lock-input.is-mismatch {
   border-color: var(--danger);
-  box-shadow: 0 0 0 0.1875rem var(--danger-glow);
   background: var(--danger-subtle);
 }
 .lock-error {
