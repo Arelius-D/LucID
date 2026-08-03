@@ -1950,11 +1950,21 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
   .app-container > .sidebar,
   .app-container > .sidebar-resizer,
   .center-pane > .top-bar,
-  .editor-split .editor-pane,
-  .editor-split .split-handle,
   .lock-screen,
   .modal-backdrop,
   .context-menu { display: none; }
+
+  /* The editor pane and the split handle must be hidden at the SAME specificity as
+     the mode rules that show them, or Editor mode wins and prints the raw markdown
+     above the rendered note. Equal specificity, later in the file, so order decides. */
+  .editor-split.mode-editor .editor-pane,
+  .editor-split.mode-preview .editor-pane,
+  .editor-split.mode-split-vertical .editor-pane,
+  .editor-split.mode-split-horizontal .editor-pane,
+  .editor-split.mode-editor .split-handle,
+  .editor-split.mode-preview .split-handle,
+  .editor-split.mode-split-vertical .split-handle,
+  .editor-split.mode-split-horizontal .split-handle { display: none; }
 
   .app-container,
   .center-pane,
