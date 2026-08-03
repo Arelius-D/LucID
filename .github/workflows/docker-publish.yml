@@ -30,7 +30,7 @@ jobs:
 
       - name: FOSSA license & dependency analysis
         if: github.event_name != 'pull_request'
-        uses: fossas/fossa-action@v1
+        uses: fossas/fossa-action@v2
         with:
           api-key: ${{ secrets.FOSSA_API_KEY }}
 
