@@ -272,21 +272,21 @@
       </div>
       <div class="lock-inputs-group" id="lock-inputs">
         <div class="lock-input-wrap">
-          <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" aria-describedby="lock-error" autofocus>
+          <span id="lock-capslock" class="lock-caps-flag hidden" role="status" aria-live="polite" title="Caps Lock is on">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.17 4.71L3.07 16.3c-1.45 2.75 1.48 5.74 4.26 4.35l3.24-1.62c.9-.45 1.96-.45 2.86 0l3.24 1.62c2.78 1.39 5.7-1.6 4.26-4.35l-6.1-11.59c-1.2-2.28-4.46-2.28-5.66 0z"/></svg>
+            <span class="visually-hidden">Caps Lock is on</span>
+          </span>
+          <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" aria-label="Master passphrase" aria-describedby="lock-error" autofocus>
           <button type="button" id="lock-reveal-btn" class="lock-reveal" title="Show passphrase" aria-label="Show passphrase">
             <span class="icon-eye"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15.58 12c0 1.98-1.6 3.58-3.58 3.58S8.42 13.98 8.42 12s1.6-3.58 3.58-3.58 3.58 1.6 3.58 3.58z"/><path d="M12 20.27c3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-2.29-3.6-5.58-5.68-9.11-5.68-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19 2.29 3.6 5.58 5.68 9.11 5.68z"/></svg></span>
             <span class="icon-eye-slash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.53 9.47l-5.06 5.06a3.576 3.576 0 115.06-5.06z"/><path d="M17.82 5.77C16.07 4.45 14.07 3.73 12 3.73c-3.53 0-6.82 2.08-9.11 5.68-.9 1.41-.9 3.78 0 5.19.79 1.24 1.71 2.31 2.71 3.17M8.42 19.53c1.14.48 2.35.74 3.58.74 3.53 0 6.82-2.08 9.11-5.68.9-1.41.9-3.78 0-5.19-.33-.52-.69-1.01-1.06-1.47M15.51 12.7a3.565 3.565 0 01-2.82 2.82M9.47 14.53L2 22M22 2l-7.47 7.47"/></svg></span>
           </button>
         </div>
-        <input type="password" id="lock-passphrase-confirm" class="lock-input hidden" placeholder="Confirm master passphrase">
+        <input type="password" id="lock-passphrase-confirm" class="lock-input hidden" placeholder="Confirm master passphrase" aria-label="Confirm master passphrase">
       </div>
       <!-- Reserved slot: caps-lock warning and failures share one fixed-height
            row, so the card never shifts under the cursor mid-click. -->
       <div class="lock-msg-slot">
-        <div id="lock-capslock" class="lock-capslock hidden" role="status" aria-live="polite">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M18.07 9.57L12 3.5 5.93 9.57M12 20.5V3.67"/></svg>
-          <span>Caps Lock is on</span>
-        </div>
         <div id="lock-error" class="lock-error hidden" role="alert" aria-live="assertive"></div>
       </div>
       <button id="lock-unlock-btn" class="lock-btn">Unlock</button>
