@@ -457,3 +457,7 @@ DOMPurify, marked, and highlight.js are vendored into `public/vendor/` and serve
 ## License
 
 Distributed under the GNU Affero General Public License v3.0. Run it, self-host it, modify it freely — but if you offer a modified LucID to others over a network, you must publish your modifications under the same license. See [`LICENSE`](LICENSE) for the full text. Releases up to and including v2.2.0 were published under MIT and remain so.
+
+License compliance of every dependency is continuously verified by FOSSA on each push:
+
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B63625%2Fgithub.com%2FArelius-D%2FLucID.svg?type=large&issueType=license)](https://app.fossa.com/projects/custom%2B63625%2Fgithub.com%2FArelius-D%2FLucID?ref=badge_large&issueType=license)
