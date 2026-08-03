@@ -9,8 +9,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.4.0-dev] - unreleased
 
 ### Added
+- **Tags are chosen, not retyped**: the note's right-click menu and the inspector's **+** now open one **Tags…** picker listing every tag in your vault, ticked where the note carries it. Click to add, click a ticked one to remove, and the menu stays open so tagging several at once costs one open. Typing is reserved for the single **New tag…** entry — so a typo can no longer silently mint a near-duplicate tag, and removing a tag no longer means typing it back from memory. Long vocabularies scroll inside the menu.
+
+### Changed
+- **One tag path, one tag rule**: every tag change in the app — picker, chip ×, new-tag prompt, global rename — now runs through a single mutation and a single normalizer (leading `#` stripped, whitespace collapsed, lowercased, capped at 32 characters). Two divergent add-tag implementations, which normalized in different orders, are gone.
+
+### Removed
+- Dead `activeTagFilter` state and the filter branch that read it — an unreachable stub; tag filtering is the tags view.
 
 ### Fixed
+- **The inspector's + button opened a menu that closed itself** in the same click (a missing propagation stop), and the context-menu engine had no height cap — a long tag list would have run off the viewport.
 
 ---
 

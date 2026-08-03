@@ -855,6 +855,12 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   gap: var(--space-3xs);
+  /* The tag picker lists the whole vault vocabulary — a long menu scrolls
+     inside itself instead of running off the viewport. */
+  max-height: 21rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
 .context-menu.hidden { display: none; }
 
