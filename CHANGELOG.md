@@ -18,6 +18,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Dead `activeTagFilter` state and the filter branch that read it — an unreachable stub; tag filtering is the tags view.
 
 ### Fixed
+- **A deleted note could still be sitting in the editor**: if every remaining note was in the trash, unlocking or reloading selected one of them — the tree showed nothing while the centre pane loaded a deleted note in an editable state, where autosave would have written to it. Note selection now happens after decryption (the trashed flag is encrypted, so it cannot be read before), keeps your current note if it is still live, and the editor refuses a trashed note whatever route selected it. The read-only trash preview is unchanged. This also removes the phantom "New Note" that could appear when the last-open note had been deleted.
+- **The tag picker now shows both states**: every tag in the list carries a checkbox — ticked where the note has it, empty where it does not — so the tags you can add are as visible as the ones you already applied.
 - **The inspector's + button opened a menu that closed itself** in the same click (a missing propagation stop), and the context-menu engine had no height cap — a long tag list would have run off the viewport.
 
 ---
