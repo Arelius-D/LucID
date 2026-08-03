@@ -1659,11 +1659,19 @@ select:focus-visible,
   color: var(--text-secondary);
   margin-bottom: var(--space-md);
 }
-.lock-sub {
-  font-size: var(--text-xs);
-  color: var(--text-muted);
-  margin-bottom: var(--space-lg);
+/* One fixed-height row shared by the caps-lock warning and any failure message.
+   Reserved so the card cannot shift under the cursor when a message appears. */
+.lock-msg-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.375rem;
+  margin-bottom: var(--space-md);
 }
+.lock-msg-slot .lock-capslock,
+.lock-msg-slot .lock-error { margin-bottom: 0; }
+.lock-inputs-group.hidden,
+.lock-footer.hidden { display: none; }
 .lock-inputs-group {
   display: flex;
   flex-direction: column;
@@ -1701,7 +1709,9 @@ select:focus-visible,
   background: var(--bg-elevated);
   border-radius: var(--radius-pill);
 }
-.lock-status svg { width: 0.875rem; height: 0.875rem; color: var(--accent); }
+.lock-status svg { width: 0.875rem; height: 0.875rem; color: inherit; }
+.lock-status { color: var(--accent); }
+.lock-status.bad { color: var(--danger); }
 .lock-status.hidden { display: none; }
 
 /* Show/hide passphrase toggle */

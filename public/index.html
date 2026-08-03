@@ -259,18 +259,18 @@
   </div>
 
   <!-- LOCK SCREEN -->
-  <div id="lock-screen" class="lock-screen" role="dialog" aria-modal="true" aria-labelledby="lock-title">
+  <div id="lock-screen" class="lock-screen" role="dialog" aria-modal="true" aria-label="LucID vault">
     <div class="lock-card">
       <div class="lock-icon">
         <img src="assets/branding/logo.png" class="lock-logo-img" alt="LucID">
       </div>
-      <h2 id="lock-title">LucID</h2>
+      <!-- One status line for all three states: it says where you are, and the
+           button says what to do. Icon and text are set by updateLockScreenUI. -->
       <div id="lock-status" class="lock-status">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5z"/><path stroke-width="2" d="M15.996 16h.01M11.995 16h.01M7.995 16h.008"/></svg>
-        <span>Vault locked</span>
+        <span id="lock-status-icon"></span>
+        <span id="lock-status-text">Vault locked</span>
       </div>
-      <p id="lock-sub-desc" class="lock-sub">Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.</p>
-      <div class="lock-inputs-group">
+      <div class="lock-inputs-group" id="lock-inputs">
         <div class="lock-input-wrap">
           <input type="password" id="lock-passphrase" class="lock-input" placeholder="Master passphrase" aria-describedby="lock-error" autofocus>
           <button type="button" id="lock-reveal-btn" class="lock-reveal" title="Show passphrase" aria-label="Show passphrase">
@@ -280,13 +280,17 @@
         </div>
         <input type="password" id="lock-passphrase-confirm" class="lock-input hidden" placeholder="Confirm master passphrase">
       </div>
-      <div id="lock-capslock" class="lock-capslock hidden" role="status" aria-live="polite">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M18.07 9.57L12 3.5 5.93 9.57M12 20.5V3.67"/></svg>
-        <span>Caps Lock is on</span>
+      <!-- Reserved slot: caps-lock warning and failures share one fixed-height
+           row, so the card never shifts under the cursor mid-click. -->
+      <div class="lock-msg-slot">
+        <div id="lock-capslock" class="lock-capslock hidden" role="status" aria-live="polite">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M18.07 9.57L12 3.5 5.93 9.57M12 20.5V3.67"/></svg>
+          <span>Caps Lock is on</span>
+        </div>
+        <div id="lock-error" class="lock-error hidden" role="alert" aria-live="assertive"></div>
       </div>
-      <div id="lock-error" class="lock-error hidden" role="alert" aria-live="assertive"></div>
       <button id="lock-unlock-btn" class="lock-btn">Unlock</button>
-      <small class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
+      <small id="lock-footer" class="lock-footer">Your passphrase never leaves this browser.<br>If you forget it, your data cannot be recovered.</small>
     </div>
   </div>
 

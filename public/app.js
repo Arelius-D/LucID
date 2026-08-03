@@ -26,6 +26,10 @@ const ICONS = {
   // The state classes carry the colour, so on/off read at a glance.
   toggleOn: `<svg class="icon-svg menu-toggle on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4h4c4.42 0 8 3.58 8 8s-3.58 8-8 8h-4c-4.42 0-8-3.58-8-8s3.58-8 8-8z"/><path d="M14 16a4 4 0 100-8 4 4 0 000 8z"/></svg>`,
   toggleOff: `<svg class="icon-svg menu-toggle off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4h4c4.42 0 8 3.58 8 8s-3.58 8-8 8h-4c-4.42 0-8-3.58-8-8s3.58-8 8-8z"/><path d="M10 16a4 4 0 100-8 4 4 0 000 8z"/></svg>`,
+  // Lock-card status glyphs: one per state, so the line reads before the text does.
+  lock: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5z"/><path stroke-width="2" d="M15.996 16h.01M11.995 16h.01M7.995 16h.008"/></svg>`,
+  passwordCheck: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M11.02 19.5H7.5c-.62 0-1.17-.02-1.66-.09-2.63-.29-3.34-1.53-3.34-4.91v-5c0-3.38.71-4.62 3.34-4.91.49-.07 1.04-.09 1.66-.09h3.46M15.02 4.5h1.48c.62 0 1.17.02 1.66.09 2.63.29 3.34 1.53 3.34 4.91v5c0 3.38-.71 4.62-3.34 4.91-.49.07-1.04.09-1.66.09h-1.48M15 2v20"/><path stroke-width="2" d="M11.095 12h.008M7.094 12h.01"/></svg>`,
+  danger: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M12 9v5M12 21.41H5.94c-3.47 0-4.92-2.48-3.24-5.51l3.12-5.62L8.76 5c1.78-3.21 4.7-3.21 6.48 0l2.94 5.29 3.12 5.62c1.68 3.03.22 5.51-3.24 5.51H12v-.01z"/><path stroke-width="2" d="M11.995 17h.009"/></svg>`,
   brush: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 19.5V18h-5c-.55 0-1.05-.22-1.41-.59-.37-.36-.59-.86-.59-1.41 0-1.03.8-1.89 1.81-1.99.06-.01.12-.01.19-.01h15c.07 0 .13 0 .19.01.48.04.9.25 1.22.58.41.4.63.97.58 1.59-.09 1.05-1.04 1.82-2.1 1.82H14.5v1.5a2.5 2.5 0 01-5 0z"/><path d="M20.17 5.3l-.48 8.71c-.06-.01-.12-.01-.19-.01h-15c-.07 0-.13 0-.19.01L3.83 5.3A2.996 2.996 0 016.81 2h10.38c1.77 0 3.16 1.53 2.98 3.3zM7.99 2v5M12 2v2"/></svg>`,
   sunFog: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M18.5 12a6.5 6.5 0 10-13 0"/><path stroke-width="2" d="M4.99 4.99l-.13-.13m14.15.13l.13-.13-.13.13zM12 2.08V2v.08zM2.08 12H2h.08zM22 12h-.08.08z"/><path stroke-width="1.5" stroke-miterlimit="10" d="M4 15h16M6 18h12M9 21h6"/></svg>`,
   // Sync state uses one icon family so the three states read as one indicator.
@@ -509,24 +513,84 @@ async function fetchStore() {
 }
 
 // Top-level so both fetchStore() and the DOMContentLoaded init can call it.
-function updateLockScreenUI() {
-  const lockTitle = document.getElementById('lock-title');
-  const lockSubDesc = document.getElementById('lock-sub-desc');
+// The single gate for the lock card: it decides what the button says and whether
+// it can be pressed, in every state. Enter routes through the same gate, so the
+// old guard messages (empty field, missing confirm, mismatch) are unreachable by
+// construction and no longer exist.
+function refreshLockGate() {
+  const lockInput = document.getElementById('lock-passphrase');
   const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
   const lockBtn = document.getElementById('lock-unlock-btn');
+  const lockError = document.getElementById('lock-error');
+  if (!lockBtn) return;
+  const v1 = lockInput ? lockInput.value : '';
+  const v2 = lockConfirmInput ? lockConfirmInput.value : '';
+  if (lockError) lockError.classList.add('hidden');
+
+  // Server unreachable: Retry is always pressable, nothing to validate.
+  if (!state.storeLoaded) {
+    if (lockBtn) lockBtn.disabled = false;
+    return;
+  }
+
+  // Existing vault: one field, and correctness cannot be known until it is
+  // tried. The only honest gate is "something was typed".
+  if (state.authVerifier) {
+    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
+    if (lockBtn) {
+      lockBtn.textContent = 'Unlock';
+      lockBtn.disabled = !v1;
+      lockBtn.classList.toggle('is-ready', !!v1);
+    }
+    return;
+  }
+
+  // First run: the two fields carry the state by glow, the button carries
+  // readiness. Enter goes through this same gate, so no message is needed to
+  // say what the colours already say.
+  const setGlow = cls => {
+    [lockInput, lockConfirmInput].forEach(el => {
+      if (!el) return;
+      el.classList.remove('is-matched', 'is-mismatch');
+      if (cls) el.classList.add(cls);
+    });
+  };
+  const setBtn = (label, ready) => {
+    if (!lockBtn) return;
+    lockBtn.textContent = label;
+    lockBtn.disabled = !ready;
+    lockBtn.classList.toggle('is-ready', ready);
+  };
+
+  if (!v1 || !v2) { setGlow(null); setBtn('Next', false); return; }
+  if (v1 === v2)  { setGlow('is-matched'); setBtn('Continue', true); return; }
+  if (v1.startsWith(v2)) { setGlow(null); setBtn('Next', false); return; }
+  setGlow('is-mismatch'); setBtn('Next', false);
+}
+
+function updateLockScreenUI() {
+  const lockInputs = document.getElementById('lock-inputs');
+  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
+  const lockBtn = document.getElementById('lock-unlock-btn');
+  const lockFooter = document.getElementById('lock-footer');
+  const statusIcon = document.getElementById('lock-status-icon');
+  const statusText = document.getElementById('lock-status-text');
   const lockStatus = document.getElementById('lock-status');
 
-  // J-10: server unreachable — neither Unlock nor Initialize is offerable,
-  // because we do not know which one is true. The button becomes Retry.
+  const setStatus = (icon, text, bad) => {
+    if (statusIcon) statusIcon.innerHTML = ICONS[icon] || '';
+    if (statusText) statusText.textContent = text;
+    if (lockStatus) lockStatus.classList.toggle('bad', !!bad);
+  };
+
+  // J-10: server unreachable. Neither Unlock nor Initialize is offerable because
+  // we do not know which is true, so the passphrase field is hidden entirely:
+  // Retry re-fetches the vault, it does not test a passphrase, and showing an
+  // input here implied otherwise.
   if (!state.storeLoaded) {
-    if (lockStatus) {
-      lockStatus.classList.remove('hidden');
-      const s = lockStatus.querySelector('span');
-      if (s) s.textContent = 'Server unreachable';
-    }
-    if (lockTitle) lockTitle.textContent = 'LucID';
-    if (lockSubDesc) lockSubDesc.textContent = 'The vault could not be loaded from the server. Unlocking and initialization stay disabled until it answers, so nothing can be overwritten.';
-    if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
+    setStatus('danger', 'Server unreachable', true);
+    if (lockInputs) lockInputs.classList.add('hidden');
+    if (lockFooter) lockFooter.classList.add('hidden');
     if (lockBtn) {
       lockBtn.textContent = 'Retry';
       lockBtn.disabled = false;
@@ -534,30 +598,20 @@ function updateLockScreenUI() {
     return;
   }
 
+  if (lockInputs) lockInputs.classList.remove('hidden');
+
   if (!state.authVerifier) {
-    // first-time setup: not "locked" yet, so hide the locked cue
-    if (lockStatus) lockStatus.classList.add('hidden');
-    if (lockTitle) lockTitle.textContent = 'Initialize LucID';
-    if (lockSubDesc) lockSubDesc.innerHTML = 'Create your master passphrase to initialize your vault. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
+    // First run: the footer's warning belongs here, where the irreversible
+    // choice is actually made.
+    setStatus('passwordCheck', 'Set a passphrase to initialize your LucID', false);
     if (lockConfirmInput) lockConfirmInput.classList.remove('hidden');
-    if (lockBtn) {
-      lockBtn.textContent = 'Next';
-      lockBtn.disabled = true;
-    }
+    if (lockFooter) lockFooter.classList.remove('hidden');
   } else {
-    if (lockStatus) {
-      lockStatus.classList.remove('hidden');
-      const s = lockStatus.querySelector('span');
-      if (s) s.textContent = 'Vault locked';   // reset after a possible unreachable phase
-    }
-    if (lockTitle) lockTitle.textContent = 'LucID';
-    if (lockSubDesc) lockSubDesc.innerHTML = 'Enter your master passphrase to unlock. All data is encrypted client-side with <strong>AES-256-GCM</strong> before reaching the server.';
+    setStatus('lock', 'Vault locked', false);
     if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
-    if (lockBtn) {
-      lockBtn.textContent = 'Unlock';
-      lockBtn.disabled = false;
-    }
+    if (lockFooter) lockFooter.classList.add('hidden');
   }
+  refreshLockGate();
 }
 
 // Persist tree open/collapse state. Folder ids are opaque and may live in
@@ -2446,74 +2500,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   updateLockScreenUI();
 
-  function checkPassphraseMatch() {
-    if (state.authVerifier) return;
-    const v1 = lockInput ? lockInput.value : '';
-    const v2 = lockConfirmInput ? lockConfirmInput.value : '';
-
-    if (lockError) lockError.classList.add('hidden');
-
-    // 1. Either empty -> Neutral disabled state
-    if (!v1 || !v2) {
-      if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
-      if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
-      if (lockBtn) {
-        lockBtn.classList.remove('is-ready');
-        lockBtn.textContent = 'Next';
-        lockBtn.disabled = true;
-      }
-      return;
-    }
-
-    // 2. Exact 100% Match -> Both glow gold (the app's success/accent colour), Button becomes "Continue" & enabled!
-    if (v1 === v2) {
-      if (lockInput) {
-        lockInput.classList.add('is-matched');
-        lockInput.classList.remove('is-mismatch');
-      }
-      if (lockConfirmInput) {
-        lockConfirmInput.classList.add('is-matched');
-        lockConfirmInput.classList.remove('is-mismatch');
-      }
-      if (lockBtn) {
-        lockBtn.classList.add('is-ready');
-        lockBtn.textContent = 'Continue';
-        lockBtn.disabled = false;
-      }
-      return;
-    }
-
-    // 3. User is typing a valid prefix of Field 1 (e.g. v1="1234", v2="12") -> Stay calm, no red error yet!
-    if (v1.startsWith(v2)) {
-      if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch');
-      if (lockConfirmInput) lockConfirmInput.classList.remove('is-matched', 'is-mismatch');
-      if (lockBtn) {
-        lockBtn.classList.remove('is-ready');
-        lockBtn.textContent = 'Next';
-        lockBtn.disabled = true;
-      }
-      return;
-    }
-
-    // 4. v2 does NOT start with v1 (e.g. v1="1234", v2="1231" or "x") -> INSTANT RED MISMATCH GLOW!
-    if (lockInput) {
-      lockInput.classList.remove('is-matched');
-      lockInput.classList.add('is-mismatch');
-    }
-    if (lockConfirmInput) {
-      lockConfirmInput.classList.remove('is-matched');
-      lockConfirmInput.classList.add('is-mismatch');
-    }
-    if (lockError) {
-      lockError.textContent = 'Passphrases do not match. Please try again.';
-      lockError.classList.remove('hidden');
-    }
-    if (lockBtn) {
-      lockBtn.classList.remove('is-ready');
-      lockBtn.textContent = 'Next';
-      lockBtn.disabled = true;
-    }
-  }
 
   async function unlockVault() {
     // J-10: in unreachable mode the button reads Retry — attempt the fetch again.
@@ -2525,27 +2511,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     const pass = lockInput ? lockInput.value : '';
-    const confirmPass = lockConfirmInput ? lockConfirmInput.value : '';
-
-    if (!pass) {
-      lockError.textContent = 'Please enter a passphrase.';
-      lockError.classList.remove('hidden');
-      return;
-    }
-
-    // Validation for Initial Vault Creation Setup
-    if (!state.authVerifier) {
-      if (!confirmPass) {
-        lockError.textContent = 'Please confirm your master passphrase.';
-        lockError.classList.remove('hidden');
-        return;
-      }
-      if (pass !== confirmPass) {
-        lockError.textContent = 'Passphrases do not match. Please try again.';
-        lockError.classList.remove('hidden');
-        return;
-      }
-    }
 
     lockBtn.textContent = !state.authVerifier ? 'Creating Vault…' : 'Verifying Passphrase…';
     lockBtn.disabled = true;
@@ -2561,7 +2526,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // STRICT PASSPHRASE VERIFICATION: must decrypt the sentinel exactly.
         const check = await tryDecryptText(state.authVerifier, derived);
         if (check !== AUTH_MAGIC_SENTINEL) {
-          lockError.textContent = 'Invalid master passphrase. Access denied.';
+          lockError.textContent = 'Wrong passphrase';
           lockError.classList.remove('hidden');
           lockBtn.textContent = 'Unlock';
           lockBtn.disabled = false;
@@ -2612,13 +2577,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   if (lockInput) {
-    lockInput.addEventListener('input', checkPassphraseMatch);
-    lockInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockVault(); });
+    lockInput.addEventListener('input', refreshLockGate);
+    lockInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !lockBtn.disabled) unlockVault(); });
   }
 
   if (lockConfirmInput) {
-    lockConfirmInput.addEventListener('input', checkPassphraseMatch);
-    lockConfirmInput.addEventListener('keydown', e => { if (e.key === 'Enter') unlockVault(); });
+    lockConfirmInput.addEventListener('input', refreshLockGate);
+    lockConfirmInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !lockBtn.disabled) unlockVault(); });
   }
 
   if (lockBtn) lockBtn.addEventListener('click', unlockVault);
