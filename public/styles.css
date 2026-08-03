@@ -1173,7 +1173,7 @@ select:focus-visible,
   justify-content: center;
   background: var(--bg-base);
   border-top: var(--hairline) solid var(--border);
-  border-bottom: var(--hairline) solid var(--border);
+  border-bottom: none;
   border-left: none;
   border-right: none;
   flex-shrink: 0;
@@ -1210,7 +1210,7 @@ select:focus-visible,
   justify-content: center;
   background: var(--bg-base);
   border-left: var(--hairline) solid var(--border);
-  border-right: var(--hairline) solid var(--border);
+  border-right: none;
   border-top: none;
   border-bottom: none;
   flex-shrink: 0;

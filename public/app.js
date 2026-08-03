@@ -482,13 +482,22 @@ async function fetchStore() {
     state.authVerifier = data.authVerifier || null;
     state.storeLoaded = true;
 
-    // Restore saved tree open/collapse state; first run (no saved state) defaults to all folders open.
+    // Restore saved tree open/collapse state. Ids from OTHER vaults are pruned: this
+    // browser may have opened several vaults, and a saved list full of dead ids used
+    // to leave a brand-new vault entirely collapsed, because the default-open rule
+    // only fired when no saved state existed at all. If nothing in the saved list
+    // belongs to this vault, treat it as a first run and open everything.
+    const openAll = () => state.folders.forEach(f => state.openFolderIds.add(f.id));
     const savedOpenFolders = localStorage.getItem('lucid-open-folders');
     if (savedOpenFolders !== null) {
-      try { state.openFolderIds = new Set(JSON.parse(savedOpenFolders)); }
-      catch (e) { state.folders.forEach(f => state.openFolderIds.add(f.id)); }
+      try {
+        const mine = new Set(state.folders.map(f => f.id));
+        const kept = JSON.parse(savedOpenFolders).filter(id => mine.has(id));
+        if (kept.length) state.openFolderIds = new Set(kept);
+        else openAll();
+      } catch (e) { openAll(); }
     } else {
-      state.folders.forEach(f => state.openFolderIds.add(f.id));
+      openAll();
     }
     localStorage.removeItem('lucid-open-tags');   // S-13: purge the legacy plaintext copy from disk
     const savedOpenTags = sessionStorage.getItem('lucid-open-tags');
