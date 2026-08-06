@@ -8,30 +8,190 @@
    packages by scripts/vendor.js. Only the active set's files are downloaded
    by the browser; declaring all four costs nothing at runtime.
    ═══════════════════════════════════════════════════ */
-@font-face { font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/geist/geist-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/geist/geist-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: swap; src: url('vendor/fonts/geist/geist-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Geist'; font-style: normal; font-weight: 700; font-display: swap; src: url('vendor/fonts/geist/geist-latin-700-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/geist-mono/geist-mono-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/geist-mono/geist-mono-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 600; font-display: swap; src: url('vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 700; font-display: swap; src: url('vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-700-normal.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/source-sans-3/source-sans-3-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/source-sans-3/source-sans-3-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 600; font-display: swap; src: url('vendor/fonts/source-sans-3/source-sans-3-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Source Sans 3'; font-style: normal; font-weight: 700; font-display: swap; src: url('vendor/fonts/source-sans-3/source-sans-3-latin-700-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Source Code Pro'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/source-code-pro/source-code-pro-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Source Code Pro'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/source-code-pro/source-code-pro-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/inter/inter-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/inter/inter-latin-500-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap; src: url('vendor/fonts/inter/inter-latin-600-normal.woff2') format('woff2'); }
-@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap; src: url('vendor/fonts/inter/inter-latin-700-normal.woff2') format('woff2'); }
-@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url('vendor/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2') format('woff2'); }
-@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 500; font-display: swap; src: url('vendor/fonts/jetbrains-mono/jetbrains-mono-latin-500-normal.woff2') format('woff2'); }
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/geist/geist-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/geist/geist-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/geist/geist-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/geist/geist-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/geist-mono/geist-mono-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/geist-mono/geist-mono-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/ibm-plex-sans/ibm-plex-sans-latin-700-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/ibm-plex-mono/ibm-plex-mono-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/source-sans-3/source-sans-3-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/source-sans-3/source-sans-3-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/source-sans-3/source-sans-3-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Source Sans 3";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/source-sans-3/source-sans-3-latin-700-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/source-code-pro/source-code-pro-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/source-code-pro/source-code-pro-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/inter/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/inter/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/inter/inter-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/inter/inter-latin-700-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/jetbrains-mono/jetbrains-mono-latin-500-normal.woff2")
+    format("woff2");
+}
 
 /* ═══════════════════════════════════════════════════
    DESIGN TOKENS — single source of truth
@@ -44,29 +204,29 @@
 /* ─── THEME-AGNOSTIC SCALES (never change per theme) ─── */
 :root {
   /* Spacing ramp — relational rem, no raw px */
-  --space-3xs: 0.125rem;   /* 2px  */
-  --space-2xs: 0.25rem;    /* 4px  */
-  --space-xs:  0.375rem;   /* 6px  */
-  --space-sm:  0.5rem;     /* 8px  */
-  --space-md:  0.75rem;    /* 12px */
-  --space-lg:  1rem;       /* 16px */
-  --space-xl:  1.5rem;     /* 24px */
-  --space-2xl: 2rem;       /* 32px */
+  --space-3xs: 0.125rem; /* 2px  */
+  --space-2xs: 0.25rem; /* 4px  */
+  --space-xs: 0.375rem; /* 6px  */
+  --space-sm: 0.5rem; /* 8px  */
+  --space-md: 0.75rem; /* 12px */
+  --space-lg: 1rem; /* 16px */
+  --space-xl: 1.5rem; /* 24px */
+  --space-2xl: 2rem; /* 32px */
 
   /* Corner radii */
-  --radius-xs:    0.25rem;
-  --radius-sm:    0.375rem;
-  --radius-md:    0.5rem;
-  --radius-lg:    0.75rem;
-  --radius-xl:    1rem;
-  --radius-pill:  62.5rem;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-pill: 62.5rem;
   --radius-round: 50%;
 
   /* Elevation ladder — one scale, no magic 9999/10000 */
-  --z-raised:  10;
+  --z-raised: 10;
   --z-overlay: 1000;
-  --z-modal:   2000;
-  --z-toast:   3000;
+  --z-modal: 2000;
+  --z-toast: 3000;
 
   /* Motion tokens */
   --motion-fast: 0.12s;
@@ -78,14 +238,14 @@
      FONT SETS block after the theme scopes (user-selectable, Geist default) */
 
   /* Type scale (rem) */
-  --text-2xs:  0.6875rem;  /* 11px — count badges only */
-  --text-xs:   0.75rem;    /* 12px — badges, fine print */
-  --text-sm:   0.8125rem;  /* 13px — UI text */
-  --text-base: 0.9375rem;  /* 15px — body / editor / preview */
-  --text-lg:   1.125rem;   /* 18px */
-  --text-xl:   1.375rem;   /* 22px */
-  --text-2xl:  1.75rem;    /* 28px */
-  --text-3xl:  2.25rem;    /* 36px */
+  --text-2xs: 0.6875rem; /* 11px — count badges only */
+  --text-xs: 0.75rem; /* 12px — badges, fine print */
+  --text-sm: 0.8125rem; /* 13px — UI text */
+  --text-base: 0.9375rem; /* 15px — body / editor / preview */
+  --text-lg: 1.125rem; /* 18px */
+  --text-xl: 1.375rem; /* 22px */
+  --text-2xl: 1.75rem; /* 28px */
+  --text-3xl: 2.25rem; /* 36px */
 
   /* Hairline width */
   --hairline: 0.0625rem; /* 1px */
@@ -96,41 +256,45 @@
 [data-theme="dusk-ember"] {
   color-scheme: dark;
 
-  --bg-base:      oklch(0.239 0.014 267);
-  --bg-surface:   oklch(0.277 0.019 268);
-  --bg-elevated:  oklch(0.321 0.025 266);
-  --bg-input:     oklch(0.212 0.013 267);            /* was referenced but undefined */
-  --bg-hover:     oklch(0.773 0.140 78.6 / 0.12);
-  --bg-active:    oklch(0.773 0.140 78.6 / 0.20);
-  --bg-drop:      oklch(0.773 0.140 78.6 / 0.32);   /* drag drop target — must clear hover AND active */
+  --bg-base: oklch(0.239 0.014 267);
+  --bg-surface: oklch(0.277 0.019 268);
+  --bg-elevated: oklch(0.321 0.025 266);
+  --bg-input: oklch(0.212 0.013 267); /* was referenced but undefined */
+  --bg-hover: oklch(0.773 0.14 78.6 / 0.12);
+  --bg-active: oklch(0.773 0.14 78.6 / 0.2);
+  --bg-drop: oklch(
+    0.773 0.14 78.6 / 0.32
+  ); /* drag drop target — must clear hover AND active */
   --surface-hover: oklch(0.321 0.025 266);
 
-  --accent:        oklch(0.773 0.140 78.6);
-  --accent-hover:  oklch(0.718 0.138 76.7);
-  --accent-subtle: oklch(0.773 0.140 78.6 / 0.15);
-  --on-accent:     oklch(0.239 0.014 267);           /* readable text ON accent */
+  --accent: oklch(0.773 0.14 78.6);
+  --accent-hover: oklch(0.718 0.138 76.7);
+  --accent-subtle: oklch(0.773 0.14 78.6 / 0.15);
+  --on-accent: oklch(0.239 0.014 267); /* readable text ON accent */
 
-  --text-primary:   oklch(0.967 0.006 264);
-  --text-secondary: oklch(0.800 0.006 264);
-  --text-muted:     oklch(0.690 0.006 264);          /* AA on base AND elevated surfaces */
+  --text-primary: oklch(0.967 0.006 264);
+  --text-secondary: oklch(0.8 0.006 264);
+  --text-muted: oklch(0.69 0.006 264); /* AA on base AND elevated surfaces */
 
-  --border:        oklch(0.967 0.006 264 / 0.10);
-  --border-hover:  oklch(0.967 0.006 264 / 0.20);
-  --shadow:        0 0.25rem 1rem oklch(0 0 0 / 0.35);
-  --shadow-sm:     0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
-  --shadow-md:     0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
-  --shadow-lg:     0 0.5rem 1.5rem oklch(0 0 0 / 0.40);
-  --scrim:         oklch(0 0 0 / 0.65);
-  --accent-glow:   oklch(0.773 0.140 78.6 / 0.45);
-  --on-danger:     oklch(0.220 0.020 25);            /* dark label — the dark-theme danger is a LIGHT coral */
+  --border: oklch(0.967 0.006 264 / 0.1);
+  --border-hover: oklch(0.967 0.006 264 / 0.2);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
+  --scrim: oklch(0 0 0 / 0.65);
+  --accent-glow: oklch(0.773 0.14 78.6 / 0.45);
+  --on-danger: oklch(
+    0.22 0.02 25
+  ); /* dark label — the dark-theme danger is a LIGHT coral */
 
   /* State feedback — belongs to the theme, not raw red/green.
      Positive == the theme accent; negative == the theme danger hue. */
-  --danger:        oklch(0.710 0.160 22.8);
-  --save-ok:       var(--accent);
-  --success:       var(--accent);                    /* "matched / ready" reads on-brand */
-  --success-glow:  oklch(0.773 0.140 78.6 / 0.32);
-  --danger-subtle: oklch(0.710 0.160 22.8 / 0.12);
+  --danger: oklch(0.71 0.16 22.8);
+  --save-ok: var(--accent);
+  --success: var(--accent); /* "matched / ready" reads on-brand */
+  --success-glow: oklch(0.773 0.14 78.6 / 0.32);
+  --danger-subtle: oklch(0.71 0.16 22.8 / 0.12);
 
   --scrollbar-track: var(--bg-base);
   --scrollbar-thumb: var(--bg-elevated);
@@ -140,42 +304,46 @@
 [data-theme="warm-linen"] {
   color-scheme: light;
 
-  --bg-base:      oklch(0.976 0.026 92.4);
-  --bg-surface:   oklch(0.949 0.030 92.3);
-  --bg-elevated:  oklch(0.951 0.040 88.2);
-  --bg-input:     oklch(0.985 0.018 92.4);
-  --bg-hover:     oklch(0.747 0.046 83.8 / 0.15);
-  --bg-active:    oklch(0.747 0.046 83.8 / 0.22);
-  --bg-drop:      oklch(0.747 0.046 83.8 / 0.36);   /* drag drop target — must clear hover AND active */
-  --surface-hover: oklch(0.951 0.040 88.2);
+  --bg-base: oklch(0.976 0.026 92.4);
+  --bg-surface: oklch(0.949 0.03 92.3);
+  --bg-elevated: oklch(0.951 0.04 88.2);
+  --bg-input: oklch(0.985 0.018 92.4);
+  --bg-hover: oklch(0.747 0.046 83.8 / 0.15);
+  --bg-active: oklch(0.747 0.046 83.8 / 0.22);
+  --bg-drop: oklch(
+    0.747 0.046 83.8 / 0.36
+  ); /* drag drop target — must clear hover AND active */
+  --surface-hover: oklch(0.951 0.04 88.2);
 
-  --accent:        oklch(0.643 0.055 81.4);
-  --accent-hover:  oklch(0.579 0.053 81.1);
+  --accent: oklch(0.643 0.055 81.4);
+  --accent-hover: oklch(0.579 0.053 81.1);
   --accent-subtle: oklch(0.643 0.055 81.4 / 0.15);
-  --on-accent:     oklch(0.200 0.015 84.5);          /* dark text ON accent — AA on the muted-brown accent */
+  --on-accent: oklch(
+    0.2 0.015 84.5
+  ); /* dark text ON accent — AA on the muted-brown accent */
 
-  --text-primary:   oklch(0.267 0.019 84.5);
-  --text-secondary: oklch(0.420 0.017 84.5);
-  --text-muted:     oklch(0.500 0.015 84.5);         /* darkened to pass AA (was 2.66:1) */
+  --text-primary: oklch(0.267 0.019 84.5);
+  --text-secondary: oklch(0.42 0.017 84.5);
+  --text-muted: oklch(0.5 0.015 84.5); /* darkened to pass AA (was 2.66:1) */
 
-  --border:        oklch(0.267 0.019 84.5 / 0.12);
-  --border-hover:  oklch(0.267 0.019 84.5 / 0.24);
-  --shadow:        0 0.125rem 0.5rem oklch(0 0 0 / 0.06);
-  --shadow-sm:     0 0.0625rem 0.1875rem oklch(0 0 0 / 0.08);
-  --shadow-md:     0 0.125rem 0.5rem oklch(0 0 0 / 0.10);
-  --shadow-lg:     0 0.5rem 1.5rem oklch(0 0 0 / 0.16);
-  --scrim:         oklch(0 0 0 / 0.45);
-  --accent-glow:   oklch(0.643 0.055 81.4 / 0.45);
-  --on-danger:     oklch(0.985 0.005 92);
+  --border: oklch(0.267 0.019 84.5 / 0.12);
+  --border-hover: oklch(0.267 0.019 84.5 / 0.24);
+  --shadow: 0 0.125rem 0.5rem oklch(0 0 0 / 0.06);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.08);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.1);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.16);
+  --scrim: oklch(0 0 0 / 0.45);
+  --accent-glow: oklch(0.643 0.055 81.4 / 0.45);
+  --on-danger: oklch(0.985 0.005 92);
 
-  --danger:        oklch(0.543 0.174 29.7);
-  --save-ok:       var(--accent);
-  --success:       var(--accent);
-  --success-glow:  oklch(0.643 0.055 81.4 / 0.35);
+  --danger: oklch(0.543 0.174 29.7);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.643 0.055 81.4 / 0.35);
   --danger-subtle: oklch(0.543 0.174 29.7 / 0.12);
 
   --scrollbar-track: var(--bg-base);
-  --scrollbar-thumb: oklch(0.862 0.038 83.0);
+  --scrollbar-thumb: var(--bg-elevated);
 }
 
 /* ─── THEME: Amber Hour (twilight) ───
@@ -185,42 +353,294 @@
 [data-theme="amber-hour"] {
   color-scheme: dark;
 
-  --bg-base:      oklch(0.395 0.018 70);
-  --bg-surface:   oklch(0.430 0.021 71);
-  --bg-elevated:  oklch(0.468 0.024 72);
-  --bg-input:     oklch(0.370 0.016 70);
-  --bg-hover:     oklch(0.740 0.110 80 / 0.14);
-  --bg-active:    oklch(0.740 0.110 80 / 0.22);
-  --bg-drop:      oklch(0.740 0.110 80 / 0.34);
+  --bg-base: oklch(0.395 0.018 70);
+  --bg-surface: oklch(0.43 0.021 71);
+  --bg-elevated: oklch(0.468 0.024 72);
+  --bg-input: oklch(0.37 0.016 70);
+  --bg-hover: oklch(0.74 0.11 80 / 0.14);
+  --bg-active: oklch(0.74 0.11 80 / 0.22);
+  --bg-drop: oklch(0.74 0.11 80 / 0.34);
   --surface-hover: oklch(0.468 0.024 72);
 
-  --accent:        oklch(0.740 0.110 80);
-  --accent-hover:  oklch(0.690 0.108 79);
-  --accent-subtle: oklch(0.740 0.110 80 / 0.15);
-  --on-accent:     oklch(0.280 0.020 75);
+  --accent: oklch(0.74 0.11 80);
+  --accent-hover: oklch(0.69 0.108 79);
+  --accent-subtle: oklch(0.74 0.11 80 / 0.15);
+  --on-accent: oklch(0.28 0.02 75);
 
-  --text-primary:   oklch(0.955 0.008 85);
-  --text-secondary: oklch(0.845 0.010 85);
-  --text-muted:     oklch(0.755 0.012 85);
+  --text-primary: oklch(0.955 0.008 85);
+  --text-secondary: oklch(0.845 0.01 85);
+  --text-muted: oklch(0.755 0.012 85);
 
-  --border:        oklch(0.955 0.008 85 / 0.14);
-  --border-hover:  oklch(0.955 0.008 85 / 0.26);
-  --shadow:        0 0.25rem 1rem oklch(0 0 0 / 0.22);
-  --shadow-sm:     0 0.0625rem 0.1875rem oklch(0 0 0 / 0.16);
-  --shadow-md:     0 0.125rem 0.5rem oklch(0 0 0 / 0.18);
-  --shadow-lg:     0 0.5rem 1.5rem oklch(0 0 0 / 0.28);
-  --scrim:         oklch(0 0 0 / 0.55);
-  --accent-glow:   oklch(0.740 0.110 80 / 0.40);
-  --on-danger:     oklch(0.220 0.020 25);
+  --border: oklch(0.955 0.008 85 / 0.14);
+  --border-hover: oklch(0.955 0.008 85 / 0.26);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.22);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.16);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.18);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.28);
+  --scrim: oklch(0 0 0 / 0.55);
+  --accent-glow: oklch(0.74 0.11 80 / 0.4);
+  --on-danger: oklch(0.22 0.02 25);
 
-  --danger:        oklch(0.640 0.168 26);
-  --save-ok:       var(--accent);
-  --success:       var(--accent);
-  --success-glow:  oklch(0.740 0.110 80 / 0.32);
-  --danger-subtle: oklch(0.640 0.168 26 / 0.12);
+  --danger: oklch(0.64 0.168 26);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.74 0.11 80 / 0.32);
+  --danger-subtle: oklch(0.64 0.168 26 / 0.12);
 
   --scrollbar-track: var(--bg-base);
-  --scrollbar-thumb: oklch(0.468 0.024 72);
+  --scrollbar-thumb: var(--bg-elevated);
+}
+
+/* ─── THEME: Dracula (dark) ─── */
+[data-theme="dracula-official"] {
+  color-scheme: dark;
+
+  --bg-base: oklch(0.268 0.027 277.5);
+  --bg-surface: oklch(0.37 0.032 277.5);
+  --bg-elevated: oklch(0.535 0.065 264.8);
+  --bg-input: oklch(0.23 0.025 277.5);
+  --bg-hover: oklch(0.724 0.145 298.5 / 0.14);
+  --bg-active: oklch(0.724 0.145 298.5 / 0.22);
+  --bg-drop: oklch(0.724 0.145 298.5 / 0.34);
+  --surface-hover: oklch(0.535 0.065 264.8);
+
+  --accent: oklch(0.724 0.145 298.5);
+  --accent-hover: oklch(0.67 0.14 298);
+  --accent-subtle: oklch(0.724 0.145 298.5 / 0.15);
+  --on-accent: oklch(0.268 0.027 277.5);
+
+  --text-primary: oklch(0.978 0.005 106.8);
+  --text-secondary: oklch(0.865 0.078 200.4);
+  --text-muted: oklch(0.72 0.05 264.8);
+
+  --border: oklch(0.978 0.005 106.8 / 0.12);
+  --border-hover: oklch(0.978 0.005 106.8 / 0.24);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
+  --scrim: oklch(0 0 0 / 0.65);
+  --accent-glow: oklch(0.724 0.145 298.5 / 0.45);
+  --on-danger: oklch(0.22 0.02 25);
+
+  --danger: oklch(0.655 0.22 22.4);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.724 0.145 298.5 / 0.32);
+  --danger-subtle: oklch(0.655 0.22 22.4 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: var(--bg-elevated);
+}
+
+/* ─── THEME: Catppuccin Mocha (dark) ─── */
+[data-theme="catppuccin-mocha"] {
+  color-scheme: dark;
+
+  --bg-base: oklch(0.254 0.021 268.4);
+  --bg-surface: oklch(0.222 0.02 268.2);
+  --bg-elevated: oklch(0.185 0.018 268);
+  --bg-input: oklch(0.2 0.019 268.1);
+  --bg-hover: oklch(0.781 0.124 302.1 / 0.14);
+  --bg-active: oklch(0.781 0.124 302.1 / 0.22);
+  --bg-drop: oklch(0.781 0.124 302.1 / 0.34);
+  --surface-hover: oklch(0.222 0.02 268.2);
+
+  --accent: oklch(0.781 0.124 302.1);
+  --accent-hover: oklch(0.73 0.12 302);
+  --accent-subtle: oklch(0.781 0.124 302.1 / 0.15);
+  --on-accent: oklch(0.185 0.018 268);
+
+  --text-primary: oklch(0.885 0.024 256.3);
+  --text-secondary: oklch(0.78 0.02 256);
+  --text-muted: oklch(0.745 0.018 255.5);
+
+  --border: oklch(0.885 0.024 256.3 / 0.12);
+  --border-hover: oklch(0.885 0.024 256.3 / 0.24);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
+  --scrim: oklch(0 0 0 / 0.65);
+  --accent-glow: oklch(0.781 0.124 302.1 / 0.45);
+  --on-danger: oklch(0.22 0.02 25);
+
+  --danger: oklch(0.732 0.142 16.5);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.781 0.124 302.1 / 0.32);
+  --danger-subtle: oklch(0.732 0.142 16.5 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: var(--bg-elevated);
+}
+
+/* ─── THEME: Catppuccin Macchiato (dark) ─── */
+[data-theme="catppuccin-macchiato"] {
+  color-scheme: dark;
+
+  --bg-base: oklch(0.282 0.024 268);
+  --bg-surface: oklch(0.245 0.022 268);
+  --bg-elevated: oklch(0.208 0.02 268);
+  --bg-input: oklch(0.225 0.021 268);
+  --bg-hover: oklch(0.77 0.122 302 / 0.14);
+  --bg-active: oklch(0.77 0.122 302 / 0.22);
+  --bg-drop: oklch(0.77 0.122 302 / 0.34);
+  --surface-hover: oklch(0.245 0.022 268);
+
+  --accent: oklch(0.77 0.122 302);
+  --accent-hover: oklch(0.72 0.118 302);
+  --accent-subtle: oklch(0.77 0.122 302 / 0.15);
+  --on-accent: oklch(0.208 0.02 268);
+
+  --text-primary: oklch(0.875 0.023 256);
+  --text-secondary: oklch(0.775 0.019 255);
+  --text-muted: oklch(0.74 0.018 255);
+
+  --border: oklch(0.875 0.023 256 / 0.12);
+  --border-hover: oklch(0.875 0.023 256 / 0.24);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
+  --scrim: oklch(0 0 0 / 0.65);
+  --accent-glow: oklch(0.77 0.122 302 / 0.45);
+  --on-danger: oklch(0.22 0.02 25);
+
+  --danger: oklch(0.715 0.14 16);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.77 0.122 302 / 0.32);
+  --danger-subtle: oklch(0.715 0.14 16 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: var(--bg-elevated);
+}
+
+/* ─── THEME: Catppuccin Frappé (dark) ─── */
+[data-theme="catppuccin-frappe"] {
+  color-scheme: dark;
+
+  --bg-base: oklch(0.325 0.025 268);
+  --bg-surface: oklch(0.285 0.023 268);
+  --bg-elevated: oklch(0.245 0.021 268);
+  --bg-input: oklch(0.265 0.022 268);
+  --bg-hover: oklch(0.76 0.118 302 / 0.14);
+  --bg-active: oklch(0.76 0.118 302 / 0.22);
+  --bg-drop: oklch(0.76 0.118 302 / 0.34);
+  --surface-hover: oklch(0.285 0.023 268);
+
+  --accent: oklch(0.76 0.118 302);
+  --accent-hover: oklch(0.71 0.114 302);
+  --accent-subtle: oklch(0.76 0.118 302 / 0.15);
+  --on-accent: oklch(0.245 0.021 268);
+
+  --text-primary: oklch(0.865 0.022 256);
+  --text-secondary: oklch(0.765 0.018 255);
+  --text-muted: oklch(0.74 0.018 255);
+
+  --border: oklch(0.865 0.022 256 / 0.12);
+  --border-hover: oklch(0.865 0.022 256 / 0.24);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
+  --scrim: oklch(0 0 0 / 0.65);
+  --accent-glow: oklch(0.76 0.118 302 / 0.45);
+  --on-danger: oklch(0.22 0.02 25);
+
+  --danger: oklch(0.695 0.135 16);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.76 0.118 302 / 0.32);
+  --danger-subtle: oklch(0.695 0.135 16 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: var(--bg-elevated);
+}
+
+/* ─── THEME: Catppuccin Latte (light) ─── */
+[data-theme="catppuccin-latte"] {
+  color-scheme: light;
+
+  --bg-base: oklch(0.965 0.008 256);
+  --bg-surface: oklch(0.94 0.01 256);
+  --bg-elevated: oklch(0.915 0.012 256);
+  --bg-input: oklch(0.975 0.006 256);
+  --bg-hover: oklch(0.55 0.22 302 / 0.15);
+  --bg-active: oklch(0.55 0.22 302 / 0.22);
+  --bg-drop: oklch(0.55 0.22 302 / 0.36);
+  --surface-hover: oklch(0.915 0.012 256);
+
+  --accent: oklch(0.55 0.22 302);
+  --accent-hover: oklch(0.48 0.21 302);
+  --accent-subtle: oklch(0.55 0.22 302 / 0.15);
+  --on-accent: oklch(0.99 0 0);
+
+  --text-primary: oklch(0.41 0.025 256);
+  --text-secondary: oklch(0.47 0.022 256);
+  --text-muted: oklch(0.53 0.02 256);
+
+  --border: oklch(0.41 0.025 256 / 0.12);
+  --border-hover: oklch(0.41 0.025 256 / 0.24);
+  --shadow: 0 0.125rem 0.5rem oklch(0 0 0 / 0.06);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.08);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.1);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.16);
+  --scrim: oklch(0 0 0 / 0.45);
+  --accent-glow: oklch(0.55 0.22 302 / 0.45);
+  --on-danger: oklch(0.985 0.005 92);
+
+  --danger: oklch(0.52 0.21 16);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.55 0.22 302 / 0.35);
+  --danger-subtle: oklch(0.52 0.21 16 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: var(--bg-elevated);
+}
+
+/* ─── THEME: Deep Space & Yale Blue (dark) ─── */
+[data-theme="deep-space-blue"] {
+  color-scheme: dark;
+
+  --bg-base: oklch(0.245 0.065 240.2);
+  --bg-surface: oklch(0.305 0.075 240.2);
+  --bg-elevated: oklch(0.365 0.085 240.2);
+  --bg-input: oklch(0.21 0.055 240);
+  --bg-hover: oklch(0.71 0.078 220.5 / 0.14);
+  --bg-active: oklch(0.71 0.078 220.5 / 0.22);
+  --bg-drop: oklch(0.71 0.078 220.5 / 0.34);
+  --surface-hover: oklch(0.365 0.085 240.2);
+
+  --accent: oklch(0.71 0.078 220.5);
+  --accent-hover: oklch(0.65 0.075 220);
+  --accent-subtle: oklch(0.71 0.078 220.5 / 0.15);
+  --on-accent: oklch(0.245 0.065 240.2);
+
+  --text-primary: oklch(0.885 0.045 220);
+  --text-secondary: oklch(0.75 0.055 220);
+  --text-muted: oklch(0.61 0.07 220);
+
+  --border: oklch(0.885 0.045 220 / 0.14);
+  --border-hover: oklch(0.885 0.045 220 / 0.26);
+  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
+  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
+  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
+  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
+  --scrim: oklch(0 0 0 / 0.65);
+  --accent-glow: oklch(0.71 0.078 220.5 / 0.45);
+  --on-danger: oklch(0.22 0.02 25);
+
+  --danger: oklch(0.68 0.18 20);
+  --save-ok: var(--accent);
+  --success: var(--accent);
+  --success-glow: oklch(0.71 0.078 220.5 / 0.32);
+  --danger-subtle: oklch(0.68 0.18 20 / 0.12);
+
+  --scrollbar-track: var(--bg-base);
+  --scrollbar-thumb: var(--bg-elevated);
 }
 
 /* ─── FONT SETS — user-selectable, mirrors the theme mechanism ───
@@ -228,24 +648,26 @@
    two font tokens. Geist is the out-of-the-box default (:root). */
 :root,
 [data-fontset="geist"] {
-  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
 }
 [data-fontset="plex"] {
-  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 [data-fontset="source"] {
-  --font-sans: 'Source Sans 3', system-ui, -apple-system, sans-serif;
-  --font-mono: 'Source Code Pro', ui-monospace, monospace;
+  --font-sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
+  --font-mono: "Source Code Pro", ui-monospace, monospace;
 }
 [data-fontset="inter"] {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
 
 /* ─── RESETS & BASE ────────────────────────────── */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -271,7 +693,9 @@ body {
   background: var(--bg-base);
   color: var(--text-primary);
   line-height: 1.5;
-  transition: background var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
+  transition:
+    background var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard);
 }
 
 .icon-svg {
@@ -316,7 +740,9 @@ body {
 }
 /* The app is hidden while the vault is locked. A class rather than an inline style,
    so the display value lives here with the rule that defines it. */
-.app-container.hidden { display: none; }
+.app-container.hidden {
+  display: none;
+}
 
 /* ─── SIDEBAR RESIZERS ──────────────────────────── */
 .sidebar-resizer {
@@ -398,7 +824,9 @@ body {
      with the editor content inset, not sitting 6px to its right */
   margin-left: calc(-1 * var(--space-xs));
 }
-.docked-expand-btn.hidden { display: none; }
+.docked-expand-btn.hidden {
+  display: none;
+}
 
 /* right-side mirror: glyph optically aligns to the inspector edge */
 .docked-expand-btn.dock-right {
@@ -430,9 +858,10 @@ body {
   display: inline-flex;
   align-items: center;
   gap: var(--space-sm);
-  transition: color var(--motion-base) var(--ease-standard),
-              background var(--motion-base) var(--ease-standard),
-              box-shadow var(--motion-base) var(--ease-standard);
+  transition:
+    color var(--motion-base) var(--ease-standard),
+    background var(--motion-base) var(--ease-standard),
+    box-shadow var(--motion-base) var(--ease-standard);
   white-space: nowrap;
 }
 .view-tab:hover {
@@ -457,7 +886,11 @@ body {
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
   opacity: 0.75;
-  transition: transform var(--motion-base) var(--ease-standard), opacity var(--motion-base) var(--ease-standard), filter var(--motion-base) var(--ease-standard), color var(--motion-base) var(--ease-standard);
+  transition:
+    transform var(--motion-base) var(--ease-standard),
+    opacity var(--motion-base) var(--ease-standard),
+    filter var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard);
   color: inherit;
   display: inline-flex;
   align-items: center;
@@ -476,13 +909,18 @@ body {
   flex-direction: column;
   overflow: hidden;
   user-select: none;
-  transition: width var(--motion-fast) var(--ease-standard), opacity var(--motion-base) var(--ease-standard);
+  transition:
+    width var(--motion-fast) var(--ease-standard),
+    opacity var(--motion-base) var(--ease-standard);
   background: var(--bg-surface);
 }
 
 .left-pane {
-  width: var(--left-w, 20rem);   /* default shows labels with comfortable margin */
-  min-width: 15rem;      /* Six icon buttons in one pill measure 205px of content;
+  width: var(
+    --left-w,
+    20rem
+  ); /* default shows labels with comfortable margin */
+  min-width: 15rem; /* Six icon buttons in one pill measure 205px of content;
                             with the sidebar body's 12px insets that needs a 229px
                             pane, so 13rem (208px) clipped. Measured, not guessed:
                             240px leaves 11px of slack. Was 13rem when the toolbar
@@ -550,17 +988,17 @@ body {
 
 /* ─── INLINE SEARCH THAT MORPHS OVER THE TOOLBAR ─── */
 .toolbar-cluster {
-  position: relative;   /* the search overlay fills this exact box */
+  position: relative; /* the search overlay fills this exact box */
   display: flex;
   align-items: center;
-  flex: 1 1 auto;       /* spans the row so the pill inside it can too, which is
+  flex: 1 1 auto; /* spans the row so the pill inside it can too, which is
                            what makes the left and right insets equal */
   min-width: 0;
   gap: var(--space-sm);
 }
 .explorer-search {
   position: absolute;
-  inset: 0;   /* 1:1 with the pills' combined box (width AND height) at any panel size */
+  inset: 0; /* 1:1 with the pills' combined box (width AND height) at any panel size */
   display: flex;
   align-items: center;
   gap: var(--space-xs);
@@ -572,9 +1010,10 @@ body {
   opacity: 0;
   visibility: hidden;
   transform: scale(0.98);
-  transition: opacity var(--motion-base) var(--ease-standard),
-              transform var(--motion-base) var(--ease-standard),
-              visibility var(--motion-base) var(--ease-standard);
+  transition:
+    opacity var(--motion-base) var(--ease-standard),
+    transform var(--motion-base) var(--ease-standard),
+    visibility var(--motion-base) var(--ease-standard);
 }
 .explorer-search .search-lead {
   flex-shrink: 0;
@@ -605,7 +1044,9 @@ body {
   color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--radius-sm);
-  transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background var(--motion-fast) var(--ease-standard);
 }
 .search-close:hover {
   color: var(--accent);
@@ -628,10 +1069,10 @@ body {
 
 /* EXPLORER STREAMLINED TOOLBAR ROW (ANCHORED SIDE-BY-SIDE WITH FIXED GAP) */
 .tree-header-row {
-  position: relative;   /* positioning context for the inline search overlay */
+  position: relative; /* positioning context for the inline search overlay */
   display: flex;
   align-items: center;
-  justify-content: flex-start;   /* both pills anchored left so they DON'T slide when the sidebar resizes */
+  justify-content: flex-start; /* both pills anchored left so they DON'T slide when the sidebar resizes */
   padding: var(--space-2xs) 0;
   gap: var(--space-sm);
   flex-wrap: nowrap;
@@ -648,7 +1089,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex: 1 1 auto;      /* fills the row, so the inset to the sidebar edge is the
+  flex: 1 1 auto; /* fills the row, so the inset to the sidebar edge is the
                           same on the left and the right at every panel width */
   min-width: 0;
   height: 2.25rem;
@@ -680,7 +1121,10 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  transition: color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
+  transition:
+    color var(--motion-base) var(--ease-standard),
+    background var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard);
 }
 .explorer-pill-btn:hover {
   color: var(--accent);
@@ -712,7 +1156,9 @@ body {
   align-items: center;
   justify-content: center;
   transform: none; /* PREVENT translateY(-2px) MISALIGNMENT */
-  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+  transition:
+    background var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
 }
 .action-pill-btn:hover {
   transform: none; /* KEEP OUTER HOVER BOX STRICTLY FLUSH AND ALIGNED */
@@ -721,17 +1167,21 @@ body {
   opacity: 1;
 }
 .action-pill-btn:hover .icon-svg {
-  transform: scale(1.15); /* SCALE ICON ITSELF SMOOTHLY WITHOUT SHIFTING OUTER CONFINEMENT BOX */
+  transform: scale(
+    1.15
+  ); /* SCALE ICON ITSELF SMOOTHLY WITHOUT SHIFTING OUTER CONFINEMENT BOX */
   transition: transform var(--motion-fast) var(--ease-standard);
 }
 
 /* ─── FOLDER & NOTE TREE HIERARCHY INDENTATION & SPACING ──── */
-.folder-tree, .tag-tree {
+.folder-tree,
+.tag-tree {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
-.folder-tree.hidden, .tag-tree.hidden {
+.folder-tree.hidden,
+.tag-tree.hidden {
   display: none;
 }
 
@@ -745,7 +1195,9 @@ body {
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-secondary);
-  transition: background var(--motion-fast), color var(--motion-fast);
+  transition:
+    background var(--motion-fast),
+    color var(--motion-fast);
   position: relative;
 }
 .tree-folder-header:hover {
@@ -793,7 +1245,11 @@ body {
   overflow: hidden;
   transition: max-height var(--motion-slow) var(--ease-standard);
 }
-.tree-notes.collapsed { max-height: 0; margin-top: 0; padding-top: 0; }
+.tree-notes.collapsed {
+  max-height: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
 
 .tree-note {
   display: flex;
@@ -804,7 +1260,9 @@ body {
   cursor: pointer;
   font-size: var(--text-sm);
   color: var(--text-secondary);
-  transition: background var(--motion-fast), color var(--motion-fast);
+  transition:
+    background var(--motion-fast),
+    color var(--motion-fast);
 }
 .tree-note:hover {
   background: var(--bg-hover);
@@ -826,7 +1284,10 @@ body {
   color: var(--accent);
   flex-shrink: 0;
 }
-.pin-marker .icon-svg { width: 0.875rem; height: 0.875rem; }
+.pin-marker .icon-svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
 
 /* Keyboard focus ring for tree navigation (arrow keys / Tab) */
 .tree-folder-header:focus-visible,
@@ -869,7 +1330,9 @@ select:focus-visible,
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
 }
-.context-menu.hidden { display: none; }
+.context-menu.hidden {
+  display: none;
+}
 
 .context-menu-item {
   display: flex;
@@ -897,9 +1360,15 @@ select:focus-visible,
 /* Membership toggles in a menu (tag picker): the accent means applied, muted
    means available. Colour carries the state, the knob position carries it too —
    never colour alone (WCAG 1.4.1). */
-.context-menu-item .menu-toggle.on { color: var(--accent); }
-.context-menu-item .menu-toggle.off { color: var(--text-muted); }
-.context-menu-item:hover .menu-toggle.off { color: var(--text-secondary); }
+.context-menu-item .menu-toggle.on {
+  color: var(--accent);
+}
+.context-menu-item .menu-toggle.off {
+  color: var(--text-muted);
+}
+.context-menu-item:hover .menu-toggle.off {
+  color: var(--text-secondary);
+}
 
 .context-menu-divider {
   height: var(--hairline);
@@ -922,7 +1391,9 @@ select:focus-visible,
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
-  transition: background var(--motion-fast), color var(--motion-fast);
+  transition:
+    background var(--motion-fast),
+    color var(--motion-fast);
 }
 /* The trashcan is the trashcan, not the whole row: hover and drag feedback live
    on the glyph alone (color + lid swap in JS); the row never fills. */
@@ -951,7 +1422,9 @@ select:focus-visible,
   overflow-y: auto;
   padding: var(--space-sm) var(--space-md);
 }
-.trash-panel[hidden] { display: none; }
+.trash-panel[hidden] {
+  display: none;
+}
 .trash-list {
   display: flex;
   flex-direction: column;
@@ -997,10 +1470,19 @@ select:focus-visible,
   color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--radius-sm);
-  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
 }
-.footer-pref-btn:hover { color: var(--accent); background: var(--surface-hover); }
-.menu-icon-blank { display: inline-block; width: 0.875rem; height: 0.875rem; }
+.footer-pref-btn:hover {
+  color: var(--accent);
+  background: var(--surface-hover);
+}
+.menu-icon-blank {
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+}
 /* E2EE state is a glyph, not a sentence: the shield carries the state, the
    tooltip carries the detail — same control family as the sync/runtime badges. */
 /* The lock button is the security corner now: one control that both reports the
@@ -1012,7 +1494,9 @@ select:focus-visible,
 .lock-glyph .icon-svg {
   transition: color var(--motion-fast) var(--ease-standard);
 }
-.lock-action-btn.is-warning { color: var(--danger); }
+.lock-action-btn.is-warning {
+  color: var(--danger);
+}
 .footer-security-cluster {
   display: flex;
   align-items: center;
@@ -1053,7 +1537,9 @@ select:focus-visible,
   height: 1.5rem;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
 }
 /* Sync and runtime are CLICKABLE (INC-43b: sync now / recheck health) — the
    hover they always had is now an honest affordance. The shield stays a pure
@@ -1064,7 +1550,9 @@ select:focus-visible,
   background: var(--surface-hover);
 }
 .sync-status-badge,
-.runtime-badge { cursor: pointer; }
+.runtime-badge {
+  cursor: pointer;
+}
 .sync-status-badge:focus-visible,
 .runtime-badge:focus-visible {
   outline: var(--hairline) solid var(--accent);
@@ -1079,9 +1567,15 @@ select:focus-visible,
   color: var(--danger);
 }
 @keyframes pulse-sync {
-  0%   { opacity: 1; }
-  50%  { opacity: 0.45; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .lock-action-btn {
@@ -1095,7 +1589,10 @@ select:focus-visible,
   align-items: center;
   gap: var(--space-xs);
   cursor: pointer;
-  transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background var(--motion-fast) var(--ease-standard),
+    border-color var(--motion-fast) var(--ease-standard);
 }
 /* Hover like everything else: the surface tints and the colour shifts. It used to
    light the whole border accent instead, and since this is the only footer control
@@ -1267,45 +1764,80 @@ select:focus-visible,
 }
 
 /* ─── RENDERED MARKDOWN (PREVIEW CONTENT) ──────────── */
-.preview-content > *:first-child { margin-top: 0; }
-.preview-content > *:last-child { margin-bottom: 0; }
+.preview-content > *:first-child {
+  margin-top: 0;
+}
+.preview-content > *:last-child {
+  margin-bottom: 0;
+}
 
-.preview-content h1, .preview-content h2, .preview-content h3,
-.preview-content h4, .preview-content h5, .preview-content h6 {
+.preview-content h1,
+.preview-content h2,
+.preview-content h3,
+.preview-content h4,
+.preview-content h5,
+.preview-content h6 {
   color: var(--text-primary);
   font-weight: 700;
   line-height: 1.25;
   margin: var(--space-xl) 0 var(--space-md);
 }
-.preview-content h1 { font-size: var(--text-3xl); }
+.preview-content h1 {
+  font-size: var(--text-3xl);
+}
 .preview-content h2 {
   font-size: var(--text-2xl);
   padding-bottom: var(--space-xs);
   border-bottom: var(--hairline) solid var(--border);
 }
-.preview-content h3 { font-size: var(--text-xl); }
-.preview-content h4 { font-size: var(--text-lg); }
+.preview-content h3 {
+  font-size: var(--text-xl);
+}
+.preview-content h4 {
+  font-size: var(--text-lg);
+}
 .preview-content h5 {
   font-size: var(--text-base);
   text-transform: uppercase;
   letter-spacing: 0.05rem;
   color: var(--text-secondary);
 }
-.preview-content h6 { font-size: var(--text-sm); color: var(--text-muted); }
+.preview-content h6 {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
 
-.preview-content p { margin: 0 0 var(--space-md); }
+.preview-content p {
+  margin: 0 0 var(--space-md);
+}
 
-.preview-content ul, .preview-content ol {
+.preview-content ul,
+.preview-content ol {
   margin: 0 0 var(--space-md);
   padding-left: var(--space-xl);
 }
-.preview-content li { margin-bottom: var(--space-2xs); }
-.preview-content li > ul, .preview-content li > ol { margin: var(--space-2xs) 0 0; }
+.preview-content li {
+  margin-bottom: var(--space-2xs);
+}
+.preview-content li > ul,
+.preview-content li > ol {
+  margin: var(--space-2xs) 0 0;
+}
 
-.preview-content a { color: var(--accent); text-decoration: none; }
-.preview-content a:hover { text-decoration: underline; }
-.preview-content strong { font-weight: 700; color: var(--text-primary); }
-.preview-content em { font-style: italic; }
+.preview-content a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.preview-content a:hover {
+  text-decoration: underline;
+}
+.preview-content strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.preview-content em {
+  font-style: italic;
+}
 
 .preview-content code {
   font-family: var(--font-mono);
@@ -1355,7 +1887,7 @@ select:focus-visible,
   background: var(--accent-subtle);
 }
 .preview-content .task-check.on::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0.1875rem;
   top: 0.0625rem;
@@ -1377,17 +1909,27 @@ select:focus-visible,
   margin: 0 0 var(--space-md);
   font-size: var(--text-sm);
 }
-.preview-content th, .preview-content td {
+.preview-content th,
+.preview-content td {
   border: var(--hairline) solid var(--border);
   padding: var(--space-xs) var(--space-md);
   text-align: left;
 }
-.preview-content th { background: var(--bg-surface); font-weight: 600; }
+.preview-content th {
+  background: var(--bg-surface);
+  font-weight: 600;
+}
 
-.preview-content img { max-width: 100%; border-radius: var(--radius-md); }
+.preview-content img {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+}
 
 /* Task-list checkboxes */
-.preview-content input[type="checkbox"] { margin-right: var(--space-2xs); accent-color: var(--accent); }
+.preview-content input[type="checkbox"] {
+  margin-right: var(--space-2xs);
+  accent-color: var(--accent);
+}
 
 /* ─── RIGHT INSPECTOR PANE & METRICS FORMATTING ─── */
 .right-pane section {
@@ -1399,7 +1941,9 @@ select:focus-visible,
   justify-content: space-between;
   margin-bottom: var(--space-md);
 }
-.tags-header h6 { margin-bottom: 0; }
+.tags-header h6 {
+  margin-bottom: 0;
+}
 .right-pane h6 {
   font-size: var(--text-xs);
   font-weight: 700;
@@ -1440,14 +1984,22 @@ select:focus-visible,
   border-radius: var(--radius-sm);
   cursor: pointer;
   color: var(--text-secondary);
-  transition: color var(--motion-fast), background var(--motion-fast), border-color var(--motion-fast);
+  transition:
+    color var(--motion-fast),
+    background var(--motion-fast),
+    border-color var(--motion-fast);
 }
 .toc-item:hover {
   color: var(--accent);
   background: var(--bg-hover);
 }
-.toc-item.toc-h2 { padding-left: var(--space-lg); }
-.toc-item.toc-h3 { padding-left: var(--space-xl); font-size: var(--text-xs); }
+.toc-item.toc-h2 {
+  padding-left: var(--space-lg);
+}
+.toc-item.toc-h3 {
+  padding-left: var(--space-xl);
+  font-size: var(--text-xs);
+}
 
 .empty-state {
   font-size: var(--text-sm);
@@ -1493,7 +2045,10 @@ select:focus-visible,
   cursor: pointer;
   opacity: 0.7;
 }
-.tag-del-btn:hover { opacity: 1; color: var(--danger); }
+.tag-del-btn:hover {
+  opacity: 1;
+  color: var(--danger);
+}
 
 /* METRICS GRID SPACING */
 .metrics-grid {
@@ -1540,7 +2095,9 @@ select:focus-visible,
   background: var(--scrim);
   backdrop-filter: blur(0.25rem);
 }
-.modal-backdrop.hidden { display: none; }
+.modal-backdrop.hidden {
+  display: none;
+}
 
 .modal-card {
   width: min(90vw, 22rem);
@@ -1558,7 +2115,8 @@ select:focus-visible,
   display: flex;
   justify-content: center;
 }
-.modal-warning-svg, .modal-prompt-svg {
+.modal-warning-svg,
+.modal-prompt-svg {
   width: 2.75rem;
   height: 2.75rem;
 }
@@ -1587,7 +2145,9 @@ select:focus-visible,
   outline: none;
   margin-bottom: var(--space-lg);
 }
-.modal-input:focus { border-color: var(--accent); }
+.modal-input:focus {
+  border-color: var(--accent);
+}
 
 .modal-actions {
   display: flex;
@@ -1643,7 +2203,9 @@ select:focus-visible,
   justify-content: center;
   background: var(--bg-base);
 }
-.lock-screen.hidden { display: none; }
+.lock-screen.hidden {
+  display: none;
+}
 
 .lock-card {
   width: min(90vw, 26rem);
@@ -1673,16 +2235,31 @@ select:focus-visible,
    and prefers-reduced-motion trades the shake back for the visible line, because
    without motion the red edge alone would be colour-only signalling. */
 @keyframes lock-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-0.375rem); }
-  40% { transform: translateX(0.375rem); }
-  60% { transform: translateX(-0.25rem); }
-  80% { transform: translateX(0.125rem); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-0.375rem);
+  }
+  40% {
+    transform: translateX(0.375rem);
+  }
+  60% {
+    transform: translateX(-0.25rem);
+  }
+  80% {
+    transform: translateX(0.125rem);
+  }
 }
-.lock-input.shake { animation: lock-shake var(--motion-slow) var(--ease-standard); }
+.lock-input.shake {
+  animation: lock-shake var(--motion-slow) var(--ease-standard);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .lock-input.shake { animation: none; }
+  .lock-input.shake {
+    animation: none;
+  }
   .lock-error.visually-hidden {
     position: static;
     width: auto;
@@ -1703,9 +2280,13 @@ select:focus-visible,
   min-height: 0.75rem;
   margin-bottom: 0;
 }
-.lock-msg-slot .lock-error { margin-bottom: 0; }
+.lock-msg-slot .lock-error {
+  margin-bottom: 0;
+}
 .lock-inputs-group.hidden,
-.lock-footer.hidden { display: none; }
+.lock-footer.hidden {
+  display: none;
+}
 .lock-inputs-group {
   display: flex;
   flex-direction: column;
@@ -1729,9 +2310,14 @@ select:focus-visible,
   outline: none;
   text-align: center;
   letter-spacing: 0.125rem;
-  transition: color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
+  transition:
+    color var(--motion-base) var(--ease-standard),
+    background var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard);
 }
-.lock-input.hidden { display: none; }
+.lock-input.hidden {
+  display: none;
+}
 
 /* "Vault locked" cue (unlock mode only) */
 .lock-status {
@@ -1746,13 +2332,27 @@ select:focus-visible,
   background: var(--bg-elevated);
   border-radius: var(--radius-pill);
 }
-.lock-status svg { width: 0.875rem; height: 0.875rem; color: inherit; }
-.lock-status { color: var(--accent); }
-.lock-status.bad { color: var(--danger); }
-.lock-status.hidden { display: none; }
+.lock-status svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: inherit;
+}
+.lock-status {
+  color: var(--accent);
+}
+.lock-status.bad {
+  color: var(--danger);
+}
+.lock-status.hidden {
+  display: none;
+}
 
 /* Show/hide passphrase toggle */
-.lock-input-wrap { position: relative; display: block; width: 100%; }
+.lock-input-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+}
 .lock-input-wrap .lock-input {
   padding-left: var(--space-2xl);
   padding-right: var(--space-2xl);
@@ -1775,13 +2375,27 @@ select:focus-visible,
   border-radius: var(--radius-sm);
   transition: color var(--motion-fast) var(--ease-standard);
 }
-.lock-reveal:hover { color: var(--accent); }
-.lock-reveal svg { width: 1.125rem; height: 1.125rem; }
+.lock-reveal:hover {
+  color: var(--accent);
+}
+.lock-reveal svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
 .lock-reveal .icon-eye,
-.lock-reveal .icon-eye-slash { display: inline-flex; align-items: center; }
-.lock-reveal .icon-eye-slash { display: none; }
-.lock-reveal.revealed .icon-eye { display: none; }
-.lock-reveal.revealed .icon-eye-slash { display: inline-flex; }
+.lock-reveal .icon-eye-slash {
+  display: inline-flex;
+  align-items: center;
+}
+.lock-reveal .icon-eye-slash {
+  display: none;
+}
+.lock-reveal.revealed .icon-eye {
+  display: none;
+}
+.lock-reveal.revealed .icon-eye-slash {
+  display: inline-flex;
+}
 
 /* Caps Lock heads-up */
 /* Caps Lock lives INSIDE the field, opposite the reveal eye: a warning that
@@ -1797,8 +2411,13 @@ select:focus-visible,
   color: var(--accent);
   pointer-events: none;
 }
-.lock-caps-flag svg { width: 0.9375rem; height: 0.9375rem; }
-.lock-caps-flag.hidden { display: none; }
+.lock-caps-flag svg {
+  width: 0.9375rem;
+  height: 0.9375rem;
+}
+.lock-caps-flag.hidden {
+  display: none;
+}
 .lock-input::placeholder {
   font-family: var(--font-sans);
   letter-spacing: normal;
@@ -1854,7 +2473,9 @@ select:focus-visible,
   margin-bottom: var(--space-md);
   font-weight: 500;
 }
-.lock-error.hidden { display: none; }
+.lock-error.hidden {
+  display: none;
+}
 
 .lock-btn {
   width: 100%;
@@ -1870,7 +2491,10 @@ select:focus-visible,
   border-radius: var(--radius-md);
   cursor: pointer;
   margin-bottom: var(--space-lg);
-  transition: color var(--motion-base) var(--ease-standard), background var(--motion-base) var(--ease-standard), border-color var(--motion-base) var(--ease-standard);
+  transition:
+    color var(--motion-base) var(--ease-standard),
+    background var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard);
 }
 .lock-btn:hover:not(:disabled) {
   opacity: 0.92;
@@ -1911,7 +2535,9 @@ select:focus-visible,
   height: 1.5rem;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  transition: color var(--motion-fast) var(--ease-standard), background-color var(--motion-fast) var(--ease-standard);
+  transition:
+    color var(--motion-fast) var(--ease-standard),
+    background-color var(--motion-fast) var(--ease-standard);
 }
 .footer-github-link:hover {
   color: var(--accent);
@@ -1924,9 +2550,18 @@ select:focus-visible,
   animation: pulse-update 4s infinite var(--ease-standard);
 }
 @keyframes pulse-update {
-  0% { transform: scale(1); filter: drop-shadow(0 0 0.0625rem var(--accent)); }
-  50% { transform: scale(1.04); filter: drop-shadow(0 0 0.25rem var(--accent)); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 0.0625rem var(--accent)); }
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0.0625rem var(--accent));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 0.25rem var(--accent));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0.0625rem var(--accent));
+  }
 }
 
 /* Dragging a note onto a folder header moves it there. The dragged row fades;
@@ -1935,7 +2570,9 @@ select:focus-visible,
    above --bg-active so the target stays legible while hover is also applied,
    and text is --text-primary, never accent, per the note above
    .tree-folder-header.active. */
-.tree-note[draggable="true"] { cursor: grab; }
+.tree-note[draggable="true"] {
+  cursor: grab;
+}
 .tree-note.dragging {
   opacity: 0.4;
   cursor: grabbing;
@@ -1956,30 +2593,56 @@ select:focus-visible,
 
 /* ─── RESPONSIVE BREAKPOINTS ─────────────────────── */
 @media (max-width: 60rem) {
-  .right-pane { display: none; }
-  .sidebar-resizer { display: none; }
+  .right-pane {
+    display: none;
+  }
+  .sidebar-resizer {
+    display: none;
+  }
 }
 @media (max-width: 40rem) {
-  .left-pane { width: 0; min-width: 0; overflow: hidden; border: none; }
+  .left-pane {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border: none;
+  }
 }
 
 /* One glyph turned four ways for the pane toggles: lin-grid-4's line marks which
    side the pane occupies, so hide/show and left/right are all the same drawing at
    90-degree steps. Same trick as the split tab's rotated centre line. */
-.icon-svg.pane-hide-left { transform: rotate(0deg); }
-.icon-svg.pane-show-left { transform: rotate(180deg); }
-.icon-svg.pane-hide-right { transform: rotate(180deg); }
-.icon-svg.pane-show-right { transform: rotate(0deg); }
-.icon-svg.turn-90 { transform: rotate(90deg); }
+.icon-svg.pane-hide-left {
+  transform: rotate(0deg);
+}
+.icon-svg.pane-show-left {
+  transform: rotate(180deg);
+}
+.icon-svg.pane-hide-right {
+  transform: rotate(180deg);
+}
+.icon-svg.pane-show-right {
+  transform: rotate(0deg);
+}
+.icon-svg.turn-90 {
+  transform: rotate(90deg);
+}
 
 /* Menus mark the current entry by colour, keeping each entry's own glyph. A tick
    replacing the glyph told you which one was chosen but hid WHAT it was. */
-.context-menu-item.active { color: var(--accent); }
-.context-menu-item .icon-svg { width: 0.875rem; height: 0.875rem; }
+.context-menu-item.active {
+  color: var(--accent);
+}
+.context-menu-item .icon-svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
 
 /* Copy control on fenced code blocks. Present but quiet until the block is hovered
    or the button focused, so it never competes with the code it sits on. */
-.preview-content pre { position: relative; }
+.preview-content pre {
+  position: relative;
+}
 .preview-content .code-copy {
   position: absolute;
   top: var(--space-xs);
@@ -1996,13 +2659,27 @@ select:focus-visible,
   color: var(--text-muted);
   cursor: pointer;
   opacity: 0;
-  transition: opacity var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
+  transition:
+    opacity var(--motion-fast) var(--ease-standard),
+    color var(--motion-fast) var(--ease-standard);
 }
 .preview-content pre:hover .code-copy,
-.preview-content .code-copy:focus-visible { opacity: 1; }
-.preview-content .code-copy:hover { color: var(--accent); border-color: var(--accent); }
-.preview-content .code-copy.done { opacity: 1; color: var(--save-ok); border-color: var(--save-ok); }
-.preview-content .code-copy svg { width: 0.875rem; height: 0.875rem; }
+.preview-content .code-copy:focus-visible {
+  opacity: 1;
+}
+.preview-content .code-copy:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.preview-content .code-copy.done {
+  opacity: 1;
+  color: var(--save-ok);
+  border-color: var(--save-ok);
+}
+.preview-content .code-copy svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
 
 /* ─── FOCUS MODE ────────────────────────────────────
    Real fullscreen (Fullscreen API) with both side panes out of the way. The class
@@ -2014,7 +2691,10 @@ body.focus-mode .app-container > .sidebar-resizer,
 body.focus-mode .app-container > .center-pane .docked-expand-btn {
   display: none;
 }
-#btn-focus.active { color: var(--accent); opacity: 1; }
+#btn-focus.active {
+  color: var(--accent);
+  opacity: 1;
+}
 
 /* ─── PRINT ─────────────────────────────────────────
    Print the NOTE, not the application: every pane and control is hidden and the
@@ -2024,14 +2704,18 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
    Colour is forced to ink-on-paper because both themes would otherwise print
    their backgrounds. */
 @media print {
-  body { background: none; }
+  body {
+    background: none;
+  }
   .app-container > .sidebar,
   .app-container > .sidebar-resizer,
   .center-pane > .top-bar,
   .lock-screen,
   .modal-backdrop,
   .context-menu,
-  .preview-content .code-copy { display: none; }
+  .preview-content .code-copy {
+    display: none;
+  }
 
   /* The editor pane and the split handle must be hidden at the SAME specificity as
      the mode rules that show them, or Editor mode wins and prints the raw markdown
@@ -2043,9 +2727,13 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
   .editor-split.mode-editor .split-handle,
   .editor-split.mode-preview .split-handle,
   .editor-split.mode-split-vertical .split-handle,
-  .editor-split.mode-split-horizontal .split-handle { display: none; }
+  .editor-split.mode-split-horizontal .split-handle {
+    display: none;
+  }
 
-  .editor-split { border-top: none; }
+  .editor-split {
+    border-top: none;
+  }
 
   .app-container,
   .center-pane,
@@ -2074,14 +2762,22 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
     color: oklch(0.15 0 0);
     background: none;
   }
-  .preview-content a { color: oklch(0.15 0 0); text-decoration: underline; }
+  .preview-content a {
+    color: oklch(0.15 0 0);
+    text-decoration: underline;
+  }
   .preview-content h1,
   .preview-content h2,
-  .preview-content h3 { color: oklch(0.15 0 0); break-after: avoid; }
+  .preview-content h3 {
+    color: oklch(0.15 0 0);
+    break-after: avoid;
+  }
   .preview-content pre,
   .preview-content blockquote,
   .preview-content table,
-  .preview-content img { break-inside: avoid; }
+  .preview-content img {
+    break-inside: avoid;
+  }
   .preview-content pre,
   .preview-content code {
     color: oklch(0.15 0 0);
@@ -2089,7 +2785,14 @@ body.focus-mode .app-container > .center-pane .docked-expand-btn {
     border: var(--hairline) solid oklch(0.75 0 0);
   }
   .preview-content table th,
-  .preview-content table td { border: var(--hairline) solid oklch(0.75 0 0); }
-  .preview-content .task-check { border-color: oklch(0.35 0 0); background: none; }
-  .preview-content .task-check.on::after { border-color: oklch(0.15 0 0); }
+  .preview-content table td {
+    border: var(--hairline) solid oklch(0.75 0 0);
+  }
+  .preview-content .task-check {
+    border-color: oklch(0.35 0 0);
+    background: none;
+  }
+  .preview-content .task-check.on::after {
+    border-color: oklch(0.15 0 0);
+  }
 }
