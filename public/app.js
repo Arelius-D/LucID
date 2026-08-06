@@ -38,6 +38,9 @@ const ICONS = {
   tickSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   copy: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"/><path d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"/></svg>`,
   sunFog: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M18.5 12a6.5 6.5 0 10-13 0"/><path stroke-width="2" d="M4.99 4.99l-.13-.13m14.15.13l.13-.13-.13.13zM12 2.08V2v.08zM2.08 12H2h.08zM22 12h-.08.08z"/><path stroke-width="1.5" stroke-miterlimit="10" d="M4 15h16M6 18h12M9 21h6"/></svg>`,
+  more2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9.32c1.19 0 2.16-.97 2.16-2.16C14.16 5.97 13.19 5 12 5c-1.19 0-2.16.97-2.16 2.16 0 1.19.97 2.16 2.16 2.16zM6.79 19c1.19 0 2.16-.97 2.16-2.16 0-1.19-.97-2.16-2.16-2.16-1.19 0-2.16.97-2.16 2.16 0 1.19.96 2.16 2.16 2.16zM17.21 19c1.19 0 2.16-.97 2.16-2.16 0-1.19-.97-2.16-2.16-2.16-1.19 0-2.16.97-2.16 2.16 0 1.19.97 2.16 2.16 2.16z"/></svg>`,
+  pet: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.41 16.75C4.17 19.64 6.35 22 9.25 22h4.79c3.26 0 5.5-2.63 4.96-5.85-.57-3.38-3.83-6.15-7.26-6.15-3.72 0-7.02 3.04-7.33 6.75zM10.47 7.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM17.3 8.7a2 2 0 100-4 2 2 0 000 4zM21 12.7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM3.97 10.7a2 2 0 100-4 2 2 0 000 4z"/></svg>`,
+  ghost: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 20.07v-7.89C22 6.58 17.5 2 12 2S2 6.58 2 12.18v7.89c0 1.26.75 1.6 1.67.76l1-.91c.37-.34.97-.34 1.34 0l2 1.83c.37.34.97.34 1.34 0l2-1.83c.37-.34.97-.34 1.34 0l2 1.83c.37.34.97.34 1.34 0l2-1.83c.37-.34.97-.34 1.34 0l1 .91c.88.84 1.63.5 1.63-.76zM8 14a6.66 6.66 0 008 0"/><path d="M12 11a2 2 0 100-4 2 2 0 000 4z"/></svg>`,
   // Sync state uses one icon family so the three states read as one indicator.
   // The glyph itself changes on failure, so colour is reinforcement rather than
   // the only signal (WCAG 1.4.1).
@@ -59,10 +62,10 @@ const ICONS = {
   trashOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-12 3 5.98)"><path d="M21 5.98c-3.33-.33-6.68-.5-10.02-.5-1.98 0-3.96.1-5.94.3L3 5.98M8.5 4.97l.22-1.31C8.88 2.71 9 2 10.69 2h2.62c1.69 0 1.82.75 1.97 1.67l.22 1.3"/></g><path d="M18.85 9.14l-.65 10.07C18.09 20.78 18 22 15.21 22H8.79C6 22 5.91 20.78 5.8 19.21L5.15 9.14M10.33 16.5h3.33M9.5 12.5h5"/></svg>`,
 };
 
-const AUTH_MAGIC_SENTINEL = 'LUCID_VAULT_AUTHENTICATED_V1';
+const AUTH_MAGIC_SENTINEL = "LUCID_VAULT_AUTHENTICATED_V1";
 
 // First-run view: editor + preview stacked top/bottom (works on any screen width).
-const DEFAULT_VIEW_MODE = 'split-vertical';
+const DEFAULT_VIEW_MODE = "split-vertical";
 
 // --- STATE ---
 const state = {
@@ -71,23 +74,23 @@ const state = {
   authVerifier: null,
   activeNoteId: null,
   activeFolderId: null,
-  searchQuery: '',
+  searchQuery: "",
   encryptionKey: null,
   saveTimeout: null,
-  pendingNoteId: null,     // note the debounced save is bound to (J-02)
-  rawStore: null,          // encrypted store exactly as received from the server
-  kdf: null,               // { algo, iterations, salt } — per-vault, from the store
+  pendingNoteId: null, // note the debounced save is bound to (J-02)
+  rawStore: null, // encrypted store exactly as received from the server
+  kdf: null, // { algo, iterations, salt } — per-vault, from the store
   schemaVersion: null,
   openFolderIds: new Set(),
   openTagNames: new Set(),
-  tagLibrary: [],          // declared tags; survive having no carrier
+  tagLibrary: [], // declared tags; survive having no carrier
   treeFocusId: null,
   dragNoteId: null,
-  trashPreviewId: null,    // trashed note shown READ-ONLY in the center pane; never the editor
+  trashPreviewId: null, // trashed note shown READ-ONLY in the center pane; never the editor
   viewMode: DEFAULT_VIEW_MODE, // see DEFAULT_VIEW_MODE — single source of truth (J-07)
-  explorerMode: 'folders', // a key of EXPLORER_MODES: 'folders' | 'tags' | 'pinned'
+  explorerMode: "folders", // a key of EXPLORER_MODES: 'folders' | 'tags' | 'pinned'
   decryptedTitleCache: new Map(),
-  storeLoaded: false,      // false until GET /api/store succeeds — gates the lock screen mode (J-10)
+  storeLoaded: false, // false until GET /api/store succeeds — gates the lock screen mode (J-10)
 };
 
 // --- API PATH ---
@@ -95,8 +98,10 @@ function apiPath(endpoint) {
   // Strip an explicit document segment first: a user landing on /index.html would
   // otherwise get API paths like /index.html/api/store, which 404 and shove the
   // lock screen into its failure mode for no real reason.
-  const base = window.location.pathname.replace(/\/index\.html?$/i, '').replace(/\/+$/, '');
-  return base + '/' + endpoint;
+  const base = window.location.pathname
+    .replace(/\/index\.html?$/i, "")
+    .replace(/\/+$/, "");
+  return base + "/" + endpoint;
 }
 
 // --- RECORD IDS ---
@@ -108,63 +113,88 @@ function apiPath(endpoint) {
 // created in the same millisecond. Mirrors server.js newId(), byte width included.
 function newId(prefix) {
   const bytes = crypto.getRandomValues(new Uint8Array(8));
-  return prefix + '-' + [...bytes].map(b => b.toString(16).padStart(2, '0')).join('');
+  return (
+    prefix +
+    "-" +
+    [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("")
+  );
 }
 
 // ─── MODAL FOCUS MANAGEMENT (A-02) ─────────────────
 // Without this, Tab walks out of an open dialog into the page behind it and the
 // invoking control loses focus when the dialog closes.
-const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])';
 
 function trapFocus(modal) {
   const previouslyFocused = document.activeElement;
   function onKeydown(e) {
-    if (e.key !== 'Tab') return;
-    const items = [...modal.querySelectorAll(FOCUSABLE)].filter(el => el.offsetParent !== null);
+    if (e.key !== "Tab") return;
+    const items = [...modal.querySelectorAll(FOCUSABLE)].filter(
+      (el) => el.offsetParent !== null,
+    );
     if (!items.length) return;
-    const first = items[0], last = items[items.length - 1];
-    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    const first = items[0],
+      last = items[items.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
   }
-  modal.addEventListener('keydown', onKeydown);
+  modal.addEventListener("keydown", onKeydown);
   // Returns a cleanup that also restores focus to whatever opened the dialog.
   return () => {
-    modal.removeEventListener('keydown', onKeydown);
+    modal.removeEventListener("keydown", onKeydown);
     if (previouslyFocused && previouslyFocused.focus) previouslyFocused.focus();
   };
 }
 
 // ─── IN-APP MODALS ─────────────────────────────────
 function showConfirmModal(title, message) {
-  return new Promise(resolve => {
-    const modal = document.getElementById('modal-confirm');
-    const titleEl = document.getElementById('modal-confirm-title');
-    const msgEl = document.getElementById('modal-confirm-msg');
-    const cancelBtn = document.getElementById('modal-btn-cancel');
-    const dangerBtn = document.getElementById('modal-btn-danger');
+  return new Promise((resolve) => {
+    const modal = document.getElementById("modal-confirm");
+    const titleEl = document.getElementById("modal-confirm-title");
+    const msgEl = document.getElementById("modal-confirm-msg");
+    const cancelBtn = document.getElementById("modal-btn-cancel");
+    const dangerBtn = document.getElementById("modal-btn-danger");
 
     titleEl.textContent = title;
     msgEl.textContent = message;
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     const releaseFocus = trapFocus(modal);
-    cancelBtn.focus();   // safe default on a destructive dialog
+    cancelBtn.focus(); // safe default on a destructive dialog
 
     function cleanup() {
-      modal.classList.add('hidden');
-      cancelBtn.removeEventListener('click', onCancel);
-      dangerBtn.removeEventListener('click', onDanger);
-      modal.removeEventListener('keydown', onKeyDown);
+      modal.classList.add("hidden");
+      cancelBtn.removeEventListener("click", onCancel);
+      dangerBtn.removeEventListener("click", onDanger);
+      modal.removeEventListener("keydown", onKeyDown);
       releaseFocus();
     }
 
-    function onCancel() { cleanup(); resolve(false); }
-    function onDanger() { cleanup(); resolve(true); }
+    function onCancel() {
+      cleanup();
+      resolve(false);
+    }
+    function onDanger() {
+      cleanup();
+      resolve(true);
+    }
     // A-03: the destructive dialog is the one that most needs an escape route.
-    function onKeyDown(e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onCancel(); } }
+    function onKeyDown(e) {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onCancel();
+      }
+    }
 
-    cancelBtn.addEventListener('click', onCancel);
-    dangerBtn.addEventListener('click', onDanger);
-    modal.addEventListener('keydown', onKeyDown);
+    cancelBtn.addEventListener("click", onCancel);
+    dangerBtn.addEventListener("click", onDanger);
+    modal.addEventListener("keydown", onKeyDown);
   });
 }
 
@@ -172,51 +202,68 @@ function showConfirmModal(title, message) {
 // match the subject or the dialog lies about what it edits.
 const PROMPT_FOLDER_ICON = `<svg class="modal-prompt-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`;
 
-function showPromptModal(title, message, defaultValue = '', opts = {}) {
-  return new Promise(resolve => {
-    const modal = document.getElementById('modal-prompt');
-    const titleEl = document.getElementById('modal-prompt-title');
-    const msgEl = document.getElementById('modal-prompt-msg');
-    const inputEl = document.getElementById('modal-prompt-input');
-    const iconEl = document.getElementById('modal-prompt-icon');
-    const cancelBtn = document.getElementById('modal-prompt-btn-cancel');
-    const submitBtn = document.getElementById('modal-prompt-btn-submit');
+function showPromptModal(title, message, defaultValue = "", opts = {}) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("modal-prompt");
+    const titleEl = document.getElementById("modal-prompt-title");
+    const msgEl = document.getElementById("modal-prompt-msg");
+    const inputEl = document.getElementById("modal-prompt-input");
+    const iconEl = document.getElementById("modal-prompt-icon");
+    const cancelBtn = document.getElementById("modal-prompt-btn-cancel");
+    const submitBtn = document.getElementById("modal-prompt-btn-submit");
 
     titleEl.textContent = title;
     msgEl.textContent = message;
-    inputEl.placeholder = opts.placeholder || 'Name';
-    inputEl.setAttribute('aria-label', opts.placeholder || 'Name');
-    if (iconEl) iconEl.innerHTML = (opts.icon && ICONS[opts.icon])
-      ? ICONS[opts.icon].replace('icon-svg', 'modal-prompt-svg')
-      : PROMPT_FOLDER_ICON;
+    inputEl.placeholder = opts.placeholder || "Name";
+    inputEl.setAttribute("aria-label", opts.placeholder || "Name");
+    if (iconEl)
+      iconEl.innerHTML =
+        opts.icon && ICONS[opts.icon]
+          ? ICONS[opts.icon].replace("icon-svg", "modal-prompt-svg")
+          : PROMPT_FOLDER_ICON;
     inputEl.value = defaultValue;
-    modal.classList.remove('hidden');
+    modal.classList.remove("hidden");
     const releaseFocus = trapFocus(modal);
     inputEl.focus();
     inputEl.select();
 
     function cleanup() {
-      modal.classList.add('hidden');
-      cancelBtn.removeEventListener('click', onCancel);
-      submitBtn.removeEventListener('click', onSubmit);
-      inputEl.removeEventListener('keydown', onKeyDown);
+      modal.classList.add("hidden");
+      cancelBtn.removeEventListener("click", onCancel);
+      submitBtn.removeEventListener("click", onSubmit);
+      inputEl.removeEventListener("keydown", onKeyDown);
       releaseFocus();
     }
 
-    function onCancel() { cleanup(); resolve(null); }
-    function onSubmit() { const val = inputEl.value.trim(); cleanup(); resolve(val || null); }
+    function onCancel() {
+      cleanup();
+      resolve(null);
+    }
+    function onSubmit() {
+      const val = inputEl.value.trim();
+      cleanup();
+      resolve(val || null);
+    }
     function onKeyDown(e) {
       // preventDefault matters here: cleanup() restores focus to the control that
       // opened this dialog, and without it the same Enter — or its key-repeat —
       // reaches that control and reopens the dialog, which looks exactly like the
       // dialog refusing to close.
-      if (e.key === 'Enter')  { e.preventDefault(); e.stopPropagation(); onSubmit(); }
-      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); onCancel(); }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        onSubmit();
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        onCancel();
+      }
     }
 
-    cancelBtn.addEventListener('click', onCancel);
-    submitBtn.addEventListener('click', onSubmit);
-    inputEl.addEventListener('keydown', onKeyDown);
+    cancelBtn.addEventListener("click", onCancel);
+    submitBtn.addEventListener("click", onSubmit);
+    inputEl.addEventListener("keydown", onKeyDown);
   });
 }
 
@@ -226,14 +273,20 @@ function showPromptModal(title, message, defaultValue = '', opts = {}) {
 // store. It is not secret; its job is to make every vault's key derivation
 // unique, so one precomputed table cannot attack multiple vaults and the same
 // passphrase never yields the same key on two installs.
-const KDF_DEFAULTS = { algo: 'PBKDF2-SHA256', iterations: 600000, hash: 'SHA-256' };
+const KDF_DEFAULTS = {
+  algo: "PBKDF2-SHA256",
+  iterations: 600000,
+  hash: "SHA-256",
+};
 const SCHEMA_VERSION = 2;
 
 // The glyph that marks a pinned note: on its row, in its context menu, and on the
 // toolbar button. One constant so the three can never disagree.
-const PIN_GLYPH = 'pin';
+const PIN_GLYPH = "pin";
 
-function bytesToB64(bytes) { return btoa(String.fromCharCode(...bytes)); }
+function bytesToB64(bytes) {
+  return btoa(String.fromCharCode(...bytes));
+}
 function b64ToBytes(b64) {
   const raw = atob(b64);
   const out = new Uint8Array(raw.length);
@@ -244,31 +297,36 @@ function newKdfParams() {
   return {
     algo: KDF_DEFAULTS.algo,
     iterations: KDF_DEFAULTS.iterations,
-    salt: bytesToB64(crypto.getRandomValues(new Uint8Array(16)))
+    salt: bytesToB64(crypto.getRandomValues(new Uint8Array(16))),
   };
 }
 
 async function deriveKey(passphrase, kdf) {
   if (!window.crypto || !window.crypto.subtle) {
-    throw new Error('SECURE_CONTEXT_REQUIRED');
+    throw new Error("SECURE_CONTEXT_REQUIRED");
   }
-  if (!kdf || !kdf.salt) throw new Error('KDF_PARAMS_MISSING');
+  if (!kdf || !kdf.salt) throw new Error("KDF_PARAMS_MISSING");
   const enc = new TextEncoder();
-  const km = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  const km = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(passphrase),
+    "PBKDF2",
+    false,
+    ["deriveKey"],
+  );
   return crypto.subtle.deriveKey(
     {
-      name: 'PBKDF2',
+      name: "PBKDF2",
       salt: b64ToBytes(kdf.salt),
       iterations: kdf.iterations || KDF_DEFAULTS.iterations,
-      hash: KDF_DEFAULTS.hash
+      hash: KDF_DEFAULTS.hash,
     },
     km,
-    { name: 'AES-GCM', length: 256 },
+    { name: "AES-GCM", length: 256 },
     false,
-    ['encrypt', 'decrypt']
+    ["encrypt", "decrypt"],
   );
 }
-
 
 // ─── SESSION KEY STORAGE (S-03) ────────────────────
 // The master passphrase is NEVER persisted. We keep the derived, non-extractable
@@ -276,16 +334,17 @@ async function deriveKey(passphrase, kdf) {
 // passphrase string in sessionStorage, which an XSS could simply read). A per-tab
 // session token gates reuse, preserving the previous "unlocked until tab closes"
 // behaviour.
-const IDB_NAME = 'lucid-vault';
-const IDB_STORE = 'keys';
-const IDB_RECORD = 'session-key';
-const SESSION_TOKEN = 'lucid-session';
+const IDB_NAME = "lucid-vault";
+const IDB_STORE = "keys";
+const IDB_RECORD = "session-key";
+const SESSION_TOKEN = "lucid-session";
 
 function idbOpen() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(IDB_NAME, 1);
     req.onupgradeneeded = () => {
-      if (!req.result.objectStoreNames.contains(IDB_STORE)) req.result.createObjectStore(IDB_STORE);
+      if (!req.result.objectStoreNames.contains(IDB_STORE))
+        req.result.createObjectStore(IDB_STORE);
     };
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
@@ -293,31 +352,53 @@ function idbOpen() {
 }
 
 function idbPut(value) {
-  return idbOpen().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(IDB_STORE, 'readwrite');
-    tx.objectStore(IDB_STORE).put(value, IDB_RECORD);
-    tx.oncomplete = () => { db.close(); resolve(true); };
-    tx.onerror = () => { db.close(); reject(tx.error); };
-  }));
+  return idbOpen().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, "readwrite");
+        tx.objectStore(IDB_STORE).put(value, IDB_RECORD);
+        tx.oncomplete = () => {
+          db.close();
+          resolve(true);
+        };
+        tx.onerror = () => {
+          db.close();
+          reject(tx.error);
+        };
+      }),
+  );
 }
 
 function idbGet() {
-  return idbOpen().then(db => new Promise((resolve, reject) => {
-    const tx = db.transaction(IDB_STORE, 'readonly');
-    const r = tx.objectStore(IDB_STORE).get(IDB_RECORD);
-    r.onsuccess = () => { db.close(); resolve(r.result || null); };
-    r.onerror = () => { db.close(); reject(r.error); };
-  }));
+  return idbOpen().then(
+    (db) =>
+      new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, "readonly");
+        const r = tx.objectStore(IDB_STORE).get(IDB_RECORD);
+        r.onsuccess = () => {
+          db.close();
+          resolve(r.result || null);
+        };
+        r.onerror = () => {
+          db.close();
+          reject(r.error);
+        };
+      }),
+  );
 }
 
 async function persistSessionKey(key) {
   try {
-    const token = (crypto.randomUUID && crypto.randomUUID()) ||
+    const token =
+      (crypto.randomUUID && crypto.randomUUID()) ||
       String(Date.now()) + Math.random().toString(36).slice(2);
     await idbPut({ key, token });
     sessionStorage.setItem(SESSION_TOKEN, token);
   } catch (e) {
-    console.warn('Session key not persisted; passphrase will be required after reload.', e);
+    console.warn(
+      "Session key not persisted; passphrase will be required after reload.",
+      e,
+    );
   }
 }
 
@@ -325,13 +406,21 @@ async function clearSessionKey() {
   sessionStorage.removeItem(SESSION_TOKEN);
   try {
     const db = await idbOpen();
-    await new Promise(resolve => {
-      const tx = db.transaction(IDB_STORE, 'readwrite');
+    await new Promise((resolve) => {
+      const tx = db.transaction(IDB_STORE, "readwrite");
       tx.objectStore(IDB_STORE).delete(IDB_RECORD);
-      tx.oncomplete = () => { db.close(); resolve(); };
-      tx.onerror = () => { db.close(); resolve(); };
+      tx.oncomplete = () => {
+        db.close();
+        resolve();
+      };
+      tx.onerror = () => {
+        db.close();
+        resolve();
+      };
     });
-  } catch (e) { /* nothing to clear */ }
+  } catch (e) {
+    /* nothing to clear */
+  }
 }
 
 async function restoreKeyFromSession() {
@@ -343,7 +432,10 @@ async function restoreKeyFromSession() {
       const check = await tryDecryptText(state.authVerifier, rec.key);
       if (check === AUTH_MAGIC_SENTINEL) {
         state.encryptionKey = rec.key;
-        const src = state.rawStore || { folders: state.folders, notes: state.notes };
+        const src = state.rawStore || {
+          folders: state.folders,
+          notes: state.notes,
+        };
         const plain = await decryptVaultIntoState(src, rec.key);
         state.folders = plain.folders;
         state.notes = plain.notes;
@@ -352,7 +444,7 @@ async function restoreKeyFromSession() {
       }
     }
   } catch (e) {
-    console.warn('Session key restore failed:', e);
+    console.warn("Session key restore failed:", e);
   }
   await clearSessionKey();
   return false;
@@ -361,31 +453,43 @@ async function restoreKeyFromSession() {
 async function encryptText(text, key) {
   // S-06: fail CLOSED. Returning plaintext when the key is missing would silently
   // write unencrypted notes to the server while the UI still claims E2EE.
-  if (!key) throw new Error('ENCRYPT_WITHOUT_KEY');
+  if (!key) throw new Error("ENCRYPT_WITHOUT_KEY");
   const enc = new TextEncoder();
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
+  const ct = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    key,
+    enc.encode(text),
+  );
   const buf = new Uint8Array(ct);
   const payload = new Uint8Array(iv.length + buf.length);
   payload.set(iv);
   payload.set(buf, iv.length);
-  return 'ENC:' + btoa(String.fromCharCode(...payload));
+  return "ENC:" + btoa(String.fromCharCode(...payload));
 }
 
 // S-05: on failure this THROWS. It must never return a placeholder string that
 // could land in the editor and then be encrypted back over the real ciphertext.
 async function decryptText(data, key) {
-  if (!key || !data || !data.startsWith('ENC:')) return data;
+  if (!key || !data || !data.startsWith("ENC:")) return data;
   const raw = atob(data.substring(4));
   const buf = new Uint8Array(raw.length);
   for (let i = 0; i < raw.length; i++) buf[i] = raw.charCodeAt(i);
-  const dec = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+  const dec = await crypto.subtle.decrypt(
+    { name: "AES-GCM", iv: buf.slice(0, 12) },
+    key,
+    buf.slice(12),
+  );
   return new TextDecoder().decode(dec);
 }
 
 // Convenience for the one place a failed decrypt is tolerable (passphrase check).
 async function tryDecryptText(data, key) {
-  try { return await decryptText(data, key); } catch (e) { return null; }
+  try {
+    return await decryptText(data, key);
+  } catch (e) {
+    return null;
+  }
 }
 
 // ─── VAULT BOUNDARY (S-07) ─────────────────────────
@@ -400,35 +504,44 @@ async function tryDecryptText(data, key) {
 
 async function decryptVaultIntoState(raw, key) {
   const folders = [];
-  for (const f of (raw.folders || [])) {
+  for (const f of raw.folders || []) {
     folders.push({
       ...f,
       name: await decryptText(f.name, key),
       // Absent on vaults written before the trash existed; treat as live.
-      trashed: f.trashed === undefined ? false : (await decryptText(f.trashed, key)) === 'y'
+      trashed:
+        f.trashed === undefined
+          ? false
+          : (await decryptText(f.trashed, key)) === "y",
     });
   }
   const notes = [];
-  for (const n of (raw.notes || [])) {
+  for (const n of raw.notes || []) {
     const tags = [];
-    for (const t of (n.tags || [])) tags.push(await decryptText(t, key));
+    for (const t of n.tags || []) tags.push(await decryptText(t, key));
     notes.push({
       ...n,
       title: await decryptText(n.title, key),
       content: await decryptText(n.content, key),
       tags,
       // Absent on vaults written before pinning existed; treat as unpinned.
-      pinned: n.pinned === undefined ? false : (await decryptText(n.pinned, key)) === 'y',
+      pinned:
+        n.pinned === undefined
+          ? false
+          : (await decryptText(n.pinned, key)) === "y",
       // Same rule as pinned, same reason: trash membership is metadata about what
       // you keep and discard, so it rides encrypted, never as a bare boolean.
-      trashed: n.trashed === undefined ? false : (await decryptText(n.trashed, key)) === 'y'
+      trashed:
+        n.trashed === undefined
+          ? false
+          : (await decryptText(n.trashed, key)) === "y",
     });
   }
   // The tag library rides encrypted like every other user string. A tag exists
   // independently of the notes carrying it, so removing it from its last note
   // does not destroy it — it stays available to re-apply.
   const tags = [];
-  for (const t of (raw.tags || [])) tags.push(await decryptText(t, key));
+  for (const t of raw.tags || []) tags.push(await decryptText(t, key));
   return { folders, notes, tags };
 }
 
@@ -437,18 +550,18 @@ async function encryptVaultFromState(key) {
   for (const f of state.folders) {
     folders.push({
       ...f,
-      name: await encryptText(f.name || '', key),
-      trashed: await encryptText(f.trashed ? 'y' : 'n', key)
+      name: await encryptText(f.name || "", key),
+      trashed: await encryptText(f.trashed ? "y" : "n", key),
     });
   }
   const notes = [];
   for (const n of state.notes) {
     const tags = [];
-    for (const t of (n.tags || [])) tags.push(await encryptText(t, key));
+    for (const t of n.tags || []) tags.push(await encryptText(t, key));
     notes.push({
       ...n,
-      title: await encryptText(n.title || '', key),
-      content: await encryptText(n.content || '', key),
+      title: await encryptText(n.title || "", key),
+      content: await encryptText(n.content || "", key),
       tags,
       // Encrypted, not a bare boolean: the object spread above would otherwise
       // carry `pinned: true` to the server in clear, handing it the list of
@@ -457,15 +570,15 @@ async function encryptVaultFromState(key) {
       // ('true'/'false' happen to encrypt to equal lengths too, because 4 and 5
       // bytes fall in the same base64 quantum, but that is luck rather than a
       // property to rely on — 'y'/'n' is equal-length for any encoding.)
-      pinned: await encryptText(n.pinned ? 'y' : 'n', key),
-      trashed: await encryptText(n.trashed ? 'y' : 'n', key),
-      isEncrypted: true
+      pinned: await encryptText(n.pinned ? "y" : "n", key),
+      trashed: await encryptText(n.trashed ? "y" : "n", key),
+      isEncrypted: true,
     });
   }
   // Library = every declared tag plus every tag actually in use, so a vault
   // written by an older version gains its library on first save here.
   const library = new Set(state.tagLibrary || []);
-  state.notes.forEach(n => (n.tags || []).forEach(t => library.add(t)));
+  state.notes.forEach((n) => (n.tags || []).forEach((t) => library.add(t)));
   const tags = [];
   for (const t of [...library].sort((a, b) => a.localeCompare(b))) {
     tags.push(await encryptText(t, key));
@@ -476,8 +589,8 @@ async function encryptVaultFromState(key) {
 // ─── PERSISTENCE ───────────────────────────────────
 async function fetchStore() {
   try {
-    const res = await fetch(apiPath('api/store'));
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const res = await fetch(apiPath("api/store"));
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     // Held as-is (still encrypted) until a key exists; decrypted on unlock.
     state.rawStore = data;
@@ -493,22 +606,27 @@ async function fetchStore() {
     // to leave a brand-new vault entirely collapsed, because the default-open rule
     // only fired when no saved state existed at all. If nothing in the saved list
     // belongs to this vault, treat it as a first run and open everything.
-    const openAll = () => state.folders.forEach(f => state.openFolderIds.add(f.id));
-    const savedOpenFolders = localStorage.getItem('lucid-open-folders');
+    const openAll = () =>
+      state.folders.forEach((f) => state.openFolderIds.add(f.id));
+    const savedOpenFolders = localStorage.getItem("lucid-open-folders");
     if (savedOpenFolders !== null) {
       try {
-        const mine = new Set(state.folders.map(f => f.id));
-        const kept = JSON.parse(savedOpenFolders).filter(id => mine.has(id));
+        const mine = new Set(state.folders.map((f) => f.id));
+        const kept = JSON.parse(savedOpenFolders).filter((id) => mine.has(id));
         if (kept.length) state.openFolderIds = new Set(kept);
         else openAll();
-      } catch (e) { openAll(); }
+      } catch (e) {
+        openAll();
+      }
     } else {
       openAll();
     }
-    localStorage.removeItem('lucid-open-tags');   // S-13: purge the legacy plaintext copy from disk
-    const savedOpenTags = sessionStorage.getItem('lucid-open-tags');
+    localStorage.removeItem("lucid-open-tags"); // S-13: purge the legacy plaintext copy from disk
+    const savedOpenTags = sessionStorage.getItem("lucid-open-tags");
     if (savedOpenTags !== null) {
-      try { state.openTagNames = new Set(JSON.parse(savedOpenTags)); } catch (e) {}
+      try {
+        state.openTagNames = new Set(JSON.parse(savedOpenTags));
+      } catch (e) {}
     }
 
     // No selection here: at this point the notes are still ciphertext, so the
@@ -524,8 +642,8 @@ async function fetchStore() {
     // passphrase typed there would have re-keyed and emptied it on the next
     // successful save. Fail closed into an explicit unreachable mode instead.
     state.storeLoaded = false;
-    console.warn('fetchStore failed:', err);
-    showSave('Vault could not be loaded from the server', 'error');
+    console.warn("fetchStore failed:", err);
+    showSave("Vault could not be loaded from the server", "error");
     updateLockScreenUI();
   }
 }
@@ -539,21 +657,23 @@ let refusalTimer = null;
 // The shake's duration lives in --motion-slow. Read it rather than restating it,
 // so the hold and the animation stay one decision.
 function refusalHoldMs() {
-  const raw = getComputedStyle(document.documentElement).getPropertyValue('--motion-slow').trim();
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--motion-slow")
+    .trim();
   const n = parseFloat(raw);
   if (!Number.isFinite(n)) return 350;
-  return raw.endsWith('ms') ? n : n * 1000;
+  return raw.endsWith("ms") ? n : n * 1000;
 }
 
 function refreshLockGate() {
-  const lockInput = document.getElementById('lock-passphrase');
-  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
-  const lockBtn = document.getElementById('lock-unlock-btn');
-  const lockError = document.getElementById('lock-error');
+  const lockInput = document.getElementById("lock-passphrase");
+  const lockConfirmInput = document.getElementById("lock-passphrase-confirm");
+  const lockBtn = document.getElementById("lock-unlock-btn");
+  const lockError = document.getElementById("lock-error");
   if (!lockBtn) return;
-  const v1 = lockInput ? lockInput.value : '';
-  const v2 = lockConfirmInput ? lockConfirmInput.value : '';
-  if (lockError) lockError.classList.add('hidden');
+  const v1 = lockInput ? lockInput.value : "";
+  const v2 = lockConfirmInput ? lockConfirmInput.value : "";
+  if (lockError) lockError.classList.add("hidden");
 
   // Server unreachable: Retry is always pressable, nothing to validate.
   if (!state.storeLoaded) {
@@ -564,11 +684,17 @@ function refreshLockGate() {
   // Existing vault: one field, and correctness cannot be known until it is
   // tried. The only honest gate is "something was typed".
   if (state.authVerifier) {
-    if (lockInput) lockInput.classList.remove('is-matched', 'is-mismatch', 'is-refused', 'shake');
+    if (lockInput)
+      lockInput.classList.remove(
+        "is-matched",
+        "is-mismatch",
+        "is-refused",
+        "shake",
+      );
     if (lockBtn) {
-      lockBtn.textContent = 'Unlock';
+      lockBtn.textContent = "Unlock";
       lockBtn.disabled = !v1;
-      lockBtn.classList.toggle('is-ready', !!v1);
+      lockBtn.classList.toggle("is-ready", !!v1);
     }
     return;
   }
@@ -577,9 +703,9 @@ function refreshLockGate() {
   // readiness. Enter goes through this same gate, so no message is needed to
   // say what the colours already say.
   const setGlow = (cls, onlyConfirm) => {
-    [lockInput, lockConfirmInput].forEach(el => {
+    [lockInput, lockConfirmInput].forEach((el) => {
       if (!el) return;
-      el.classList.remove('is-matched', 'is-mismatch', 'is-refused', 'shake');
+      el.classList.remove("is-matched", "is-mismatch", "is-refused", "shake");
       if (!cls) return;
       // A match belongs to the PAIR, so both fields carry it. A mismatch belongs to
       // the confirm field alone: the first field is the reference and is never the
@@ -591,28 +717,41 @@ function refreshLockGate() {
     if (!lockBtn) return;
     lockBtn.textContent = label;
     lockBtn.disabled = !ready;
-    lockBtn.classList.toggle('is-ready', ready);
+    lockBtn.classList.toggle("is-ready", ready);
   };
 
-  if (!v1 || !v2) { setGlow(null); setBtn('Next', false); return; }
-  if (v1 === v2)  { setGlow('is-matched'); setBtn('Continue', true); return; }
-  if (v1.startsWith(v2)) { setGlow(null); setBtn('Next', false); return; }
-  setGlow('is-mismatch', true); setBtn('Next', false);
+  if (!v1 || !v2) {
+    setGlow(null);
+    setBtn("Next", false);
+    return;
+  }
+  if (v1 === v2) {
+    setGlow("is-matched");
+    setBtn("Continue", true);
+    return;
+  }
+  if (v1.startsWith(v2)) {
+    setGlow(null);
+    setBtn("Next", false);
+    return;
+  }
+  setGlow("is-mismatch", true);
+  setBtn("Next", false);
 }
 
 function updateLockScreenUI() {
-  const lockInputs = document.getElementById('lock-inputs');
-  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
-  const lockBtn = document.getElementById('lock-unlock-btn');
-  const lockFooter = document.getElementById('lock-footer');
-  const statusIcon = document.getElementById('lock-status-icon');
-  const statusText = document.getElementById('lock-status-text');
-  const lockStatus = document.getElementById('lock-status');
+  const lockInputs = document.getElementById("lock-inputs");
+  const lockConfirmInput = document.getElementById("lock-passphrase-confirm");
+  const lockBtn = document.getElementById("lock-unlock-btn");
+  const lockFooter = document.getElementById("lock-footer");
+  const statusIcon = document.getElementById("lock-status-icon");
+  const statusText = document.getElementById("lock-status-text");
+  const lockStatus = document.getElementById("lock-status");
 
   const setStatus = (icon, text, bad) => {
-    if (statusIcon) statusIcon.innerHTML = ICONS[icon] || '';
+    if (statusIcon) statusIcon.innerHTML = ICONS[icon] || "";
     if (statusText) statusText.textContent = text;
-    if (lockStatus) lockStatus.classList.toggle('bad', !!bad);
+    if (lockStatus) lockStatus.classList.toggle("bad", !!bad);
   };
 
   // J-10: server unreachable. Neither Unlock nor Initialize is offerable because
@@ -620,28 +759,32 @@ function updateLockScreenUI() {
   // Retry re-fetches the vault, it does not test a passphrase, and showing an
   // input here implied otherwise.
   if (!state.storeLoaded) {
-    setStatus('heartSlash', 'Server unreachable', true);
-    if (lockInputs) lockInputs.classList.add('hidden');
-    if (lockFooter) lockFooter.classList.add('hidden');
+    setStatus("heartSlash", "Server unreachable", true);
+    if (lockInputs) lockInputs.classList.add("hidden");
+    if (lockFooter) lockFooter.classList.add("hidden");
     if (lockBtn) {
-      lockBtn.textContent = 'Retry';
+      lockBtn.textContent = "Retry";
       lockBtn.disabled = false;
     }
     return;
   }
 
-  if (lockInputs) lockInputs.classList.remove('hidden');
+  if (lockInputs) lockInputs.classList.remove("hidden");
 
   if (!state.authVerifier) {
     // First run: the footer's warning belongs here, where the irreversible
     // choice is actually made.
-    setStatus('passwordCheck', 'Set a passphrase to initialize your LucID', false);
-    if (lockConfirmInput) lockConfirmInput.classList.remove('hidden');
-    if (lockFooter) lockFooter.classList.remove('hidden');
+    setStatus(
+      "passwordCheck",
+      "Set a passphrase to initialize your LucID",
+      false,
+    );
+    if (lockConfirmInput) lockConfirmInput.classList.remove("hidden");
+    if (lockFooter) lockFooter.classList.remove("hidden");
   } else {
-    setStatus('lock', 'Vault locked', false);
-    if (lockConfirmInput) lockConfirmInput.classList.add('hidden');
-    if (lockFooter) lockFooter.classList.add('hidden');
+    setStatus("lock", "Vault locked", false);
+    if (lockConfirmInput) lockConfirmInput.classList.add("hidden");
+    if (lockFooter) lockFooter.classList.add("hidden");
   }
   refreshLockGate();
 }
@@ -653,38 +796,46 @@ function updateLockScreenUI() {
 // touches disk unencrypted.
 function saveTreeState() {
   try {
-    localStorage.setItem('lucid-open-folders', JSON.stringify([...state.openFolderIds]));
-    sessionStorage.setItem('lucid-open-tags', JSON.stringify([...state.openTagNames]));
+    localStorage.setItem(
+      "lucid-open-folders",
+      JSON.stringify([...state.openFolderIds]),
+    );
+    sessionStorage.setItem(
+      "lucid-open-tags",
+      JSON.stringify([...state.openTagNames]),
+    );
   } catch (e) {}
 }
 
 async function saveStore() {
   // Fail closed: never write the in-memory PLAINTEXT vault to the server.
   if (!state.encryptionKey || !state.kdf) {
-    console.warn('saveStore aborted: vault is locked.');
-    showSave('Locked before changes could sync', 'error');   // never silent (J-02)
+    console.warn("saveStore aborted: vault is locked.");
+    showSave("Locked before changes could sync", "error"); // never silent (J-02)
     return;
   }
   try {
-    showSave('Syncing changes to vault', 'saving');
-    const { folders, notes, tags } = await encryptVaultFromState(state.encryptionKey);
-    const res = await fetch(apiPath('api/store'), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    showSave("Syncing changes to vault", "saving");
+    const { folders, notes, tags } = await encryptVaultFromState(
+      state.encryptionKey,
+    );
+    const res = await fetch(apiPath("api/store"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         schemaVersion: SCHEMA_VERSION,
         kdf: state.kdf,
         folders,
         notes,
         tags,
-        authVerifier: state.authVerifier
-      })
+        authVerifier: state.authVerifier,
+      }),
     });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    showSave('Synced to vault', '');
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    showSave("Synced to vault", "");
   } catch (err) {
-    console.error('saveStore failed:', err);
-    showSave('Sync error: changes were not saved to the vault', 'error');
+    console.error("saveStore failed:", err);
+    showSave("Sync error: changes were not saved to the vault", "error");
   }
 }
 
@@ -706,13 +857,13 @@ async function settleVaultOnEntry() {
 // not enough, because it never wrote back into state.
 function absorbInUseTags() {
   const all = new Set(state.tagLibrary || []);
-  state.notes.forEach(n => (n.tags || []).forEach(t => all.add(t)));
+  state.notes.forEach((n) => (n.tags || []).forEach((t) => all.add(t)));
   state.tagLibrary = [...all].sort((a, b) => a.localeCompare(b));
 }
 
 function selectFirstLiveNote() {
-  const live = state.notes.filter(n => !n.trashed);
-  const current = live.find(n => n.id === state.activeNoteId);
+  const live = state.notes.filter((n) => !n.trashed);
+  const current = live.find((n) => n.id === state.activeNoteId);
   const pick = current || live[0] || null;
   state.activeNoteId = pick ? pick.id : null;
   state.activeFolderId = pick ? pick.folderId : null;
@@ -722,26 +873,26 @@ function selectFirstLiveNote() {
 // The cache is kept only so existing render call-sites keep working.
 async function preloadDecryptedTitles() {
   for (const n of state.notes) {
-    state.decryptedTitleCache.set(n.id, n.title || 'Untitled');
+    state.decryptedTitleCache.set(n.id, n.title || "Untitled");
   }
 }
 
 function extractTitleFromContent(content) {
-  if (!content) return 'Untitled';
-  const lines = content.trim().split('\n');
-  if (!lines.length) return 'Untitled';
-  const firstLine = lines[0].replace(/^[#\s*->]+/, '').trim();
-  return firstLine.substring(0, 50) || 'Untitled';
+  if (!content) return "Untitled";
+  const lines = content.trim().split("\n");
+  if (!lines.length) return "Untitled";
+  const firstLine = lines[0].replace(/^[#\s*->]+/, "").trim();
+  return firstLine.substring(0, 50) || "Untitled";
 }
 
 // J-01/J-02: copy the editor into the note it belongs to. Captured against a
 // specific note id, so a note switch inside the debounce window can no longer
 // write one note's text into another — or silently discard it.
 function commitEditorToNote(noteId) {
-  const note = state.notes.find(n => n.id === noteId);
-  const ta = document.getElementById('markdown-textarea');
+  const note = state.notes.find((n) => n.id === noteId);
+  const ta = document.getElementById("markdown-textarea");
   if (!note || !ta || ta.readOnly) return false;
-  const rawContent = ta.value || '';
+  const rawContent = ta.value || "";
   const rawTitle = extractTitleFromContent(rawContent);
   if (note.content === rawContent && note.title === rawTitle) return false; // nothing changed
   note.title = rawTitle;
@@ -755,9 +906,9 @@ function commitEditorToNote(noteId) {
 function triggerAutoSave() {
   if (state.saveTimeout) clearTimeout(state.saveTimeout);
   if (!state.encryptionKey) return;
-  const targetId = state.activeNoteId;      // bind now, not when the timer fires
+  const targetId = state.activeNoteId; // bind now, not when the timer fires
   state.pendingNoteId = targetId;
-  showSave('Syncing changes to vault', 'saving');
+  showSave("Syncing changes to vault", "saving");
   state.saveTimeout = setTimeout(async () => {
     state.saveTimeout = null;
     commitEditorToNote(targetId);
@@ -785,16 +936,20 @@ async function flushPendingSave() {
 // tooltip carries the detail. The text is kept in the DOM but visually hidden,
 // because this element is an aria-live region and an icon swap alone announces
 // nothing to a screen reader.
-const SYNC_ICONS = { error: 'cloudCross', saving: 'cloudConnection', ok: 'cloudConnection' };
+const SYNC_ICONS = {
+  error: "cloudCross",
+  saving: "cloudConnection",
+  ok: "cloudConnection",
+};
 
 function showSave(message, cls) {
-  const el = document.getElementById('save-indicator');
+  const el = document.getElementById("save-indicator");
   if (!el) return;
   const icon = SYNC_ICONS[cls] || SYNC_ICONS.ok;
-  const text = message || 'Synced to vault';
-  el.className = 'sync-status-badge' + (cls ? ' ' + cls : '');
+  const text = message || "Synced to vault";
+  el.className = "sync-status-badge" + (cls ? " " + cls : "");
   el.title = text;
-  el.setAttribute('aria-label', text);
+  el.setAttribute("aria-label", text);
   el.innerHTML = `${ICONS[icon]} <span class="visually-hidden">${escapeHtml(text)}</span>`;
 }
 
@@ -814,22 +969,24 @@ function formatUptime(seconds) {
 }
 
 async function updateRuntimeIndicator() {
-  const el = document.getElementById('runtime-indicator');
+  const el = document.getElementById("runtime-indicator");
   if (!el) return;
   const set = (cls, msg) => {
-    el.className = 'runtime-badge' + (cls ? ' ' + cls : '');
+    el.className = "runtime-badge" + (cls ? " " + cls : "");
     el.title = msg;
-    el.setAttribute('aria-label', msg);
+    el.setAttribute("aria-label", msg);
   };
   try {
-    const res = await fetch(apiPath('health'));
+    const res = await fetch(apiPath("health"));
     if (!res.ok) throw new Error(`health ${res.status}`);
     const data = await res.json();
-    const healthy = data && data.status === 'healthy';
-    set(healthy ? '' : 'error',
-        `Server ${healthy ? 'healthy' : 'reporting ' + String(data && data.status)} \u2014 running ${formatUptime(data && data.uptime)}`);
+    const healthy = data && data.status === "healthy";
+    set(
+      healthy ? "" : "error",
+      `Server ${healthy ? "healthy" : "reporting " + String(data && data.status)} \u2014 running ${formatUptime(data && data.uptime)}`,
+    );
   } catch (err) {
-    set('error', 'Server unreachable');
+    set("error", "Server unreachable");
   }
 }
 
@@ -841,9 +998,13 @@ async function updateRuntimeIndicator() {
 // rendering the tag tree into a hidden container while the pinned list sat
 // stale. A fourth view is now a row here, not another branch in five places.
 const EXPLORER_MODES = {
-  folders: { btn: 'btn-mode-folders', tree: 'folder-tree', render: renderTree },
-  tags:    { btn: 'btn-mode-tags',    tree: 'tag-tree',    render: renderTagTree },
-  pinned:  { btn: 'btn-mode-pinned',  tree: 'pinned-tree', render: renderPinnedTree }
+  folders: { btn: "btn-mode-folders", tree: "folder-tree", render: renderTree },
+  tags: { btn: "btn-mode-tags", tree: "tag-tree", render: renderTagTree },
+  pinned: {
+    btn: "btn-mode-pinned",
+    tree: "pinned-tree",
+    render: renderPinnedTree,
+  },
 };
 
 // Show the container belonging to the active mode, hide the other two, and
@@ -854,10 +1015,14 @@ const EXPLORER_MODES = {
 // previous view back untouched, because the mode was never changed.
 function noteMatchesQuery(n, q) {
   if (n.trashed) return false;
-  const title = state.decryptedTitleCache.get(n.id) || n.title || '';
-  return (title && title.toLowerCase().includes(q)) ||
-         (n.tags && n.tags.some(t => t.toLowerCase().includes(q))) ||
-         (typeof n.content === 'string' && !n.content.startsWith('ENC:') && n.content.toLowerCase().includes(q));
+  const title = state.decryptedTitleCache.get(n.id) || n.title || "";
+  return (
+    (title && title.toLowerCase().includes(q)) ||
+    (n.tags && n.tags.some((t) => t.toLowerCase().includes(q))) ||
+    (typeof n.content === "string" &&
+      !n.content.startsWith("ENC:") &&
+      n.content.toLowerCase().includes(q))
+  );
 }
 
 function renderSearchResults() {
@@ -865,32 +1030,43 @@ function renderSearchResults() {
   const container = document.getElementById(mode.tree);
   if (!container) return;
   const q = state.searchQuery.trim().toLowerCase();
-  container.innerHTML = '';
-  container.setAttribute('role', 'tree');
-  container.setAttribute('aria-label', 'Search results');
+  container.innerHTML = "";
+  container.setAttribute("role", "tree");
+  container.setAttribute("aria-label", "Search results");
 
-  const hits = state.notes.filter(n => noteMatchesQuery(n, q));
+  const hits = state.notes.filter((n) => noteMatchesQuery(n, q));
   if (!hits.length) {
-    container.innerHTML = '<div class="empty-state empty-state-pane">No notes match</div>';
+    container.innerHTML =
+      '<div class="empty-state empty-state-pane">No notes match</div>';
     return;
   }
 
-  hits.forEach(note => {
-    const noteEl = document.createElement('div');
-    noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
-    noteEl.setAttribute('role', 'treeitem');
-    noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
+  hits.forEach((note) => {
+    const noteEl = document.createElement("div");
+    noteEl.className =
+      "tree-note" + (note.id === state.activeNoteId ? " active" : "");
+    noteEl.setAttribute("role", "treeitem");
+    noteEl.setAttribute(
+      "aria-selected",
+      String(note.id === state.activeNoteId),
+    );
     noteEl.tabIndex = -1;
-    noteEl.dataset.treeId = 'note:' + note.id;
+    noteEl.dataset.treeId = "note:" + note.id;
 
     let displayTitle = state.decryptedTitleCache.get(note.id);
-    if (!displayTitle || displayTitle.startsWith('ENC:')) {
-      displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
+    if (!displayTitle || displayTitle.startsWith("ENC:")) {
+      displayTitle =
+        note.title && !note.title.startsWith("ENC:")
+          ? note.title
+          : "Untitled Note";
     }
-    noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
-      (note.pinned ? `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>` : '');
+    noteEl.innerHTML =
+      `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
+      (note.pinned
+        ? `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>`
+        : "");
 
-    noteEl.addEventListener('click', async e => {
+    noteEl.addEventListener("click", async (e) => {
       e.stopPropagation();
       await flushPendingSave();
       state.trashPreviewId = null;
@@ -898,7 +1074,7 @@ function renderSearchResults() {
       state.activeFolderId = note.folderId;
       renderAll();
     });
-    noteEl.addEventListener('contextmenu', e => {
+    noteEl.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
     });
@@ -909,16 +1085,16 @@ function renderSearchResults() {
 }
 
 function renderExplorer() {
-  if (!EXPLORER_MODES[state.explorerMode]) state.explorerMode = 'folders';
+  if (!EXPLORER_MODES[state.explorerMode]) state.explorerMode = "folders";
   const active = state.explorerMode;
   Object.entries(EXPLORER_MODES).forEach(([name, m]) => {
     const btn = document.getElementById(m.btn);
     const tree = document.getElementById(m.tree);
     if (btn) {
-      btn.classList.toggle('active', name === active);
-      btn.setAttribute('aria-pressed', String(name === active));
+      btn.classList.toggle("active", name === active);
+      btn.setAttribute("aria-pressed", String(name === active));
     }
-    if (tree) tree.classList.toggle('hidden', name !== active);
+    if (tree) tree.classList.toggle("hidden", name !== active);
   });
   if (state.searchQuery.trim()) renderSearchResults();
   else EXPLORER_MODES[active].render();
@@ -955,8 +1131,12 @@ function focusTreeItem(treeId) {
 // actually runs, not to the one that only runs when the user changes their mind.
 function clearDragState() {
   state.dragNoteId = null;
-  document.querySelectorAll('.tree-note.dragging').forEach(el => el.classList.remove('dragging'));
-  document.querySelectorAll('.tree-folder-header.drop-target').forEach(el => el.classList.remove('drop-target'));
+  document
+    .querySelectorAll(".tree-note.dragging")
+    .forEach((el) => el.classList.remove("dragging"));
+  document
+    .querySelectorAll(".tree-folder-header.drop-target")
+    .forEach((el) => el.classList.remove("drop-target"));
 }
 
 // J-09: group heights are MEASURED, not hand-computed. The old (n*36+12)px
@@ -964,149 +1144,188 @@ function clearDragState() {
 // folders clipped their tail from the 10th note. scrollHeight is the truth;
 // converted to rem so the stored value stays relational.
 function sizeTreeGroups(container) {
-  container.querySelectorAll('.tree-notes:not(.collapsed)').forEach(el => {
-    el.style.maxHeight = (el.scrollHeight / 16) + 'rem';
+  container.querySelectorAll(".tree-notes:not(.collapsed)").forEach((el) => {
+    el.style.maxHeight = el.scrollHeight / 16 + "rem";
   });
 }
 
 function renderTree() {
-  const container = document.getElementById('folder-tree');
+  const container = document.getElementById("folder-tree");
   if (!container) return;
-  container.innerHTML = '';
-  container.setAttribute('role', 'tree');
-  container.setAttribute('aria-label', 'Folders');
-  state.folders.filter(f => !f.trashed).forEach(folder => {
-    const folderNotes = state.notes.filter(n => !n.trashed && n.folderId === folder.id);
+  container.innerHTML = "";
+  container.setAttribute("role", "tree");
+  container.setAttribute("aria-label", "Folders");
+  state.folders
+    .filter((f) => !f.trashed)
+    .forEach((folder) => {
+      const folderNotes = state.notes.filter(
+        (n) => !n.trashed && n.folderId === folder.id,
+      );
 
-    const isOpen = state.openFolderIds.has(folder.id);
-    const isActive = state.activeFolderId === folder.id;
+      const isOpen = state.openFolderIds.has(folder.id);
+      const isActive = state.activeFolderId === folder.id;
 
-    const wrapper = document.createElement('div');
-    wrapper.className = 'tree-folder';
+      const wrapper = document.createElement("div");
+      wrapper.className = "tree-folder";
 
-    const header = document.createElement('div');
-    header.className = 'tree-folder-header' + (isActive ? ' active' : '') + (isOpen ? ' open' : '');
-    header.setAttribute('role', 'treeitem');
-    // An empty folder has nothing to expand and nothing to count: no caret, no
-    // badge, and the closed glyph regardless of stored open state. The state is
-    // still remembered — it simply has nothing to paint until a note arrives.
-    const isEmpty = folderNotes.length === 0;
-    if (isEmpty) header.removeAttribute('aria-expanded');
-    else header.setAttribute('aria-expanded', String(isOpen));
-    header.tabIndex = -1;
-    header.dataset.treeId = 'folder:' + folder.id;
+      const header = document.createElement("div");
+      header.className =
+        "tree-folder-header" +
+        (isActive ? " active" : "") +
+        (isOpen ? " open" : "");
+      header.setAttribute("role", "treeitem");
+      // An empty folder has nothing to expand and nothing to count: no caret, no
+      // badge, and the closed glyph regardless of stored open state. The state is
+      // still remembered — it simply has nothing to paint until a note arrives.
+      const isEmpty = folderNotes.length === 0;
+      if (isEmpty) header.removeAttribute("aria-expanded");
+      else header.setAttribute("aria-expanded", String(isOpen));
+      header.tabIndex = -1;
+      header.dataset.treeId = "folder:" + folder.id;
 
-    const caretHtml = isEmpty
-      ? '<span class="tree-caret-blank" aria-hidden="true"></span>'
-      : (isOpen ? ICONS.chevronOpen : ICONS.chevron);
-    const folderIconHtml = (isOpen && !isEmpty) ? ICONS.folderOpen : ICONS.folderClosed;
-    const countHtml = isEmpty ? '' : `<span class="count-badge">${folderNotes.length}</span>`;
-    header.innerHTML = `${caretHtml}${folderIconHtml} <span>${escapeHtml(folder.name)}</span>${countHtml}`;
+      const caretHtml = isEmpty
+        ? '<span class="tree-caret-blank" aria-hidden="true"></span>'
+        : isOpen
+          ? ICONS.chevronOpen
+          : ICONS.chevron;
+      const folderIconHtml =
+        isOpen && !isEmpty ? ICONS.folderOpen : ICONS.folderClosed;
+      const countHtml = isEmpty
+        ? ""
+        : `<span class="count-badge">${folderNotes.length}</span>`;
+      header.innerHTML = `${caretHtml}${folderIconHtml} <span>${escapeHtml(folder.name)}</span>${countHtml}`;
 
-    header.addEventListener('click', () => {
-      state.activeFolderId = folder.id;
-      if (state.openFolderIds.has(folder.id)) state.openFolderIds.delete(folder.id);
-      else state.openFolderIds.add(folder.id);
-      saveTreeState();
-      renderTree();
-    });
-
-    // Drop target: a note dragged onto this folder header moves into it.
-    header.addEventListener('dragover', e => {
-      if (!state.dragNoteId) return;
-      const dragged = state.notes.find(n => n.id === state.dragNoteId);
-      if (!dragged || (!dragged.trashed && dragged.folderId === folder.id)) return;
-      e.preventDefault();                       // without this the drop never fires
-      e.dataTransfer.dropEffect = 'move';
-      header.classList.add('drop-target');
-    });
-
-    header.addEventListener('dragleave', () => header.classList.remove('drop-target'));
-
-    header.addEventListener('drop', async e => {
-      e.preventDefault();
-      const noteId = state.dragNoteId;
-      clearDragState();
-      if (!noteId) return;
-      const note = state.notes.find(n => n.id === noteId);
-      if (!note || (!note.trashed && note.folderId === folder.id)) return;
-      await flushPendingSave();                 // never lose the in-flight edit
-      note.folderId = folder.id;
-      note.trashed = false;                     // dragging out of the trash restores
-      note.updatedAt = new Date().toISOString();
-      state.openFolderIds.add(folder.id);       // reveal where it landed
-      saveTreeState();
-      renderAll();
-      await saveStore();
-    });
-
-    // Right-click context menu for Folder
-    header.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      showTreeContextMenu(e.clientX, e.clientY, [
-        { label: 'New Note in Folder', icon: ICONS.noteAdd, action: () => createNoteInFolder(folder.id) },
-        { label: 'Rename Folder', icon: ICONS.edit, action: () => renameFolder(folder) },
-        { divider: true },
-        { label: 'Delete Folder', icon: ICONS.folderCross, danger: true, action: () => trashFolder(folder) }
-      ]);
-    });
-
-    wrapper.appendChild(header);
-
-    const notesContainer = document.createElement('div');
-    notesContainer.className = 'tree-notes' + (isOpen ? '' : ' collapsed');
-    notesContainer.setAttribute('role', 'group');
-    if (!isOpen) notesContainer.style.maxHeight = '0';   // open groups sized by sizeTreeGroups()
-
-    folderNotes.forEach(note => {
-      const noteEl = document.createElement('div');
-      noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
-      noteEl.setAttribute('role', 'treeitem');
-      noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
-      noteEl.tabIndex = -1;
-      noteEl.dataset.treeId = 'note:' + note.id;
-
-      let displayTitle = state.decryptedTitleCache.get(note.id);
-      if (!displayTitle || displayTitle.startsWith('ENC:')) {
-        displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
-      }
-
-      noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
-        (note.pinned ? `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>` : '');
-
-      noteEl.draggable = true;
-
-      noteEl.addEventListener('dragstart', e => {
-        state.dragNoteId = note.id;
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', note.id);
-        noteEl.classList.add('dragging');
+      header.addEventListener("click", () => {
+        state.activeFolderId = folder.id;
+        if (state.openFolderIds.has(folder.id))
+          state.openFolderIds.delete(folder.id);
+        else state.openFolderIds.add(folder.id);
+        saveTreeState();
+        renderTree();
       });
 
-      // Only reached when a drag is abandoned without dropping on a folder.
-      noteEl.addEventListener('dragend', clearDragState);
-
-      noteEl.addEventListener('click', async e => {
-        e.stopPropagation();
-        await flushPendingSave();   // J-02: never drop the previous note's edits
-        state.trashPreviewId = null;   // any live selection leaves the trash preview
-        state.activeNoteId = note.id;
-        state.activeFolderId = note.folderId;
-        renderAll();
+      // Drop target: a note dragged onto this folder header moves into it.
+      header.addEventListener("dragover", (e) => {
+        if (!state.dragNoteId) return;
+        const dragged = state.notes.find((n) => n.id === state.dragNoteId);
+        if (!dragged || (!dragged.trashed && dragged.folderId === folder.id))
+          return;
+        e.preventDefault(); // without this the drop never fires
+        e.dataTransfer.dropEffect = "move";
+        header.classList.add("drop-target");
       });
 
-      // Right-click context menu for Note
-      noteEl.addEventListener('contextmenu', e => {
+      header.addEventListener("dragleave", () =>
+        header.classList.remove("drop-target"),
+      );
+
+      header.addEventListener("drop", async (e) => {
         e.preventDefault();
-        showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
+        const noteId = state.dragNoteId;
+        clearDragState();
+        if (!noteId) return;
+        const note = state.notes.find((n) => n.id === noteId);
+        if (!note || (!note.trashed && note.folderId === folder.id)) return;
+        await flushPendingSave(); // never lose the in-flight edit
+        note.folderId = folder.id;
+        note.trashed = false; // dragging out of the trash restores
+        note.updatedAt = new Date().toISOString();
+        state.openFolderIds.add(folder.id); // reveal where it landed
+        saveTreeState();
+        renderAll();
+        await saveStore();
       });
 
-      notesContainer.appendChild(noteEl);
-    });
+      // Right-click context menu for Folder
+      header.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        showTreeContextMenu(e.clientX, e.clientY, [
+          {
+            label: "New Note in Folder",
+            icon: ICONS.noteAdd,
+            action: () => createNoteInFolder(folder.id),
+          },
+          {
+            label: "Rename Folder",
+            icon: ICONS.edit,
+            action: () => renameFolder(folder),
+          },
+          { divider: true },
+          {
+            label: "Delete Folder",
+            icon: ICONS.folderCross,
+            danger: true,
+            action: () => trashFolder(folder),
+          },
+        ]);
+      });
 
-    wrapper.appendChild(notesContainer);
-    container.appendChild(wrapper);
-  });
+      wrapper.appendChild(header);
+
+      const notesContainer = document.createElement("div");
+      notesContainer.className = "tree-notes" + (isOpen ? "" : " collapsed");
+      notesContainer.setAttribute("role", "group");
+      if (!isOpen) notesContainer.style.maxHeight = "0"; // open groups sized by sizeTreeGroups()
+
+      folderNotes.forEach((note) => {
+        const noteEl = document.createElement("div");
+        noteEl.className =
+          "tree-note" + (note.id === state.activeNoteId ? " active" : "");
+        noteEl.setAttribute("role", "treeitem");
+        noteEl.setAttribute(
+          "aria-selected",
+          String(note.id === state.activeNoteId),
+        );
+        noteEl.tabIndex = -1;
+        noteEl.dataset.treeId = "note:" + note.id;
+
+        let displayTitle = state.decryptedTitleCache.get(note.id);
+        if (!displayTitle || displayTitle.startsWith("ENC:")) {
+          displayTitle =
+            note.title && !note.title.startsWith("ENC:")
+              ? note.title
+              : "Untitled Note";
+        }
+
+        noteEl.innerHTML =
+          `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
+          (note.pinned
+            ? `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>`
+            : "");
+
+        noteEl.draggable = true;
+
+        noteEl.addEventListener("dragstart", (e) => {
+          state.dragNoteId = note.id;
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", note.id);
+          noteEl.classList.add("dragging");
+        });
+
+        // Only reached when a drag is abandoned without dropping on a folder.
+        noteEl.addEventListener("dragend", clearDragState);
+
+        noteEl.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          await flushPendingSave(); // J-02: never drop the previous note's edits
+          state.trashPreviewId = null; // any live selection leaves the trash preview
+          state.activeNoteId = note.id;
+          state.activeFolderId = note.folderId;
+          renderAll();
+        });
+
+        // Right-click context menu for Note
+        noteEl.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
+        });
+
+        notesContainer.appendChild(noteEl);
+      });
+
+      wrapper.appendChild(notesContainer);
+      container.appendChild(wrapper);
+    });
   sizeTreeGroups(container);
   updateTreeRoving(container);
 }
@@ -1115,42 +1334,51 @@ function renderTree() {
 // Pinned view: a flat list of pinned notes. No folder headers and no grouping —
 // only notes can be pinned, so there is no hierarchy to show and nothing to expand.
 function renderPinnedTree() {
-  const container = document.getElementById('pinned-tree');
+  const container = document.getElementById("pinned-tree");
   if (!container) return;
-  container.innerHTML = '';
-  container.setAttribute('role', 'tree');
-  container.setAttribute('aria-label', 'Pinned notes');
-  const matching = state.notes.filter(n => n.pinned && !n.trashed);
+  container.innerHTML = "";
+  container.setAttribute("role", "tree");
+  container.setAttribute("aria-label", "Pinned notes");
+  const matching = state.notes.filter((n) => n.pinned && !n.trashed);
   if (!matching.length) {
-    container.innerHTML = '<div class="empty-state empty-state-pane">Nothing pinned yet. Right-click a note to pin it.</div>';
+    container.innerHTML =
+      '<div class="empty-state empty-state-pane">Nothing pinned yet. Right-click a note to pin it.</div>';
     return;
   }
 
-  matching.forEach(note => {
-    const noteEl = document.createElement('div');
-    noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
-    noteEl.setAttribute('role', 'treeitem');
-    noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
+  matching.forEach((note) => {
+    const noteEl = document.createElement("div");
+    noteEl.className =
+      "tree-note" + (note.id === state.activeNoteId ? " active" : "");
+    noteEl.setAttribute("role", "treeitem");
+    noteEl.setAttribute(
+      "aria-selected",
+      String(note.id === state.activeNoteId),
+    );
     noteEl.tabIndex = -1;
-    noteEl.dataset.treeId = 'note:' + note.id;
+    noteEl.dataset.treeId = "note:" + note.id;
 
     let displayTitle = state.decryptedTitleCache.get(note.id);
-    if (!displayTitle || displayTitle.startsWith('ENC:')) {
-      displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
+    if (!displayTitle || displayTitle.startsWith("ENC:")) {
+      displayTitle =
+        note.title && !note.title.startsWith("ENC:")
+          ? note.title
+          : "Untitled Note";
     }
-    noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
+    noteEl.innerHTML =
+      `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>` +
       `<span class="pin-marker" aria-hidden="true">${ICONS[PIN_GLYPH]}</span>`;
 
-    noteEl.addEventListener('click', async e => {
+    noteEl.addEventListener("click", async (e) => {
       e.stopPropagation();
       await flushPendingSave();
-      state.trashPreviewId = null;   // any live selection leaves the trash preview
+      state.trashPreviewId = null; // any live selection leaves the trash preview
       state.activeNoteId = note.id;
       state.activeFolderId = note.folderId;
       renderAll();
     });
 
-    noteEl.addEventListener('contextmenu', e => {
+    noteEl.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
     });
@@ -1162,119 +1390,154 @@ function renderPinnedTree() {
 }
 
 function renderTagTree() {
-  const container = document.getElementById('tag-tree');
+  const container = document.getElementById("tag-tree");
   if (!container) return;
-  container.innerHTML = '';
-  container.setAttribute('role', 'tree');
-  container.setAttribute('aria-label', 'Tags');
+  container.innerHTML = "";
+  container.setAttribute("role", "tree");
+  container.setAttribute("aria-label", "Tags");
 
   const tagMap = new Map();
-  state.notes.filter(n => !n.trashed).forEach(n => {
-    (n.tags || []).forEach(t => {
-      const list = tagMap.get(t) || [];
-      list.push(n);
-      tagMap.set(t, list);
+  state.notes
+    .filter((n) => !n.trashed)
+    .forEach((n) => {
+      (n.tags || []).forEach((t) => {
+        const list = tagMap.get(t) || [];
+        list.push(n);
+        tagMap.set(t, list);
+      });
     });
-  });
 
   if (!tagMap.size) {
-    container.innerHTML = '<div class="empty-state empty-state-pane">No tags yet. Right-click a note to add one.</div>';
+    container.innerHTML =
+      '<div class="empty-state empty-state-pane">No tags yet. Right-click a note to add one.</div>';
     return;
   }
 
-  Array.from(tagMap.entries()).sort((a,b) => a[0].localeCompare(b[0])).forEach(([tag, tagNotes]) => {
-    const isOpen = state.openTagNames.has(tag);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'tree-folder';
+  Array.from(tagMap.entries())
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .forEach(([tag, tagNotes]) => {
+      const isOpen = state.openTagNames.has(tag);
+      const wrapper = document.createElement("div");
+      wrapper.className = "tree-folder";
 
-    const header = document.createElement('div');
-    header.className = 'tree-folder-header' + (isOpen ? ' open' : '');
-    header.setAttribute('role', 'treeitem');
-    header.setAttribute('aria-expanded', String(isOpen));
-    header.tabIndex = -1;
-    header.dataset.treeId = 'tag:' + tag;
-    header.innerHTML = `${isOpen ? ICONS.chevronOpen : ICONS.chevron}${ICONS.tag} <span>#${escapeHtml(tag)}</span><span class="count-badge">${tagNotes.length}</span>`;
+      const header = document.createElement("div");
+      header.className = "tree-folder-header" + (isOpen ? " open" : "");
+      header.setAttribute("role", "treeitem");
+      header.setAttribute("aria-expanded", String(isOpen));
+      header.tabIndex = -1;
+      header.dataset.treeId = "tag:" + tag;
+      header.innerHTML = `${isOpen ? ICONS.chevronOpen : ICONS.chevron}${ICONS.tag} <span>#${escapeHtml(tag)}</span><span class="count-badge">${tagNotes.length}</span>`;
 
-    header.addEventListener('click', () => {
-      if (state.openTagNames.has(tag)) state.openTagNames.delete(tag);
-      else state.openTagNames.add(tag);
-      saveTreeState();
-      renderTagTree();
-    });
-
-    header.addEventListener('contextmenu', e => {
-      e.preventDefault();
-      showTreeContextMenu(e.clientX, e.clientY, [
-        { label: `Rename Tag #${tag}`, icon: ICONS.edit, action: () => renameTagGlobal(tag) },
-        { label: `Remove Tag #${tag}`, icon: ICONS.tagCross, danger: true, action: () => removeTagGlobal(tag) }
-      ]);
-    });
-
-    wrapper.appendChild(header);
-
-    const notesContainer = document.createElement('div');
-    notesContainer.className = 'tree-notes' + (isOpen ? '' : ' collapsed');
-    notesContainer.setAttribute('role', 'group');
-    if (!isOpen) notesContainer.style.maxHeight = '0';   // open groups sized by sizeTreeGroups()
-
-    tagNotes.forEach(note => {
-      const noteEl = document.createElement('div');
-      noteEl.className = 'tree-note' + (note.id === state.activeNoteId ? ' active' : '');
-      noteEl.setAttribute('role', 'treeitem');
-      noteEl.setAttribute('aria-selected', String(note.id === state.activeNoteId));
-      noteEl.tabIndex = -1;
-      noteEl.dataset.treeId = 'note:' + note.id;
-
-      let displayTitle = state.decryptedTitleCache.get(note.id);
-      if (!displayTitle || displayTitle.startsWith('ENC:')) {
-        displayTitle = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
-      }
-
-      noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>`;
-
-      noteEl.addEventListener('click', async e => {
-        e.stopPropagation();
-        await flushPendingSave();   // J-02: never drop the previous note's edits
-        state.trashPreviewId = null;   // any live selection leaves the trash preview
-        state.activeNoteId = note.id;
-        state.activeFolderId = note.folderId;
-        renderAll();
+      header.addEventListener("click", () => {
+        if (state.openTagNames.has(tag)) state.openTagNames.delete(tag);
+        else state.openTagNames.add(tag);
+        saveTreeState();
+        renderTagTree();
       });
 
-      noteEl.addEventListener('contextmenu', e => {
+      header.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-        showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
+        showTreeContextMenu(e.clientX, e.clientY, [
+          {
+            label: `Rename Tag #${tag}`,
+            icon: ICONS.edit,
+            action: () => renameTagGlobal(tag),
+          },
+          {
+            label: `Remove Tag #${tag}`,
+            icon: ICONS.tagCross,
+            danger: true,
+            action: () => removeTagGlobal(tag),
+          },
+        ]);
       });
 
-      notesContainer.appendChild(noteEl);
-    });
+      wrapper.appendChild(header);
 
-    wrapper.appendChild(notesContainer);
-    container.appendChild(wrapper);
-  });
+      const notesContainer = document.createElement("div");
+      notesContainer.className = "tree-notes" + (isOpen ? "" : " collapsed");
+      notesContainer.setAttribute("role", "group");
+      if (!isOpen) notesContainer.style.maxHeight = "0"; // open groups sized by sizeTreeGroups()
+
+      tagNotes.forEach((note) => {
+        const noteEl = document.createElement("div");
+        noteEl.className =
+          "tree-note" + (note.id === state.activeNoteId ? " active" : "");
+        noteEl.setAttribute("role", "treeitem");
+        noteEl.setAttribute(
+          "aria-selected",
+          String(note.id === state.activeNoteId),
+        );
+        noteEl.tabIndex = -1;
+        noteEl.dataset.treeId = "note:" + note.id;
+
+        let displayTitle = state.decryptedTitleCache.get(note.id);
+        if (!displayTitle || displayTitle.startsWith("ENC:")) {
+          displayTitle =
+            note.title && !note.title.startsWith("ENC:")
+              ? note.title
+              : "Untitled Note";
+        }
+
+        noteEl.innerHTML = `${ICONS.note} <span>${escapeHtml(displayTitle)}</span>`;
+
+        noteEl.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          await flushPendingSave(); // J-02: never drop the previous note's edits
+          state.trashPreviewId = null; // any live selection leaves the trash preview
+          state.activeNoteId = note.id;
+          state.activeFolderId = note.folderId;
+          renderAll();
+        });
+
+        noteEl.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          showTreeContextMenu(e.clientX, e.clientY, noteContextItems(note));
+        });
+
+        notesContainer.appendChild(noteEl);
+      });
+
+      wrapper.appendChild(notesContainer);
+      container.appendChild(wrapper);
+    });
   sizeTreeGroups(container);
   updateTreeRoving(container);
 }
 
 // ─── TREE KEYBOARD NAVIGATION + ARIA ROVING TABINDEX ───────────────
 function isTreeItemVisible(el) {
-  return !!el && el.offsetParent !== null && !el.closest('.tree-notes.collapsed');
+  return (
+    !!el && el.offsetParent !== null && !el.closest(".tree-notes.collapsed")
+  );
 }
 function updateTreeRoving(container) {
   const all = [...container.querySelectorAll('[role="treeitem"]')];
   const items = all.filter(isTreeItemVisible);
   if (!items.length) return;
-  all.forEach(i => { i.tabIndex = -1; });
-  let cur = state.treeFocusId ? items.find(i => i.dataset.treeId === state.treeFocusId) : null;
-  if (!cur) cur = container.querySelector('.tree-note.active');
+  all.forEach((i) => {
+    i.tabIndex = -1;
+  });
+  let cur = state.treeFocusId
+    ? items.find((i) => i.dataset.treeId === state.treeFocusId)
+    : null;
+  if (!cur) cur = container.querySelector(".tree-note.active");
   if (!cur || !isTreeItemVisible(cur)) cur = items[0];
   cur.tabIndex = 0;
 }
 function refocusTree(container) {
   const all = [...container.querySelectorAll('[role="treeitem"]')];
-  let el = state.treeFocusId ? all.find(i => i.dataset.treeId === state.treeFocusId && isTreeItemVisible(i)) : null;
-  if (!el) el = all.find(i => i.tabIndex === 0 && isTreeItemVisible(i));
-  if (el) { all.forEach(i => i.tabIndex = -1); el.tabIndex = 0; el.focus(); }
+  let el = state.treeFocusId
+    ? all.find(
+        (i) => i.dataset.treeId === state.treeFocusId && isTreeItemVisible(i),
+      )
+    : null;
+  if (!el) el = all.find((i) => i.tabIndex === 0 && isTreeItemVisible(i));
+  if (el) {
+    all.forEach((i) => (i.tabIndex = -1));
+    el.tabIndex = 0;
+    el.focus();
+  }
 }
 function initTreeKeyboard() {
   // Driven off EXPLORER_MODES so a view cannot be given rows, roving tabindex and
@@ -1282,39 +1545,76 @@ function initTreeKeyboard() {
   // pinned view while this was a hand-written list of two ids. The trash list is
   // not an explorer mode (it lives in its own panel above the footer) but its
   // rows join the same wiring.
-  [...Object.values(EXPLORER_MODES).map(m => m.tree), 'trash-list'].forEach(id => {
-    const container = document.getElementById(id);
-    if (!container) return;
-    container.addEventListener('keydown', e => {
-      const items = [...container.querySelectorAll('[role="treeitem"]')].filter(isTreeItemVisible);
-      const cur = document.activeElement;
-      const idx = items.indexOf(cur);
-      if (idx < 0) return;
-      const isFolder = cur.classList.contains('tree-folder-header');
-      const move = el => { if (!el) return; items.forEach(i => i.tabIndex = -1); el.tabIndex = 0; el.focus(); state.treeFocusId = el.dataset.treeId; };
-      const activate = () => { state.treeFocusId = cur.dataset.treeId; cur.click(); requestAnimationFrame(() => refocusTree(container)); };
-      switch (e.key) {
-        case 'ArrowDown': e.preventDefault(); move(items[Math.min(idx + 1, items.length - 1)]); break;
-        case 'ArrowUp':   e.preventDefault(); move(items[Math.max(idx - 1, 0)]); break;
-        case 'Home':      e.preventDefault(); move(items[0]); break;
-        case 'End':       e.preventDefault(); move(items[items.length - 1]); break;
-        case 'Enter':
-        case ' ':         e.preventDefault(); activate(); break;
-        case 'ArrowRight':
-          if (isFolder) {
+  [...Object.values(EXPLORER_MODES).map((m) => m.tree), "trash-list"].forEach(
+    (id) => {
+      const container = document.getElementById(id);
+      if (!container) return;
+      container.addEventListener("keydown", (e) => {
+        const items = [
+          ...container.querySelectorAll('[role="treeitem"]'),
+        ].filter(isTreeItemVisible);
+        const cur = document.activeElement;
+        const idx = items.indexOf(cur);
+        if (idx < 0) return;
+        const isFolder = cur.classList.contains("tree-folder-header");
+        const move = (el) => {
+          if (!el) return;
+          items.forEach((i) => (i.tabIndex = -1));
+          el.tabIndex = 0;
+          el.focus();
+          state.treeFocusId = el.dataset.treeId;
+        };
+        const activate = () => {
+          state.treeFocusId = cur.dataset.treeId;
+          cur.click();
+          requestAnimationFrame(() => refocusTree(container));
+        };
+        switch (e.key) {
+          case "ArrowDown":
             e.preventDefault();
-            if (cur.getAttribute('aria-expanded') === 'false') activate();
-            else move(items[idx + 1]);
-          }
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          if (isFolder && cur.getAttribute('aria-expanded') === 'true') activate();
-          else { for (let j = idx - 1; j >= 0; j--) { if (items[j].classList.contains('tree-folder-header')) { move(items[j]); break; } } }
-          break;
-      }
-    });
-  });
+            move(items[Math.min(idx + 1, items.length - 1)]);
+            break;
+          case "ArrowUp":
+            e.preventDefault();
+            move(items[Math.max(idx - 1, 0)]);
+            break;
+          case "Home":
+            e.preventDefault();
+            move(items[0]);
+            break;
+          case "End":
+            e.preventDefault();
+            move(items[items.length - 1]);
+            break;
+          case "Enter":
+          case " ":
+            e.preventDefault();
+            activate();
+            break;
+          case "ArrowRight":
+            if (isFolder) {
+              e.preventDefault();
+              if (cur.getAttribute("aria-expanded") === "false") activate();
+              else move(items[idx + 1]);
+            }
+            break;
+          case "ArrowLeft":
+            e.preventDefault();
+            if (isFolder && cur.getAttribute("aria-expanded") === "true")
+              activate();
+            else {
+              for (let j = idx - 1; j >= 0; j--) {
+                if (items[j].classList.contains("tree-folder-header")) {
+                  move(items[j]);
+                  break;
+                }
+              }
+            }
+            break;
+        }
+      });
+    },
+  );
 }
 
 // ─── RIGHT-CLICK CONTEXT MENU SYSTEM ───────────────
@@ -1323,51 +1623,133 @@ function initTreeKeyboard() {
 let lastMenuX = 0;
 let lastMenuY = 0;
 
+let activeSubmenuEl = null;
+
 function showTreeContextMenu(x, y, items) {
   lastMenuX = x;
   lastMenuY = y;
-  const menu = document.getElementById('tree-context-menu');
-  menu.innerHTML = '';
-  
-  items.forEach(item => {
+  const menu = document.getElementById("tree-context-menu");
+  if (!menu) return;
+  menu.innerHTML = "";
+  closeSubmenu();
+
+  items.forEach((item) => {
     if (item.divider) {
-      const div = document.createElement('div');
-      div.className = 'context-menu-divider';
+      const div = document.createElement("div");
+      div.className = "context-menu-divider";
       menu.appendChild(div);
       return;
     }
-    const btn = document.createElement('button');
-    btn.className = 'context-menu-item' + (item.danger ? ' danger' : '') + (item.active ? ' active' : '');
-    btn.innerHTML = (item.icon || '') + `<span>${escapeHtml(item.label)}</span>`;
-    btn.addEventListener('click', e => {
+    const btn = document.createElement("button");
+    btn.className =
+      "context-menu-item" +
+      (item.danger ? " danger" : "") +
+      (item.active ? " active" : "") +
+      (item.submenuItems ? " has-submenu" : "");
+    btn.style.display = "flex";
+    btn.style.alignItems = "center";
+    btn.style.gap = "0.5rem";
+
+    let labelHtml = (item.icon || "") + `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
+    if (item.submenuItems) {
+      labelHtml += ICONS.chevron;
+    }
+    btn.innerHTML = labelHtml;
+
+    if (item.submenuItems) {
+      let hoverTimer = null;
+      btn.addEventListener("mouseenter", () => {
+        hoverTimer = setTimeout(() => {
+          openSubmenuForItem(btn, item.submenuItems);
+        }, 150);
+      });
+      btn.addEventListener("mouseleave", () => {
+        if (hoverTimer) clearTimeout(hoverTimer);
+      });
+    } else {
+      btn.addEventListener("mouseenter", () => {
+        closeSubmenu();
+      });
+    }
+
+    btn.addEventListener("click", (e) => {
       e.stopPropagation();
-      // keepOpen: multi-select menus (tag picker) refresh themselves instead of
-      // closing, so several toggles cost one open.
+      if (item.submenuItems) {
+        openSubmenuForItem(btn, item.submenuItems);
+        return;
+      }
       if (!item.keepOpen) closeContextMenu();
-      item.action();
+      if (item.action) item.action();
     });
     menu.appendChild(btn);
   });
 
-  menu.style.left = Math.min(x, window.innerWidth - 200) + 'px';
-  menu.style.top = Math.min(y, window.innerHeight - 200) + 'px';
-  menu.classList.remove('hidden');
+  menu.style.left = Math.min(x, window.innerWidth - 200) + "px";
+  menu.style.top = Math.min(y, window.innerHeight - 200) + "px";
+  menu.classList.remove("hidden");
+}
+
+function openSubmenuForItem(parentBtn, subItems) {
+  closeSubmenu();
+  const rect = parentBtn.getBoundingClientRect();
+  const subMenu = document.createElement("div");
+  subMenu.className = "context-menu sub-context-menu";
+  subMenu.id = "tree-context-submenu";
+  subMenu.style.display = "flex";
+  subMenu.style.flexDirection = "column";
+  subMenu.style.gap = "0.125rem";
+  subMenu.style.padding = "0.25rem";
+
+  subItems.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.className =
+      "context-menu-item" +
+      (item.active ? " active" : "");
+    btn.style.display = "flex";
+    btn.style.alignItems = "center";
+    btn.style.gap = "0.5rem";
+    btn.innerHTML = (item.icon || "") + `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeContextMenu();
+      if (item.action) item.action();
+    });
+    subMenu.appendChild(btn);
+  });
+
+  document.body.appendChild(subMenu);
+  activeSubmenuEl = subMenu;
+
+  const left = Math.min(rect.right + 4, window.innerWidth - 200);
+  const top = Math.min(rect.top, window.innerHeight - 180);
+  subMenu.style.left = left + "px";
+  subMenu.style.top = top + "px";
+  subMenu.style.position = "fixed";
+  subMenu.style.zIndex = "2100";
+}
+
+function closeSubmenu() {
+  if (activeSubmenuEl) {
+    activeSubmenuEl.remove();
+    activeSubmenuEl = null;
+  }
 }
 
 function closeContextMenu() {
-  const menu = document.getElementById('tree-context-menu');
-  if (menu) menu.classList.add('hidden');
+  closeSubmenu();
+  const menu = document.getElementById("tree-context-menu");
+  if (menu) menu.classList.add("hidden");
 }
 
-document.addEventListener('click', closeContextMenu);
+document.addEventListener("click", closeContextMenu);
 
 // Context menu actions
 // A note is only reachable through a LIVE folder, so every creation path must
 // resolve to one. Without this a note could be filed into a trashed folder (or
 // none at all) and existed in the vault while being invisible in every view.
 function liveFolderId() {
-  const live = state.folders.filter(f => !f.trashed);
-  const active = live.find(f => f.id === state.activeFolderId);
+  const live = state.folders.filter((f) => !f.trashed);
+  const active = live.find((f) => f.id === state.activeFolderId);
   return (active || live[0] || null)?.id || null;
 }
 
@@ -1376,7 +1758,12 @@ function liveFolderId() {
 function ensureLiveFolderId() {
   const existing = liveFolderId();
   if (existing) return existing;
-  const folder = { id: newId('f'), name: 'General', parentId: null, trashed: false };
+  const folder = {
+    id: newId("f"),
+    name: "General",
+    parentId: null,
+    trashed: false,
+  };
   state.folders.push(folder);
   state.activeFolderId = folder.id;
   state.openFolderIds.add(folder.id);
@@ -1388,40 +1775,53 @@ function ensureLiveFolderId() {
 // they stop being invisible. Trashed notes are left alone — their folderId is
 // the restore memory.
 function adoptOrphanNotes() {
-  const liveIds = new Set(state.folders.filter(f => !f.trashed).map(f => f.id));
-  const orphans = state.notes.filter(n => !n.trashed && !liveIds.has(n.folderId));
+  const liveIds = new Set(
+    state.folders.filter((f) => !f.trashed).map((f) => f.id),
+  );
+  const orphans = state.notes.filter(
+    (n) => !n.trashed && !liveIds.has(n.folderId),
+  );
   if (!orphans.length) return false;
   const home = ensureLiveFolderId();
-  orphans.forEach(n => { n.folderId = home; });
+  orphans.forEach((n) => {
+    n.folderId = home;
+  });
   return true;
 }
 
 async function createNoteInFolder(folderId) {
-  const liveIds = new Set(state.folders.filter(f => !f.trashed).map(f => f.id));
+  const liveIds = new Set(
+    state.folders.filter((f) => !f.trashed).map((f) => f.id),
+  );
   if (!liveIds.has(folderId)) folderId = ensureLiveFolderId();
   const newNote = {
-    id: newId('n'),
+    id: newId("n"),
     folderId,
-    title: 'New Note',
-    content: '# New Note\n\nStart writing here...',
+    title: "New Note",
+    content: "# New Note\n\nStart writing here...",
     isEncrypted: !!state.encryptionKey,
     tags: [],
     pinned: false,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   };
   state.notes.unshift(newNote);
   state.activeNoteId = newNote.id;
   state.activeFolderId = folderId;
   state.openFolderIds.add(folderId);
   saveTreeState();
-  state.decryptedTitleCache.set(newNote.id, 'New Note');
+  state.decryptedTitleCache.set(newNote.id, "New Note");
   await saveStore();
   renderAll();
 }
 
 async function renameFolder(folder) {
-  const name = await showPromptModal('Rename Folder', 'Enter new folder name:', folder.name, { placeholder: 'Folder name' });
+  const name = await showPromptModal(
+    "Rename Folder",
+    "Enter new folder name:",
+    folder.name,
+    { placeholder: "Folder name" },
+  );
   if (!name || name === folder.name) return;
   folder.name = name;
   await saveStore();
@@ -1439,21 +1839,23 @@ async function renameFolder(folder) {
 // vault encrypted (like pinned), so it follows the user across devices and the
 // server never learns what is kept versus discarded.
 
-function firstLiveFolder() { return state.folders.find(f => !f.trashed) || null; }
+function firstLiveFolder() {
+  return state.folders.find((f) => !f.trashed) || null;
+}
 
 function retargetActiveAfterTrash() {
-  const live = state.notes.filter(n => !n.trashed);
-  if (!live.find(n => n.id === state.activeNoteId)) {
+  const live = state.notes.filter((n) => !n.trashed);
+  if (!live.find((n) => n.id === state.activeNoteId)) {
     state.activeNoteId = live.length ? live[0].id : null;
     const flf = firstLiveFolder();
-    state.activeFolderId = live.length ? live[0].folderId : (flf ? flf.id : null);
+    state.activeFolderId = live.length ? live[0].folderId : flf ? flf.id : null;
   }
 }
 
 async function trashFolder(folder) {
   await flushPendingSave();
   folder.trashed = true;
-  state.notes.forEach(n => {
+  state.notes.forEach((n) => {
     if (n.folderId === folder.id && !n.trashed) {
       n.trashed = true;
       n.updatedAt = new Date().toISOString();
@@ -1465,33 +1867,42 @@ async function trashFolder(folder) {
 }
 
 async function restoreFolder(folder) {
-  folder.trashed = false;   // back to the root tree; its notes stay in the trash until restored themselves
+  folder.trashed = false; // back to the root tree; its notes stay in the trash until restored themselves
   await saveStore();
   renderAll();
 }
 
 async function permaDeleteFolder(folder) {
-  const ok = await showConfirmModal('Delete Permanently', `Permanently delete folder "${folder.name}"? This cannot be undone.`);
+  const ok = await showConfirmModal(
+    "Delete Permanently",
+    `Permanently delete folder "${folder.name}"? This cannot be undone.`,
+  );
   if (!ok) return;
-  state.folders = state.folders.filter(f => f.id !== folder.id);
+  state.folders = state.folders.filter((f) => f.id !== folder.id);
   await saveStore();
   renderAll();
 }
 
 async function renameNote(note) {
-  const currentTitle = state.decryptedTitleCache.get(note.id) || 'Untitled Note';
-  const newTitle = await showPromptModal('Rename Note', 'Enter new title:', currentTitle, { placeholder: 'Note title', icon: 'note' });
+  const currentTitle =
+    state.decryptedTitleCache.get(note.id) || "Untitled Note";
+  const newTitle = await showPromptModal(
+    "Rename Note",
+    "Enter new title:",
+    currentTitle,
+    { placeholder: "Note title", icon: "note" },
+  );
   if (!newTitle || newTitle === currentTitle) return;
-  
-  const content = note.content || '';   // already plaintext in state
-  const lines = content.split('\n');
-  if (lines.length > 0 && lines[0].startsWith('#')) {
-    lines[0] = '# ' + newTitle;
+
+  const content = note.content || ""; // already plaintext in state
+  const lines = content.split("\n");
+  if (lines.length > 0 && lines[0].startsWith("#")) {
+    lines[0] = "# " + newTitle;
   } else {
-    lines.unshift('# ' + newTitle);
+    lines.unshift("# " + newTitle);
   }
-  const updatedContent = lines.join('\n');
-  
+  const updatedContent = lines.join("\n");
+
   note.title = newTitle;
   note.content = updatedContent;
   state.decryptedTitleCache.set(note.id, newTitle);
@@ -1505,12 +1916,30 @@ async function renameNote(note) {
 // apply is the same defect as hiding one that can.
 function noteContextItems(note) {
   const items = [
-    { label: note.pinned ? 'Remove Pin' : 'Pin Note', icon: note.pinned ? ICONS.pinRemove : ICONS.pinAdd, action: () => togglePin(note) },
-    { label: 'Tags…', icon: ICONS.tag, keepOpen: true, action: () => openTagMenu(note, lastMenuX, lastMenuY) }
+    {
+      label: note.pinned ? "Remove Pin" : "Pin Note",
+      icon: note.pinned ? ICONS.pinRemove : ICONS.pinAdd,
+      action: () => togglePin(note),
+    },
+    {
+      label: "Tags…",
+      icon: ICONS.tag,
+      keepOpen: true,
+      action: () => openTagMenu(note, lastMenuX, lastMenuY),
+    },
   ];
-  items.push({ label: 'Rename Note', icon: ICONS.edit, action: () => renameNote(note) });
+  items.push({
+    label: "Rename Note",
+    icon: ICONS.edit,
+    action: () => renameNote(note),
+  });
   items.push({ divider: true });
-  items.push({ label: 'Delete Note', icon: ICONS.noteRemove, danger: true, action: () => trashNote(note) });
+  items.push({
+    label: "Delete Note",
+    icon: ICONS.noteRemove,
+    danger: true,
+    action: () => trashNote(note),
+  });
   return items;
 }
 
@@ -1523,9 +1952,9 @@ function noteContextItems(note) {
 const TAG_MAX_LENGTH = 32;
 
 function normalizeTag(raw) {
-  return String(raw || '')
-    .replace(/^#/, '')
-    .replace(/\s+/g, ' ')
+  return String(raw || "")
+    .replace(/^#/, "")
+    .replace(/\s+/g, " ")
     .trim()
     .toLowerCase()
     .slice(0, TAG_MAX_LENGTH);
@@ -1536,9 +1965,9 @@ function normalizeTag(raw) {
 // instead of forcing the user to retype a tag they already created.
 function tagVocabulary() {
   const all = new Set(state.tagLibrary || []);
-  state.notes.forEach(n => {
+  state.notes.forEach((n) => {
     if (n.trashed) return;
-    (n.tags || []).forEach(t => all.add(t));
+    (n.tags || []).forEach((t) => all.add(t));
   });
   return [...all].sort((a, b) => a.localeCompare(b));
 }
@@ -1552,7 +1981,7 @@ async function toggleTagOnNote(note, tag) {
   // after it loses its last carrier.
   if (!(state.tagLibrary || []).includes(clean)) state.tagLibrary.push(clean);
   note.tags = note.tags.includes(clean)
-    ? note.tags.filter(t => t !== clean)
+    ? note.tags.filter((t) => t !== clean)
     : [...note.tags, clean];
   note.updatedAt = new Date().toISOString();
   await saveStore();
@@ -1563,8 +1992,8 @@ async function toggleTagOnNote(note, tag) {
 // The picker: vocabulary with ticks on the note's own tags, click to toggle,
 // menu stays open for multi-tagging, plus one entry to create a new tag.
 function openTagMenu(note, x, y) {
-  const items = tagVocabulary().map(tag => ({
-    label: '#' + tag,
+  const items = tagVocabulary().map((tag) => ({
+    label: "#" + tag,
     // Two visible states, because this is a membership list and not a
     // one-of-many choice: on = applied to this note, off = in your library and
     // available to apply. Clicking flips it.
@@ -1572,24 +2001,33 @@ function openTagMenu(note, x, y) {
     keepOpen: true,
     action: async () => {
       await toggleTagOnNote(note, tag);
-      openTagMenu(note, x, y);   // refresh the ticks in place
-    }
+      openTagMenu(note, x, y); // refresh the ticks in place
+    },
   }));
   if (items.length) items.push({ divider: true });
   items.push({
-    label: 'New tag…',
+    label: "New tag…",
     icon: ICONS.tag,
     action: async () => {
-      const input = await showPromptModal('New Tag', 'Name the new tag (without #):', '', { placeholder: 'Tag name', icon: 'tag' });
+      const input = await showPromptModal(
+        "New Tag",
+        "Name the new tag (without #):",
+        "",
+        { placeholder: "Tag name", icon: "tag" },
+      );
       if (input === null) return;
       const clean = normalizeTag(input);
       if (!clean) return;
       // Declare it even if the note already carries it: creating a tag adds it
       // to the vault's library, which is what keeps it re-appliable later.
-      if (!(state.tagLibrary || []).includes(clean)) state.tagLibrary.push(clean);
-      if ((note.tags || []).includes(clean)) { await saveStore(); return; }
+      if (!(state.tagLibrary || []).includes(clean))
+        state.tagLibrary.push(clean);
+      if ((note.tags || []).includes(clean)) {
+        await saveStore();
+        return;
+      }
       await toggleTagOnNote(note, clean);
-    }
+    },
   });
   showTreeContextMenu(x, y, items);
 }
@@ -1611,13 +2049,18 @@ async function trashNote(note) {
 }
 
 async function restoreNote(note) {
-  const home = state.folders.find(f => f.id === note.folderId);
+  const home = state.folders.find((f) => f.id === note.folderId);
   if (home && home.trashed) {
-    home.trashed = false;             // the folder returns; its other trashed notes stay put
+    home.trashed = false; // the folder returns; its other trashed notes stay put
   } else if (!home) {
-    let target = firstLiveFolder();   // original folder was permanently deleted
+    let target = firstLiveFolder(); // original folder was permanently deleted
     if (!target) {
-      target = { id: newId('f'), name: 'General', parentId: null, trashed: false };
+      target = {
+        id: newId("f"),
+        name: "General",
+        parentId: null,
+        trashed: false,
+      };
       state.folders.push(target);
     }
     note.folderId = target.id;
@@ -1635,23 +2078,31 @@ async function restoreNote(note) {
 }
 
 async function permaDeleteNote(note) {
-  const ok = await showConfirmModal('Delete Permanently', 'Permanently delete this note? This cannot be undone.');
+  const ok = await showConfirmModal(
+    "Delete Permanently",
+    "Permanently delete this note? This cannot be undone.",
+  );
   if (!ok) return;
-  state.notes = state.notes.filter(n => n.id !== note.id);
-  state.decryptedTitleCache.delete(note.id);   // J-08: don't retain a decrypted title after delete
+  state.notes = state.notes.filter((n) => n.id !== note.id);
+  state.decryptedTitleCache.delete(note.id); // J-08: don't retain a decrypted title after delete
   await saveStore();
   renderAll();
 }
 
 async function emptyTrash() {
-  const nf = state.folders.filter(f => f.trashed).length;
-  const nn = state.notes.filter(n => n.trashed).length;
+  const nf = state.folders.filter((f) => f.trashed).length;
+  const nn = state.notes.filter((n) => n.trashed).length;
   if (!nf && !nn) return;
-  const ok = await showConfirmModal('Empty Trash', `Permanently delete ${nn} note(s) and ${nf} folder(s)? This cannot be undone.`);
+  const ok = await showConfirmModal(
+    "Empty Trash",
+    `Permanently delete ${nn} note(s) and ${nf} folder(s)? This cannot be undone.`,
+  );
   if (!ok) return;
-  state.notes.filter(n => n.trashed).forEach(n => state.decryptedTitleCache.delete(n.id));
-  state.notes = state.notes.filter(n => !n.trashed);
-  state.folders = state.folders.filter(f => !f.trashed);
+  state.notes
+    .filter((n) => n.trashed)
+    .forEach((n) => state.decryptedTitleCache.delete(n.id));
+  state.notes = state.notes.filter((n) => !n.trashed);
+  state.folders = state.folders.filter((f) => !f.trashed);
   await saveStore();
   renderAll();
 }
@@ -1660,65 +2111,86 @@ async function emptyTrash() {
 // shared tree keyboard wiring; notes are draggable — dropping one on a live
 // folder header restores it into that folder.
 function renderTrashPanel() {
-  const list = document.getElementById('trash-list');
+  const list = document.getElementById("trash-list");
   if (!list) return;
-  const tf = state.folders.filter(f => f.trashed);
-  const tn = state.notes.filter(n => n.trashed);
-  list.innerHTML = '';
+  const tf = state.folders.filter((f) => f.trashed);
+  const tn = state.notes.filter((n) => n.trashed);
+  list.innerHTML = "";
   if (!tf.length && !tn.length) {
     list.innerHTML = '<div class="empty-state">Trash is empty</div>';
     return;
   }
-  tf.forEach(folder => {
-    const el = document.createElement('div');
-    el.className = 'tree-note';
-    el.setAttribute('role', 'treeitem');
+  tf.forEach((folder) => {
+    const el = document.createElement("div");
+    el.className = "tree-note";
+    el.setAttribute("role", "treeitem");
     el.tabIndex = -1;
-    el.dataset.treeId = 'trash-folder:' + folder.id;
+    el.dataset.treeId = "trash-folder:" + folder.id;
     el.innerHTML = `${ICONS.folderCross} <span>${escapeHtml(folder.name)}</span>`;
-    el.addEventListener('contextmenu', e => {
+    el.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       showTreeContextMenu(e.clientX, e.clientY, [
-        { label: 'Restore Folder', icon: ICONS.folderOpen, action: () => restoreFolder(folder) },
+        {
+          label: "Restore Folder",
+          icon: ICONS.folderOpen,
+          action: () => restoreFolder(folder),
+        },
         { divider: true },
-        { label: 'Delete Permanently', icon: ICONS.trash, danger: true, action: () => permaDeleteFolder(folder) }
+        {
+          label: "Delete Permanently",
+          icon: ICONS.trash,
+          danger: true,
+          action: () => permaDeleteFolder(folder),
+        },
       ]);
     });
     list.appendChild(el);
   });
-  tn.forEach(note => {
-    const el = document.createElement('div');
-    el.className = 'tree-note';
-    el.setAttribute('role', 'treeitem');
+  tn.forEach((note) => {
+    const el = document.createElement("div");
+    el.className = "tree-note";
+    el.setAttribute("role", "treeitem");
     el.tabIndex = -1;
-    el.dataset.treeId = 'trash-note:' + note.id;
-    if (note.id === state.trashPreviewId) el.classList.add('active');
+    el.dataset.treeId = "trash-note:" + note.id;
+    if (note.id === state.trashPreviewId) el.classList.add("active");
     let title = state.decryptedTitleCache.get(note.id);
-    if (!title || title.startsWith('ENC:')) {
-      title = note.title && !note.title.startsWith('ENC:') ? note.title : 'Untitled Note';
+    if (!title || title.startsWith("ENC:")) {
+      title =
+        note.title && !note.title.startsWith("ENC:")
+          ? note.title
+          : "Untitled Note";
     }
     el.innerHTML = `${ICONS.noteRemove} <span>${escapeHtml(title)}</span>`;
     el.draggable = true;
-    el.addEventListener('dragstart', e => {
+    el.addEventListener("dragstart", (e) => {
       state.dragNoteId = note.id;
-      e.dataTransfer.effectAllowed = 'move';
-      e.dataTransfer.setData('text/plain', note.id);
-      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", note.id);
+      el.classList.add("dragging");
     });
-    el.addEventListener('dragend', clearDragState);
+    el.addEventListener("dragend", clearDragState);
     // Selecting a trashed note previews it read-only in the center pane, so it
     // can be identified before restoring. No edit path opens.
-    el.addEventListener('click', e => {
+    el.addEventListener("click", (e) => {
       e.stopPropagation();
       state.trashPreviewId = note.id;
       renderAll();
     });
-    el.addEventListener('contextmenu', e => {
+    el.addEventListener("contextmenu", (e) => {
       e.preventDefault();
       showTreeContextMenu(e.clientX, e.clientY, [
-        { label: 'Restore Note', icon: ICONS.note, action: () => restoreNote(note) },
+        {
+          label: "Restore Note",
+          icon: ICONS.note,
+          action: () => restoreNote(note),
+        },
         { divider: true },
-        { label: 'Delete Permanently', icon: ICONS.trash, danger: true, action: () => permaDeleteNote(note) }
+        {
+          label: "Delete Permanently",
+          icon: ICONS.trash,
+          danger: true,
+          action: () => permaDeleteNote(note),
+        },
       ]);
     });
     list.appendChild(el);
@@ -1726,35 +2198,44 @@ function renderTrashPanel() {
   updateTreeRoving(list);
 }
 
-
 async function renameTagGlobal(oldTag) {
-  const input = await showPromptModal('Rename Tag', `Rename tag #${oldTag} to:`, oldTag, { placeholder: 'Tag name', icon: 'tag' });
+  const input = await showPromptModal(
+    "Rename Tag",
+    `Rename tag #${oldTag} to:`,
+    oldTag,
+    { placeholder: "Tag name", icon: "tag" },
+  );
   if (input === null) return;
   // J-11: normalize BEFORE validating — an input of "#" must not collapse into
   // an empty tag written onto every carrier. One normalizer for every path.
   const clean = normalizeTag(input);
   if (!clean || clean === oldTag) return;
-  state.notes.forEach(n => {
-    if (!n.tags || !n.tags.includes(oldTag)) return;   // library renamed below
+  state.notes.forEach((n) => {
+    if (!n.tags || !n.tags.includes(oldTag)) return; // library renamed below
     // Set-dedupe: renaming #a to #b on a note that already has #b must not
     // leave ['b','b'] behind.
-    n.tags = [...new Set(n.tags.map(t => (t === oldTag ? clean : t)))];
+    n.tags = [...new Set(n.tags.map((t) => (t === oldTag ? clean : t)))];
     n.updatedAt = new Date().toISOString();
   });
   // The library follows the rename, or the old name would linger as a ghost.
-  state.tagLibrary = [...new Set((state.tagLibrary || []).map(t => (t === oldTag ? clean : t)))];
-  await saveStore();   // immediate, like every other tag mutation (one idiom)
+  state.tagLibrary = [
+    ...new Set((state.tagLibrary || []).map((t) => (t === oldTag ? clean : t))),
+  ];
+  await saveStore(); // immediate, like every other tag mutation (one idiom)
   renderAll();
 }
 
 async function removeTagGlobal(tag) {
-  const ok = await showConfirmModal('Delete Tag', `Delete tag #${tag} from the vault? It is removed from every note and from your tag list.`);
+  const ok = await showConfirmModal(
+    "Delete Tag",
+    `Delete tag #${tag} from the vault? It is removed from every note and from your tag list.`,
+  );
   if (!ok) return;
-  state.notes.forEach(n => {
-    if (n.tags) n.tags = n.tags.filter(t => t !== tag);
+  state.notes.forEach((n) => {
+    if (n.tags) n.tags = n.tags.filter((t) => t !== tag);
   });
   // This is the one action that destroys a tag: it leaves the library too.
-  state.tagLibrary = (state.tagLibrary || []).filter(t => t !== tag);
+  state.tagLibrary = (state.tagLibrary || []).filter((t) => t !== tag);
   await saveStore();
   renderAll();
 }
@@ -1764,9 +2245,9 @@ async function removeTagGlobal(tag) {
 // and the leftover keyword advertised an ordering guarantee its one caller does not
 // take and does not need.
 function renderActiveNote() {
-  const textarea = document.getElementById('markdown-textarea');
-  const preview = document.getElementById('markdown-preview');
-  const splitContainer = document.getElementById('editor-split');
+  const textarea = document.getElementById("markdown-textarea");
+  const preview = document.getElementById("markdown-preview");
+  const splitContainer = document.getElementById("editor-split");
 
   // Trash preview: a selected trashed note renders READ-ONLY in the preview pane
   // so it can be identified before restoring - the editor never loads it, so no
@@ -1774,42 +2255,46 @@ function renderActiveNote() {
   // NEVER overwritten by this: it stays in state.viewMode and localStorage, and
   // leaving the preview simply re-applies it.
   const tp = state.trashPreviewId
-    ? state.notes.find(n => n.id === state.trashPreviewId && n.trashed)
+    ? state.notes.find((n) => n.id === state.trashPreviewId && n.trashed)
     : null;
-  if (state.trashPreviewId && !tp) state.trashPreviewId = null;   // restored or purged meanwhile
+  if (state.trashPreviewId && !tp) state.trashPreviewId = null; // restored or purged meanwhile
   if (tp) {
-    splitContainer.className = 'editor-split mode-preview trash-preview';
-    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-    const tabPreview = document.getElementById('tab-mode-preview');
-    if (tabPreview) tabPreview.classList.add('active');
-    renderPreview(tp.content || '');
+    splitContainer.className = "editor-split mode-preview trash-preview";
+    document
+      .querySelectorAll(".view-tab")
+      .forEach((t) => t.classList.remove("active"));
+    const tabPreview = document.getElementById("tab-mode-preview");
+    if (tabPreview) tabPreview.classList.add("active");
+    renderPreview(tp.content || "");
     return;
   }
-  if (splitContainer.classList.contains('trash-preview')) {
+  if (splitContainer.classList.contains("trash-preview")) {
     // Leaving the trash preview: re-apply the persisted mode - it never changed.
     setViewMode(state.viewMode);
   }
 
   // A trashed note is never the editable active note, whatever route set the id:
   // the trash preview above is the only way a deleted note reaches the screen.
-  const active = state.notes.find(n => n.id === state.activeNoteId);
+  const active = state.notes.find((n) => n.id === state.activeNoteId);
   const note = active && !active.trashed ? active : null;
 
   if (!note) {
-    textarea.value = '';
-    preview.innerHTML = '<div class="empty-state empty-state-pane">Select or create a note to start writing</div>';
+    textarea.value = "";
+    preview.innerHTML =
+      '<div class="empty-state empty-state-pane">Select or create a note to start writing</div>';
     return;
   }
 
-  const content = note.content || '';   // plaintext in state after unlock
+  const content = note.content || ""; // plaintext in state after unlock
 
   // S-05 guard: if anything here is still ciphertext, decryption failed for this
   // note. Show it as a locked, READ-ONLY state — never place it in the editor,
   // where autosave would encrypt the placeholder over the real content.
-  if (typeof content === 'string' && content.startsWith('ENC:')) {
-    textarea.value = '';
+  if (typeof content === "string" && content.startsWith("ENC:")) {
+    textarea.value = "";
     textarea.readOnly = true;
-    preview.innerHTML = '<div class="empty-state locked-note">This note could not be decrypted with the current passphrase. It is shown read-only so its stored content is not overwritten.</div>';
+    preview.innerHTML =
+      '<div class="empty-state locked-note">This note could not be decrypted with the current passphrase. It is shown read-only so its stored content is not overwritten.</div>';
     return;
   }
   textarea.readOnly = false;
@@ -1819,16 +2304,17 @@ function renderActiveNote() {
 }
 
 function renderPreview(md) {
-  const preview = document.getElementById('markdown-preview');
+  const preview = document.getElementById("markdown-preview");
   if (!md || !md.trim()) {
-    preview.innerHTML = '<div class="empty-state empty-state-preview">Preview will appear here…</div>';
+    preview.innerHTML =
+      '<div class="empty-state empty-state-preview">Preview will appear here…</div>';
     return;
   }
   // S-04: never inject raw marked output. Note content is untrusted input — it can
   // arrive from a restored vault, a synced file, or an unauthenticated API write.
   // Sanitize BEFORE it touches innerHTML; highlight AFTER, on the cleaned DOM.
   preview.innerHTML = sanitizeHtml(marked.parse(md));
-  preview.querySelectorAll('pre code').forEach(block => {
+  preview.querySelectorAll("pre code").forEach((block) => {
     hljs.highlightElement(block);
   });
   addCodeCopyButtons(preview);
@@ -1837,30 +2323,30 @@ function renderPreview(md) {
 // A copy control per fenced block. Built with createElement and our own icon
 // constants AFTER sanitising, so nothing here can carry note content into markup.
 function addCodeCopyButtons(scope) {
-  scope.querySelectorAll('pre').forEach(pre => {
-    if (pre.querySelector('.code-copy')) return;
-    const code = pre.querySelector('code');
+  scope.querySelectorAll("pre").forEach((pre) => {
+    if (pre.querySelector(".code-copy")) return;
+    const code = pre.querySelector("code");
     if (!code) return;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'code-copy';
-    btn.title = 'Copy code';
-    btn.setAttribute('aria-label', 'Copy code');
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "code-copy";
+    btn.title = "Copy code";
+    btn.setAttribute("aria-label", "Copy code");
     btn.innerHTML = ICONS.copy;
-    btn.addEventListener('click', async () => {
+    btn.addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText(code.textContent);
         btn.innerHTML = ICONS.tickSquare;
-        btn.classList.add('done');
-        btn.title = 'Copied';
+        btn.classList.add("done");
+        btn.title = "Copied";
         setTimeout(() => {
           btn.innerHTML = ICONS.copy;
-          btn.classList.remove('done');
-          btn.title = 'Copy code';
+          btn.classList.remove("done");
+          btn.title = "Copy code";
         }, 1400);
       } catch (err) {
-        console.warn('Clipboard write refused:', err);
-        showSave('Clipboard unavailable in this browser', 'error');
+        console.warn("Clipboard write refused:", err);
+        showSave("Clipboard unavailable in this browser", "error");
       }
     });
     pre.appendChild(btn);
@@ -1868,19 +2354,23 @@ function addCodeCopyButtons(scope) {
 }
 
 function renderTOC() {
-  const container = document.getElementById('toc-container');
-  const headings = document.querySelectorAll('#markdown-preview h1, #markdown-preview h2, #markdown-preview h3');
+  const container = document.getElementById("toc-container");
+  const headings = document.querySelectorAll(
+    "#markdown-preview h1, #markdown-preview h2, #markdown-preview h3",
+  );
   if (!headings.length) {
     container.innerHTML = '<div class="empty-state">No headings</div>';
     return;
   }
-  container.innerHTML = '';
-  headings.forEach(h => {
-    const item = document.createElement('div');
+  container.innerHTML = "";
+  headings.forEach((h) => {
+    const item = document.createElement("div");
     const level = h.tagName.toLowerCase();
-    item.className = 'toc-item toc-' + level;
+    item.className = "toc-item toc-" + level;
     item.textContent = h.textContent;
-    item.addEventListener('click', () => h.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    item.addEventListener("click", () =>
+      h.scrollIntoView({ behavior: "smooth", block: "center" }),
+    );
     container.appendChild(item);
   });
 }
@@ -1889,31 +2379,38 @@ function renderTOC() {
 // one is open (read-only, identification only), otherwise the active note.
 function displayedNote() {
   if (state.trashPreviewId) {
-    const tp = state.notes.find(n => n.id === state.trashPreviewId && n.trashed);
+    const tp = state.notes.find(
+      (n) => n.id === state.trashPreviewId && n.trashed,
+    );
     if (tp) return tp;
   }
-  return state.notes.find(n => n.id === state.activeNoteId);
+  return state.notes.find((n) => n.id === state.activeNoteId);
 }
 
 function renderTags() {
-  const container = document.getElementById('tags-container');
+  const container = document.getElementById("tags-container");
   const note = displayedNote();
   if (!note || !note.tags || !note.tags.length) {
     container.innerHTML = '<div class="empty-state">No tags</div>';
     return;
   }
-  container.innerHTML = '';
-  const readOnly = !!note.trashed;   // trashed notes are not editable, tags included
+  container.innerHTML = "";
+  const readOnly = !!note.trashed; // trashed notes are not editable, tags included
   note.tags.forEach((tag, idx) => {
-    const chip = document.createElement('span');
-    chip.className = 'tag-chip';
-    chip.innerHTML = `#${escapeHtml(tag)}` + (readOnly ? '' : ` <span class="tag-del-btn" title="Remove Tag">×</span>`);
+    const chip = document.createElement("span");
+    chip.className = "tag-chip";
+    chip.innerHTML =
+      `#${escapeHtml(tag)}` +
+      (readOnly
+        ? ""
+        : ` <span class="tag-del-btn" title="Remove Tag">×</span>`);
 
-    const del = chip.querySelector('.tag-del-btn');
-    if (del) del.addEventListener('click', e => {
-      e.stopPropagation();
-      toggleTagOnNote(note, tag);   // one mutation path for every tag change
-    });
+    const del = chip.querySelector(".tag-del-btn");
+    if (del)
+      del.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleTagOnNote(note, tag); // one mutation path for every tag change
+      });
 
     container.appendChild(chip);
   });
@@ -1921,11 +2418,17 @@ function renderTags() {
 
 function renderMetrics() {
   const shown = displayedNote();
-  const text = (shown && shown.trashed ? shown.content : document.getElementById('markdown-textarea').value) || '';
+  const text =
+    (shown && shown.trashed
+      ? shown.content
+      : document.getElementById("markdown-textarea").value) || "";
   const words = text.trim() ? text.trim().split(/\s+/).length : 0;
-  document.getElementById('val-words').textContent = words.toLocaleString();
-  document.getElementById('val-chars').textContent = text.length.toLocaleString();
-  document.getElementById('val-lines').textContent = text ? text.split('\n').length.toLocaleString() : '0';
+  document.getElementById("val-words").textContent = words.toLocaleString();
+  document.getElementById("val-chars").textContent =
+    text.length.toLocaleString();
+  document.getElementById("val-lines").textContent = text
+    ? text.split("\n").length.toLocaleString()
+    : "0";
 }
 
 // An indicator must be able to say something other than "fine". The one condition
@@ -1941,44 +2444,48 @@ function renderMetrics() {
 // What DOES vary while you are inside is how long the key will sit in memory, and
 // nothing reported it. The lock button carries that in its own glyph now.
 const AUTOLOCK_HARD_CEILING_MIN = 60;
-const VAULT_SHIELD_WARN_MS = 60000;    // one 15s sweep, with room to spare
+const VAULT_SHIELD_WARN_MS = 60000; // one 15s sweep, with room to spare
 let idleLastActivity = Date.now();
 
 function autolockSoftMin() {
-  const raw = parseFloat(localStorage.getItem('lucid-autolock-min'));
-  return Number.isFinite(raw) ? raw : 5;                       // default 5 min
+  const raw = parseFloat(localStorage.getItem("lucid-autolock-min"));
+  return Number.isFinite(raw) ? raw : 5; // default 5 min
 }
 function getAutolockMs() {
   const soft = autolockSoftMin();
-  const eff = soft > 0 ? Math.min(soft, AUTOLOCK_HARD_CEILING_MIN) : AUTOLOCK_HARD_CEILING_MIN;
+  const eff =
+    soft > 0
+      ? Math.min(soft, AUTOLOCK_HARD_CEILING_MIN)
+      : AUTOLOCK_HARD_CEILING_MIN;
   return eff * 60 * 1000;
 }
 
 function updateVaultShield() {
-  const btn = document.getElementById('btn-lock-vault');
+  const btn = document.getElementById("btn-lock-vault");
   if (!btn) return;
-  const glyph = btn.querySelector('.lock-glyph');
+  const glyph = btn.querySelector(".lock-glyph");
   const soft = autolockSoftMin();
   const left = getAutolockMs() - (Date.now() - idleLastActivity);
 
   let mark, icon, msg;
   if (state.encryptionKey && left <= VAULT_SHIELD_WARN_MS) {
-    mark = 'warn';
+    mark = "warn";
     icon = ICONS.shieldCross;
-    msg = 'Locking in under a minute \u00b7 move or type to stay \u00b7 click to lock now';
+    msg =
+      "Locking in under a minute \u00b7 move or type to stay \u00b7 click to lock now";
   } else if (soft > 0) {
-    mark = 'armed';
+    mark = "armed";
     icon = ICONS.shieldSecurity;
     msg = `Lock vault \u00b7 AES-256-GCM \u00b7 auto-locks after ${soft} min idle`;
   } else {
-    mark = 'open';
+    mark = "open";
     icon = ICONS.shield;
     msg = `Lock vault \u00b7 AES-256-GCM \u00b7 auto-lock off, hard ceiling ${AUTOLOCK_HARD_CEILING_MIN} min`;
   }
 
-  btn.classList.toggle('is-warning', mark === 'warn');
+  btn.classList.toggle("is-warning", mark === "warn");
   btn.title = msg;
-  btn.setAttribute('aria-label', msg);
+  btn.setAttribute("aria-label", msg);
   // Repaint only on a real change: this runs every 15 seconds.
   if (glyph && glyph.dataset.mark !== mark) {
     glyph.dataset.mark = mark;
@@ -1986,9 +2493,8 @@ function updateVaultShield() {
   }
 }
 
-
 function escapeHtml(str) {
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
 }
@@ -2000,89 +2506,103 @@ function escapeHtml(str) {
 // us to injecting raw HTML.
 const SANITIZE_CONFIG = {
   USE_PROFILES: { html: true },
-  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'base', 'meta'],
-  FORBID_ATTR: ['style', 'formaction', 'srcdoc', 'ping'],
-  ALLOW_DATA_ATTR: false
+  FORBID_TAGS: [
+    "script",
+    "style",
+    "iframe",
+    "object",
+    "embed",
+    "form",
+    "input",
+    "button",
+    "base",
+    "meta",
+  ],
+  FORBID_ATTR: ["style", "formaction", "srcdoc", "ping"],
+  ALLOW_DATA_ATTR: false,
 };
 
 function sanitizeHtml(dirty) {
-  if (typeof DOMPurify === 'undefined' || !DOMPurify.sanitize) {
-    console.error('DOMPurify missing — refusing to render unsanitized HTML.');
+  if (typeof DOMPurify === "undefined" || !DOMPurify.sanitize) {
+    console.error("DOMPurify missing — refusing to render unsanitized HTML.");
     return escapeHtml(String(dirty));
   }
   return DOMPurify.sanitize(dirty, SANITIZE_CONFIG);
 }
 
 // Any link surviving sanitization opens safely (no window.opener access).
-if (typeof DOMPurify !== 'undefined' && DOMPurify.addHook) {
-  DOMPurify.addHook('afterSanitizeAttributes', node => {
-    if (node.tagName === 'A' && node.hasAttribute('href')) {
-      node.setAttribute('target', '_blank');
-      node.setAttribute('rel', 'noopener noreferrer');
+if (typeof DOMPurify !== "undefined" && DOMPurify.addHook) {
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName === "A" && node.hasAttribute("href")) {
+      node.setAttribute("target", "_blank");
+      node.setAttribute("rel", "noopener noreferrer");
     }
   });
 }
 
 // ─── HORIZONTAL SIDEBAR RESIZERS ───────────────────
 function initSidebarResizers() {
-  const leftResizer = document.getElementById('resizer-left');
-  const rightResizer = document.getElementById('resizer-right');
-  const leftPane = document.getElementById('sidebar-left');
-  const rightPane = document.getElementById('sidebar-right');
+  const leftResizer = document.getElementById("resizer-left");
+  const rightResizer = document.getElementById("resizer-right");
+  const leftPane = document.getElementById("sidebar-left");
+  const rightPane = document.getElementById("sidebar-right");
 
   const root = document.documentElement;
-  const px2rem = px => (px / 16) + 'rem';
-  const savedLeft = localStorage.getItem('lucid-left-width');
-  const savedRight = localStorage.getItem('lucid-right-width');
-  if (savedLeft) root.style.setProperty('--left-w', px2rem(savedLeft));
-  if (savedRight) root.style.setProperty('--right-w', px2rem(savedRight));
+  const px2rem = (px) => px / 16 + "rem";
+  const savedLeft = localStorage.getItem("lucid-left-width");
+  const savedRight = localStorage.getItem("lucid-right-width");
+  if (savedLeft) root.style.setProperty("--left-w", px2rem(savedLeft));
+  if (savedRight) root.style.setProperty("--right-w", px2rem(savedRight));
 
   if (leftResizer && leftPane) {
     let dragging = false;
-    leftResizer.addEventListener('mousedown', e => {
+    leftResizer.addEventListener("mousedown", (e) => {
       e.preventDefault();
       dragging = true;
-      leftResizer.classList.add('resizing');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
+      leftResizer.classList.add("resizing");
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
     });
-    window.addEventListener('mousemove', e => {
+    window.addEventListener("mousemove", (e) => {
       if (!dragging) return;
-      const newWidth = Math.max(240, Math.min(480, e.clientX));   // floor matches the CSS min-width (15rem)
-      root.style.setProperty('--left-w', px2rem(newWidth));
-      localStorage.setItem('lucid-left-width', newWidth);
+      const newWidth = Math.max(240, Math.min(480, e.clientX)); // floor matches the CSS min-width (15rem)
+      root.style.setProperty("--left-w", px2rem(newWidth));
+      localStorage.setItem("lucid-left-width", newWidth);
     });
-    window.addEventListener('mouseup', () => {
+    window.addEventListener("mouseup", () => {
       if (dragging) {
         dragging = false;
-        leftResizer.classList.remove('resizing');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
+        leftResizer.classList.remove("resizing");
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
       }
     });
   }
 
   if (rightResizer && rightPane) {
     let dragging = false;
-    rightResizer.addEventListener('mousedown', e => {
+    rightResizer.addEventListener("mousedown", (e) => {
       e.preventDefault();
       dragging = true;
-      rightResizer.classList.add('resizing');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
+      rightResizer.classList.add("resizing");
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
     });
-    window.addEventListener('mousemove', e => {
+    window.addEventListener("mousemove", (e) => {
       if (!dragging) return;
-      const newWidth = Math.max(192, Math.min(400, window.innerWidth - e.clientX));   // floor matches the CSS min-width (12rem)
-      root.style.setProperty('--right-w', px2rem(newWidth));
-      localStorage.setItem('lucid-right-width', newWidth);
+      const newWidth = Math.max(
+        192,
+        Math.min(400, window.innerWidth - e.clientX),
+      ); // floor matches the CSS min-width (12rem)
+      root.style.setProperty("--right-w", px2rem(newWidth));
+      localStorage.setItem("lucid-right-width", newWidth);
     });
-    window.addEventListener('mouseup', () => {
+    window.addEventListener("mouseup", () => {
       if (dragging) {
         dragging = false;
-        rightResizer.classList.remove('resizing');
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
+        rightResizer.classList.remove("resizing");
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
       }
     });
   }
@@ -2090,40 +2610,40 @@ function initSidebarResizers() {
 
 // ─── SPLIT HANDLE DRAG (DYNAMIC RESIZING FOR BOTH VERTICAL AND HORIZONTAL SPLITS) ──────
 function initSplitHandle() {
-  const handle = document.getElementById('split-handle');
-  const split = document.getElementById('editor-split');
-  const editorPane = split.querySelector('.editor-pane');
-  const previewPane = split.querySelector('.preview-pane');
+  const handle = document.getElementById("split-handle");
+  const split = document.getElementById("editor-split");
+  const editorPane = split.querySelector(".editor-pane");
+  const previewPane = split.querySelector(".preview-pane");
   let dragging = false;
 
   if (!handle) return;
-  handle.addEventListener('mousedown', e => {
+  handle.addEventListener("mousedown", (e) => {
     e.preventDefault();
     dragging = true;
-    const isHorizontal = state.viewMode === 'split-horizontal';
-    document.body.style.cursor = isHorizontal ? 'col-resize' : 'row-resize';
-    document.body.style.userSelect = 'none';
+    const isHorizontal = state.viewMode === "split-horizontal";
+    document.body.style.cursor = isHorizontal ? "col-resize" : "row-resize";
+    document.body.style.userSelect = "none";
   });
 
-  window.addEventListener('mousemove', e => {
+  window.addEventListener("mousemove", (e) => {
     if (!dragging) return;
     const rect = split.getBoundingClientRect();
-    if (state.viewMode === 'split-horizontal') {
+    if (state.viewMode === "split-horizontal") {
       const x = e.clientX - rect.left;
       const pct = Math.max(15, Math.min(85, (x / rect.width) * 100));
-      split.style.setProperty('--split-pct', pct + '%');
-    } else if (state.viewMode === 'split-vertical') {
+      split.style.setProperty("--split-pct", pct + "%");
+    } else if (state.viewMode === "split-vertical") {
       const y = e.clientY - rect.top;
       const pct = Math.max(15, Math.min(85, (y / rect.height) * 100));
-      split.style.setProperty('--split-pct', pct + '%');
+      split.style.setProperty("--split-pct", pct + "%");
     }
   });
 
-  window.addEventListener('mouseup', () => {
+  window.addEventListener("mouseup", () => {
     if (dragging) {
       dragging = false;
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
     }
   });
 }
@@ -2134,105 +2654,174 @@ function initSplitHandle() {
 // an explicit exit from the trash preview - the pane then belongs to the LIVE
 // active note again, in the mode the user just chose.
 function setViewMode(mode) {
-  const tabEditor = document.getElementById('tab-mode-editor');
-  const tabSplit = document.getElementById('tab-mode-split');
-  const tabPreview = document.getElementById('tab-mode-preview');
-  const splitContainer = document.getElementById('editor-split');
+  const tabEditor = document.getElementById("tab-mode-editor");
+  const tabSplit = document.getElementById("tab-mode-split");
+  const tabPreview = document.getElementById("tab-mode-preview");
+  const splitContainer = document.getElementById("editor-split");
   const wasTrashPreview = state.trashPreviewId !== null;
   state.trashPreviewId = null;
 
   state.viewMode = mode;
-  [tabEditor, tabSplit, tabPreview].forEach(t => t && t.classList.remove('active'));
-  splitContainer.className = 'editor-split mode-' + mode;
+  [tabEditor, tabSplit, tabPreview].forEach(
+    (t) => t && t.classList.remove("active"),
+  );
+  splitContainer.className = "editor-split mode-" + mode;
 
-  const iconSpan = tabSplit ? tabSplit.querySelector('.split-tab-icon') : null;
+  const iconSpan = tabSplit ? tabSplit.querySelector(".split-tab-icon") : null;
 
-  if (mode === 'editor') {
-    tabEditor && tabEditor.classList.add('active');
+  if (mode === "editor") {
+    tabEditor && tabEditor.classList.add("active");
     if (iconSpan) iconSpan.innerHTML = ICONS.gridMixed;
-  } else if (mode.startsWith('split')) {
-    tabSplit && tabSplit.classList.add('active');
+  } else if (mode.startsWith("split")) {
+    tabSplit && tabSplit.classList.add("active");
     if (iconSpan) {
       // One glyph, turned: lin-grid-9's centre line is vertical for two columns and
       // horizontal (rotated) for two rows, so the icon IS the layout it produces.
-      iconSpan.innerHTML = mode === 'split-horizontal'
-        ? ICONS.gridSplit
-        : ICONS.gridSplit.replace('class="icon-svg"', 'class="icon-svg turn-90"');
+      iconSpan.innerHTML =
+        mode === "split-horizontal"
+          ? ICONS.gridSplit
+          : ICONS.gridSplit.replace(
+              'class="icon-svg"',
+              'class="icon-svg turn-90"',
+            );
     }
-    tabSplit.title = mode === 'split-horizontal' ? 'Split View (Side-by-Side Left/Right — Click to switch to Top/Bottom)' : 'Split View (Top/Bottom — Click to switch to Left/Right)';
-  } else if (mode === 'preview') {
-    tabPreview && tabPreview.classList.add('active');
+    tabSplit.title =
+      mode === "split-horizontal"
+        ? "Split View (Side-by-Side Left/Right — Click to switch to Top/Bottom)"
+        : "Split View (Top/Bottom — Click to switch to Left/Right)";
+  } else if (mode === "preview") {
+    tabPreview && tabPreview.classList.add("active");
     if (iconSpan) iconSpan.innerHTML = ICONS.gridMixed;
   }
 
-  localStorage.setItem('lucid-view-mode', mode);
-  if (wasTrashPreview) { renderActiveNote(); renderTOC(); renderTags(); renderMetrics(); }
+  localStorage.setItem("lucid-view-mode", mode);
+  if (wasTrashPreview) {
+    renderActiveNote();
+    renderTOC();
+    renderTags();
+    renderMetrics();
+  }
 }
 
 function initViewModeTabs() {
-  const tabEditor = document.getElementById('tab-mode-editor');
-  const tabSplit = document.getElementById('tab-mode-split');
-  const tabPreview = document.getElementById('tab-mode-preview');
+  const tabEditor = document.getElementById("tab-mode-editor");
+  const tabSplit = document.getElementById("tab-mode-split");
+  const tabPreview = document.getElementById("tab-mode-preview");
 
-  if (tabEditor) tabEditor.addEventListener('click', () => setViewMode('editor'));
+  if (tabEditor)
+    tabEditor.addEventListener("click", () => setViewMode("editor"));
 
   if (tabSplit) {
-    tabSplit.addEventListener('click', () => {
-      if (state.viewMode === 'split-horizontal') {
-        setViewMode('split-vertical');
+    tabSplit.addEventListener("click", () => {
+      if (state.viewMode === "split-horizontal") {
+        setViewMode("split-vertical");
       } else {
-        setViewMode('split-horizontal');
+        setViewMode("split-horizontal");
       }
     });
   }
 
-  if (tabPreview) tabPreview.addEventListener('click', () => setViewMode('preview'));
+  if (tabPreview)
+    tabPreview.addEventListener("click", () => setViewMode("preview"));
 
   // First-run default: split with preview ON, stacked top/bottom (works on any screen width).
-  const savedMode = localStorage.getItem('lucid-view-mode') || DEFAULT_VIEW_MODE;
-  setViewMode(savedMode === 'split' ? DEFAULT_VIEW_MODE : savedMode);
+  const savedMode =
+    localStorage.getItem("lucid-view-mode") || DEFAULT_VIEW_MODE;
+  setViewMode(savedMode === "split" ? DEFAULT_VIEW_MODE : savedMode);
 }
 
 // ─── SEAMLESS GLOWING SUN / MOON THEME TOGGLE ──────
 function applyTheme(themeId) {
-  document.body.setAttribute('data-theme', themeId);
-  document.documentElement.setAttribute('data-theme', themeId);
-  localStorage.setItem('lucid-theme', themeId);
+  document.body.setAttribute("data-theme", themeId);
+  document.documentElement.setAttribute("data-theme", themeId);
+  localStorage.setItem("lucid-theme", themeId);
 
   // Swap the highlight.js code theme to match the app theme
-  const hljsTheme = document.getElementById('hljs-theme');
+  const hljsTheme = document.getElementById("hljs-theme");
   if (hljsTheme) {
-    const t = THEMES.find(x => x.id === themeId);
-    hljsTheme.href = `vendor/hljs-styles/${(t && t.hljs) || 'github-dark'}.min.css`;
+    const t = THEMES.find((x) => x.id === themeId);
+    hljsTheme.href = `vendor/hljs-styles/${(t && t.hljs) || "github-dark"}.min.css`;
   }
-
 }
 
 // Three themes, one mechanism — mirrors the font-set picker exactly: a table,
 // a footer button, a menu, localStorage, unknown values fall back to default.
 // Listed light to dark, which is how the eye reads a brightness scale.
 const THEMES = [
-  { id: 'warm-linen', label: 'Warm Linen', icon: 'sun',    hljs: 'github' },
-  { id: 'amber-hour', label: 'Amber Hour', icon: 'sunFog', hljs: 'github-dark' },
-  { id: 'dusk-ember', label: 'Dusk Ember', icon: 'moon',   hljs: 'github-dark' }
+  { id: "catppuccin-latte", label: "Catppuccin Latte", icon: "pet", hljs: "github" },
+  { id: "warm-linen", label: "Warm Linen", icon: "sun", hljs: "github" },
+  { id: "amber-hour", label: "Amber Hour", icon: "sunFog", hljs: "github-dark" },
+  { id: "catppuccin-frappe", label: "Catppuccin Frappé", icon: "pet", hljs: "github-dark" },
+  { id: "catppuccin-macchiato", label: "Catppuccin Macchiato", icon: "pet", hljs: "github-dark" },
+  { id: "dusk-ember", label: "Dusk Ember", icon: "moon", hljs: "github-dark" },
+  { id: "catppuccin-mocha", label: "Catppuccin Mocha", icon: "pet", hljs: "github-dark" },
+  { id: "dracula-official", label: "Dracula", icon: "ghost", hljs: "github-dark" },
+  { id: "deep-space-blue", label: "Deep Space", icon: "more2", hljs: "github-dark" },
 ];
-const DEFAULT_THEME = 'dusk-ember';
+const DEFAULT_THEME = "dusk-ember";
 
 function initThemePicker() {
-  const btn = document.getElementById('btn-theme');
+  const btn = document.getElementById("btn-theme");
   if (!btn) return;
-  const saved = localStorage.getItem('lucid-theme');
-  applyTheme(THEMES.some(t => t.id === saved) ? saved : DEFAULT_THEME);
-  btn.addEventListener('click', e => {
+  const saved = localStorage.getItem("lucid-theme");
+  applyTheme(THEMES.some((t) => t.id === saved) ? saved : DEFAULT_THEME);
+  btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const current = localStorage.getItem('lucid-theme') || DEFAULT_THEME;
+    const current = localStorage.getItem("lucid-theme") || DEFAULT_THEME;
     const rect = btn.getBoundingClientRect();
-    const items = THEMES.map(t => ({
-      label: t.label,
-      active: t.id === current,
-      icon: ICONS[t.icon],
-      action: () => applyTheme(t.id)
-    }));
+
+    const catppuccinFlavors = [
+      { id: "catppuccin-latte", label: "Latte (Light)" },
+      { id: "catppuccin-frappe", label: "Frappé (Dark)" },
+      { id: "catppuccin-macchiato", label: "Macchiato (Dark)" },
+      { id: "catppuccin-mocha", label: "Mocha (Dark)" },
+    ];
+    const isCatppuccinActive = catppuccinFlavors.some((f) => f.id === current);
+
+    const items = [
+      {
+        label: "Warm Linen",
+        active: current === "warm-linen",
+        icon: ICONS.sun,
+        action: () => applyTheme("warm-linen"),
+      },
+      {
+        label: "Amber Hour",
+        active: current === "amber-hour",
+        icon: ICONS.sunFog,
+        action: () => applyTheme("amber-hour"),
+      },
+      {
+        label: "Dusk Ember",
+        active: current === "dusk-ember",
+        icon: ICONS.moon,
+        action: () => applyTheme("dusk-ember"),
+      },
+      {
+        label: "Dracula",
+        active: current === "dracula-official",
+        icon: ICONS.ghost,
+        action: () => applyTheme("dracula-official"),
+      },
+      {
+        label: "Deep Space",
+        active: current === "deep-space-blue",
+        icon: ICONS.more2,
+        action: () => applyTheme("deep-space-blue"),
+      },
+      { divider: true },
+      {
+        label: "Catppuccin Palette",
+        active: isCatppuccinActive,
+        icon: ICONS.pet,
+        submenuItems: catppuccinFlavors.map((f) => ({
+          label: f.label,
+          active: f.id === current,
+          icon: ICONS.pet,
+          action: () => applyTheme(f.id),
+        })),
+      },
+    ];
     showTreeContextMenu(rect.left, rect.top, items);
   });
 }
@@ -2243,33 +2832,34 @@ function initThemePicker() {
 // data-fontset. Browsers download only the active set's files, so the three
 // unchosen sets cost nothing at runtime.
 const FONT_SETS = [
-  { id: 'geist',  label: 'Geist + Geist Mono' },
-  { id: 'plex',   label: 'IBM Plex Sans + IBM Plex Mono' },
-  { id: 'source', label: 'Source Sans 3 + Source Code Pro' },
-  { id: 'inter',  label: 'Inter + JetBrains Mono' },
+  { id: "geist", label: "Geist + Geist Mono" },
+  { id: "plex", label: "IBM Plex Sans + IBM Plex Mono" },
+  { id: "source", label: "Source Sans 3 + Source Code Pro" },
+  { id: "inter", label: "Inter + JetBrains Mono" },
 ];
-const DEFAULT_FONT_SET = 'geist';
+const DEFAULT_FONT_SET = "geist";
 
 function applyFontSet(id) {
-  if (!FONT_SETS.some(s => s.id === id)) id = DEFAULT_FONT_SET;
-  document.documentElement.setAttribute('data-fontset', id);
-  document.body.setAttribute('data-fontset', id);
-  localStorage.setItem('lucid-fontset', id);
+  if (!FONT_SETS.some((s) => s.id === id)) id = DEFAULT_FONT_SET;
+  document.documentElement.setAttribute("data-fontset", id);
+  document.body.setAttribute("data-fontset", id);
+  localStorage.setItem("lucid-fontset", id);
 }
 
 function initFontPicker() {
-  applyFontSet(localStorage.getItem('lucid-fontset') || DEFAULT_FONT_SET);
-  const btn = document.getElementById('btn-fontset');
+  applyFontSet(localStorage.getItem("lucid-fontset") || DEFAULT_FONT_SET);
+  const btn = document.getElementById("btn-fontset");
   if (!btn) return;
-  btn.addEventListener('click', e => {
+  btn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const current = localStorage.getItem('lucid-fontset') || DEFAULT_FONT_SET;
+    const current = localStorage.getItem("lucid-fontset") || DEFAULT_FONT_SET;
     const rect = btn.getBoundingClientRect();
-    const items = FONT_SETS.map(s => ({
+    const items = FONT_SETS.map((s) => ({
       label: s.label,
       active: s.id === current,
-      icon: s.id === current ? ICONS.text : '<span class="menu-icon-blank"></span>',
-      action: () => applyFontSet(s.id)
+      icon:
+        s.id === current ? ICONS.text : '<span class="menu-icon-blank"></span>',
+      action: () => applyFontSet(s.id),
     }));
     showTreeContextMenu(rect.left, rect.top, items);
   });
@@ -2277,12 +2867,16 @@ function initFontPicker() {
 
 // ─── EXPLORER MODE PILL TOGGLE (Folders / Tags / Pinned) ─
 function initExplorerModeToggle() {
-  const pinBtn = document.getElementById('btn-mode-pinned');
+  const pinBtn = document.getElementById("btn-mode-pinned");
   if (pinBtn) pinBtn.innerHTML = ICONS[PIN_GLYPH];
 
   Object.entries(EXPLORER_MODES).forEach(([name, m]) => {
     const btn = document.getElementById(m.btn);
-    if (btn) btn.addEventListener('click', () => { state.explorerMode = name; renderExplorer(); });
+    if (btn)
+      btn.addEventListener("click", () => {
+        state.explorerMode = name;
+        renderExplorer();
+      });
   });
 
   renderExplorer();
@@ -2298,41 +2892,45 @@ function initExplorerModeToggle() {
 // carries it has finished building. Commit distance comes from /compare, which
 // accepts tag and branch names directly, so the version string the build
 // already reports about itself is the only identifier needed.
-const GH_REPO = 'Arelius-D/LucID';
+const GH_REPO = "Arelius-D/LucID";
 const GH_API = `https://api.github.com/repos/${GH_REPO}`;
 
 async function ghJson(url) {
   const res = await fetch(url);
-  if (!res.ok) { const e = new Error(`GitHub API ${res.status}`); e.status = res.status; throw e; }
+  if (!res.ok) {
+    const e = new Error(`GitHub API ${res.status}`);
+    e.status = res.status;
+    throw e;
+  }
   return res.json();
 }
 
 async function checkVersionAndUpdateIndicator() {
-  const githubLink = document.querySelector('.footer-github-link');
+  const githubLink = document.querySelector(".footer-github-link");
   if (!githubLink) return;
 
-  let currentVersion = '2.7.0-dev';
+  let currentVersion = "2.7.0-dev";
   try {
-    const res = await fetch(apiPath('api/version'));
+    const res = await fetch(apiPath("api/version"));
     if (res.ok) {
       const data = await res.json();
       if (data.version) currentVersion = data.version;
     }
   } catch (e) {
-    console.warn('Could not fetch local version:', e);
+    console.warn("Could not fetch local version:", e);
   }
 
   // The channel comes from the version string, which is the build's own claim
   // about itself. It was previously guessed from hostname and port, so any dev
   // image reached through a reverse proxy reported itself as "production".
   const channel = describeChannel(currentVersion);
-  const isPreRelease = channel !== 'release';
-  const branch = isPreRelease ? 'dev' : 'main';
+  const isPreRelease = channel !== "release";
+  const branch = isPreRelease ? "dev" : "main";
   const base = `LucID v${currentVersion} (${channel})`;
 
   const setLabel = (msg) => {
-    githubLink.setAttribute('title', msg);
-    githubLink.setAttribute('aria-label', msg);
+    githubLink.setAttribute("title", msg);
+    githubLink.setAttribute("aria-label", msg);
   };
   // Neutral until the remote answers. Claiming currency before asking is an
   // assertion the app has no basis for, and it used to survive every failure.
@@ -2345,18 +2943,27 @@ async function checkVersionAndUpdateIndicator() {
   } catch (err) {
     // 404 means no Release has been published, which is a fact worth stating.
     // Anything else is a failed check and must not be reported as either.
-    console.warn('Release lookup failed:', err);
-    setLabel(err.status === 404
-      ? `${base} \u2014 no releases published yet`
-      : `${base} \u2014 update check unavailable`);
+    console.warn("Release lookup failed:", err);
+    setLabel(
+      err.status === 404
+        ? `${base} \u2014 no releases published yet`
+        : `${base} \u2014 update check unavailable`,
+    );
     return;
   }
 
-  const latest = String(release.tag_name || '').replace(/^v/, '');
-  if (!latest) { setLabel(`${base} \u2014 update check unavailable`); return; }
+  const latest = String(release.tag_name || "").replace(/^v/, "");
+  if (!latest) {
+    setLabel(`${base} \u2014 update check unavailable`);
+    return;
+  }
 
   const published = release.published_at
-    ? new Date(release.published_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+    ? new Date(release.published_at).toLocaleDateString(undefined, {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
     : null;
 
   // Request 2: how far the tracked branch has moved past that release. /compare
@@ -2364,32 +2971,47 @@ async function checkVersionAndUpdateIndicator() {
   let ahead = null;
   try {
     const cmp = await ghJson(`${GH_API}/compare/v${latest}...${branch}`);
-    if (typeof cmp.ahead_by === 'number') ahead = cmp.ahead_by;
+    if (typeof cmp.ahead_by === "number") ahead = cmp.ahead_by;
   } catch (err) {
-    console.warn('Compare lookup failed:', err);   // optional detail, not fatal
+    console.warn("Compare lookup failed:", err); // optional detail, not fatal
   }
-  const trail = ahead ? ` \u00b7 ${branch} +${ahead} commit${ahead === 1 ? '' : 's'} since v${latest}` : '';
+  const trail = ahead
+    ? ` \u00b7 ${branch} +${ahead} commit${ahead === 1 ? "" : "s"} since v${latest}`
+    : "";
 
   if (compareVersions(latest, currentVersion) > 0) {
-    githubLink.classList.add('update-available');
-    githubLink.href = release.html_url || `https://github.com/${GH_REPO}/releases/tag/v${latest}`;
-    setLabel(`${base} \u2014 update available: v${latest}${published ? ' (' + published + ')' : ''}`);
+    githubLink.classList.add("update-available");
+    githubLink.href =
+      release.html_url ||
+      `https://github.com/${GH_REPO}/releases/tag/v${latest}`;
+    setLabel(
+      `${base} \u2014 update available: v${latest}${published ? " (" + published + ")" : ""}`,
+    );
     return;
   }
 
-  githubLink.classList.remove('update-available');
+  githubLink.classList.remove("update-available");
   githubLink.href = `https://github.com/${GH_REPO}`;
-  setLabel(isPreRelease
-    ? `${base} \u2014 latest release v${latest}${published ? ' (' + published + ')' : ''}${trail}`
-    : `${base} \u2014 up to date${trail}`);
+  setLabel(
+    isPreRelease
+      ? `${base} \u2014 latest release v${latest}${published ? " (" + published + ")" : ""}${trail}`
+      : `${base} \u2014 up to date${trail}`,
+  );
 }
 
-const CHANNEL_LABELS = { dev: 'dev build', rc: 'release candidate', beta: 'beta', alpha: 'alpha' };
+const CHANNEL_LABELS = {
+  dev: "dev build",
+  rc: "release candidate",
+  beta: "beta",
+  alpha: "alpha",
+};
 
 function describeChannel(version) {
-  const suffix = (String(version).split('-')[1] || '').toLowerCase().replace(/[^a-z]/g, '');
-  if (!suffix) return 'release';
-  return CHANNEL_LABELS[suffix] || 'pre-release';
+  const suffix = (String(version).split("-")[1] || "")
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
+  if (!suffix) return "release";
+  return CHANNEL_LABELS[suffix] || "pre-release";
 }
 
 // Numeric core first. When cores are equal, a build carrying a pre-release
@@ -2397,8 +3019,8 @@ function describeChannel(version) {
 // previous implementation mapped "0-dev" to NaN and silently returned "equal".
 function compareVersions(v1, v2) {
   const parse = (v) => {
-    const [core, pre = ''] = String(v).split('-', 2);
-    const nums = core.split('.').map(n => parseInt(n, 10) || 0);
+    const [core, pre = ""] = String(v).split("-", 2);
+    const nums = core.split(".").map((n) => parseInt(n, 10) || 0);
     return { nums, pre };
   };
   const a = parse(v1);
@@ -2419,26 +3041,39 @@ function compareVersions(v1, v2) {
 // or half-rendered UI with no signal. Now anything unhandled is shown.
 function reportFatal(what, err) {
   console.error(what, err);
-  showSave(what + ': ' + ((err && err.message) || err || 'unknown error'), 'error');
+  showSave(
+    what + ": " + ((err && err.message) || err || "unknown error"),
+    "error",
+  );
 }
-window.addEventListener('error', e => reportFatal('Unexpected error', e.error || e.message));
-window.addEventListener('unhandledrejection', e => reportFatal('Unexpected error', e.reason));
+window.addEventListener("error", (e) =>
+  reportFatal("Unexpected error", e.error || e.message),
+);
+window.addEventListener("unhandledrejection", (e) =>
+  reportFatal("Unexpected error", e.reason),
+);
 
 // Tab hidden / navigating away: run the pending save now rather than losing it
 // to the debounce window. visibilitychange still permits async work.
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'hidden') flushPendingSave();
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") flushPendingSave();
 });
-window.addEventListener('pagehide', () => { flushPendingSave(); });
+window.addEventListener("pagehide", () => {
+  flushPendingSave();
+});
 
 // Encryption + upload cannot complete synchronously in beforeunload, so if a
 // save is still pending we ask the browser to confirm rather than lose the text.
-window.addEventListener('beforeunload', e => {
-  if (state.saveTimeout) { e.preventDefault(); e.returnValue = ''; return ''; }
+window.addEventListener("beforeunload", (e) => {
+  if (state.saveTimeout) {
+    e.preventDefault();
+    e.returnValue = "";
+    return "";
+  }
 });
 
 // ─── INITIALIZATION ────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   marked.setOptions({
     breaks: true,
     gfm: true,
@@ -2450,12 +3085,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   marked.use({
     renderer: {
       checkbox({ checked }) {
-        return `<span class="task-check${checked ? ' on' : ''}" role="img" aria-label="${checked ? 'done' : 'to do'}"></span>`;
-      }
-    }
+        return `<span class="task-check${checked ? " on" : ""}" role="img" aria-label="${checked ? "done" : "to do"}"></span>`;
+      },
+    },
   });
 
-  document.getElementById('app').classList.add('hidden');
+  document.getElementById("app").classList.add("hidden");
 
   await fetchStore();
   initSidebarResizers();
@@ -2470,89 +3105,110 @@ document.addEventListener('DOMContentLoaded', async () => {
   setInterval(updateRuntimeIndicator, 60000);
 
   // Sidebar toggles with docked button in top-bar-left (left sidebar expanded by default)
-  const sidebarLeft = document.getElementById('sidebar-left');
-  const btnExpandLeft = document.getElementById('btn-expand-left');
-  const btnToggleLeft = document.getElementById('btn-toggle-left');
+  const sidebarLeft = document.getElementById("sidebar-left");
+  const btnExpandLeft = document.getElementById("btn-expand-left");
+  const btnToggleLeft = document.getElementById("btn-toggle-left");
 
   if (btnToggleLeft && sidebarLeft && btnExpandLeft) {
-    btnToggleLeft.addEventListener('click', () => {
-      sidebarLeft.classList.add('collapsed');
-      btnExpandLeft.classList.remove('hidden');
+    btnToggleLeft.addEventListener("click", () => {
+      sidebarLeft.classList.add("collapsed");
+      btnExpandLeft.classList.remove("hidden");
     });
-    btnExpandLeft.addEventListener('click', () => {
-      sidebarLeft.classList.remove('collapsed');
-      btnExpandLeft.classList.add('hidden');
+    btnExpandLeft.addEventListener("click", () => {
+      sidebarLeft.classList.remove("collapsed");
+      btnExpandLeft.classList.add("hidden");
     });
   }
 
   // Inspector toggle mirrors the left sidebar: an in-panel collapse button, and
   // a docked expand button in top-bar-right that only shows while collapsed.
-  const sidebarRight = document.getElementById('sidebar-right');
-  const btnToggleRight = document.getElementById('btn-toggle-right');   // in-panel collapse
-  const btnExpandRight = document.getElementById('btn-expand-right');   // docked expand
+  const sidebarRight = document.getElementById("sidebar-right");
+  const btnToggleRight = document.getElementById("btn-toggle-right"); // in-panel collapse
+  const btnExpandRight = document.getElementById("btn-expand-right"); // docked expand
   if (sidebarRight && btnToggleRight && btnExpandRight) {
     const syncRight = () =>
-      btnExpandRight.classList.toggle('hidden', !sidebarRight.classList.contains('collapsed'));
-    btnToggleRight.addEventListener('click', () => { sidebarRight.classList.add('collapsed'); syncRight(); });
-    btnExpandRight.addEventListener('click', () => { sidebarRight.classList.remove('collapsed'); syncRight(); });
+      btnExpandRight.classList.toggle(
+        "hidden",
+        !sidebarRight.classList.contains("collapsed"),
+      );
+    btnToggleRight.addEventListener("click", () => {
+      sidebarRight.classList.add("collapsed");
+      syncRight();
+    });
+    btnExpandRight.addEventListener("click", () => {
+      sidebarRight.classList.remove("collapsed");
+      syncRight();
+    });
     syncRight(); // collapsed by default → expand button visible on load
   }
 
   // ── Trash row: click toggles the panel above it; right-click offers Empty ──
-  const trashBtn = document.getElementById('btn-mode-trash');
-  const trashPanel = document.getElementById('trash-panel');
+  const trashBtn = document.getElementById("btn-mode-trash");
+  const trashPanel = document.getElementById("trash-panel");
   if (trashBtn && trashPanel) {
     // The lid opens whenever the can is "in use": panel open, or a live note
     // hovering over the row mid-drag. Same closed/open glyph convention as
     // folders; the open glyph is lin-trash-open, derived from lin-trash.
-    const trashIcon = document.getElementById('trash-row-icon');
+    const trashIcon = document.getElementById("trash-row-icon");
     const syncTrashIcon = () => {
-      const open = !trashPanel.hasAttribute('hidden') || trashBtn.classList.contains('drop-target');
+      const open =
+        !trashPanel.hasAttribute("hidden") ||
+        trashBtn.classList.contains("drop-target");
       if (trashIcon) trashIcon.innerHTML = open ? ICONS.trashOpen : ICONS.trash;
     };
-    trashBtn.addEventListener('click', () => {
-      const opening = trashPanel.hasAttribute('hidden');
-      if (opening) trashPanel.removeAttribute('hidden');
-      else trashPanel.setAttribute('hidden', '');
-      trashBtn.classList.toggle('open', opening);
-      trashBtn.setAttribute('aria-expanded', String(opening));
+    trashBtn.addEventListener("click", () => {
+      const opening = trashPanel.hasAttribute("hidden");
+      if (opening) trashPanel.removeAttribute("hidden");
+      else trashPanel.setAttribute("hidden", "");
+      trashBtn.classList.toggle("open", opening);
+      trashBtn.setAttribute("aria-expanded", String(opening));
       if (opening) renderTrashPanel();
       // Closing the panel while previewing a trashed note ends the preview; the
       // user's persisted view mode re-applies via renderActiveNote.
-      if (!opening && state.trashPreviewId) { state.trashPreviewId = null; renderAll(); }
+      if (!opening && state.trashPreviewId) {
+        state.trashPreviewId = null;
+        renderAll();
+      }
       syncTrashIcon();
     });
-    trashBtn.addEventListener('contextmenu', e => {
+    trashBtn.addEventListener("contextmenu", (e) => {
       e.preventDefault();
-      const n = state.folders.filter(f => f.trashed).length + state.notes.filter(x => x.trashed).length;
+      const n =
+        state.folders.filter((f) => f.trashed).length +
+        state.notes.filter((x) => x.trashed).length;
       if (!n) return;
       showTreeContextMenu(e.clientX, e.clientY, [
-        { label: 'Empty Trash', icon: ICONS.trash, danger: true, action: () => emptyTrash() }
+        {
+          label: "Empty Trash",
+          icon: ICONS.trash,
+          danger: true,
+          action: () => emptyTrash(),
+        },
       ]);
     });
     // Drag a LIVE note onto the row to delete it — the counterpart of dragging
     // a trashed note onto a folder to restore it. Row fills with --bg-drop and
     // the lid opens while the note hovers, mirroring the folder drop convention.
-    trashBtn.addEventListener('dragover', e => {
+    trashBtn.addEventListener("dragover", (e) => {
       if (!state.dragNoteId) return;
-      const dragged = state.notes.find(n => n.id === state.dragNoteId);
+      const dragged = state.notes.find((n) => n.id === state.dragNoteId);
       if (!dragged || dragged.trashed) return;
       e.preventDefault();
-      e.dataTransfer.dropEffect = 'move';
-      trashBtn.classList.add('drop-target');
+      e.dataTransfer.dropEffect = "move";
+      trashBtn.classList.add("drop-target");
       syncTrashIcon();
     });
-    trashBtn.addEventListener('dragleave', () => {
-      trashBtn.classList.remove('drop-target');
+    trashBtn.addEventListener("dragleave", () => {
+      trashBtn.classList.remove("drop-target");
       syncTrashIcon();
     });
-    trashBtn.addEventListener('drop', async e => {
+    trashBtn.addEventListener("drop", async (e) => {
       e.preventDefault();
       const noteId = state.dragNoteId;
       clearDragState();
-      trashBtn.classList.remove('drop-target');
+      trashBtn.classList.remove("drop-target");
       syncTrashIcon();
-      const note = state.notes.find(n => n.id === noteId);
+      const note = state.notes.find((n) => n.id === noteId);
       if (!note || note.trashed) return;
       await trashNote(note);
       syncTrashIcon();
@@ -2560,48 +3216,48 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // EXPANDABLE SEARCH BELOW EXPLORER HEADER ROW
-  const btnSearch = document.getElementById('btn-toggle-search');
-  const headerRow = document.getElementById('tree-header-row');
-  const btnSearchClose = document.getElementById('btn-search-close');
-  const searchInput = document.getElementById('search-input');
+  const btnSearch = document.getElementById("btn-toggle-search");
+  const headerRow = document.getElementById("tree-header-row");
+  const btnSearchClose = document.getElementById("btn-search-close");
+  const searchInput = document.getElementById("search-input");
 
   if (btnSearch && headerRow && searchInput) {
     const openSearch = () => {
-      headerRow.classList.add('searching');
+      headerRow.classList.add("searching");
       searchInput.focus();
     };
     const closeSearch = () => {
-      headerRow.classList.remove('searching');
-      state.searchQuery = '';
-      searchInput.value = '';
+      headerRow.classList.remove("searching");
+      state.searchQuery = "";
+      searchInput.value = "";
       renderAll();
     };
 
-    btnSearch.addEventListener('click', () => {
-      if (headerRow.classList.contains('searching')) closeSearch();
+    btnSearch.addEventListener("click", () => {
+      if (headerRow.classList.contains("searching")) closeSearch();
       else openSearch();
     });
 
-    if (btnSearchClose) btnSearchClose.addEventListener('click', closeSearch);
+    if (btnSearchClose) btnSearchClose.addEventListener("click", closeSearch);
 
     // Clicking outside the search box closes it. Previously only the X, the toggle
     // button and Escape did, so clicking away left the toolbar hidden behind a
     // search field the user had already finished with.
-    document.addEventListener('click', e => {
-      if (!headerRow.classList.contains('searching')) return;
+    document.addEventListener("click", (e) => {
+      if (!headerRow.classList.contains("searching")) return;
       if (headerRow.contains(e.target)) return;
       closeSearch();
     });
 
-    searchInput.addEventListener('blur', () => {
-      if (!searchInput.value.trim()) headerRow.classList.remove('searching');
+    searchInput.addEventListener("blur", () => {
+      if (!searchInput.value.trim()) headerRow.classList.remove("searching");
     });
 
-    searchInput.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeSearch();
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeSearch();
     });
 
-    searchInput.addEventListener('input', e => {
+    searchInput.addEventListener("input", (e) => {
       state.searchQuery = e.target.value;
       renderExplorer();
     });
@@ -2611,43 +3267,43 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Print: always the rendered note, never the editor. The @media print block does
   // the work, so this is one call and no state — and the browser's own dialog
   // supplies Save-as-PDF for free.
-  const btnPrint = document.getElementById('btn-print');
-  if (btnPrint) btnPrint.addEventListener('click', () => window.print());
+  const btnPrint = document.getElementById("btn-print");
+  if (btnPrint) btnPrint.addEventListener("click", () => window.print());
 
   // Focus mode: real fullscreen via the Fullscreen API, with both side panes out
   // of the way. The class and the button state follow the fullscreenchange EVENT,
   // not the click, because Escape and the browser's own exit are outside our
   // control and would otherwise leave the UI lying about where it is.
-  const btnFocus = document.getElementById('btn-focus');
+  const btnFocus = document.getElementById("btn-focus");
   if (btnFocus) {
-    btnFocus.addEventListener('click', async () => {
+    btnFocus.addEventListener("click", async () => {
       try {
         if (document.fullscreenElement) await document.exitFullscreen();
         else await document.documentElement.requestFullscreen();
       } catch (err) {
-        console.warn('Fullscreen refused:', err);
-        showSave('Focus mode unavailable in this browser', 'error');
+        console.warn("Fullscreen refused:", err);
+        showSave("Focus mode unavailable in this browser", "error");
       }
     });
-    document.addEventListener('fullscreenchange', () => {
+    document.addEventListener("fullscreenchange", () => {
       const on = !!document.fullscreenElement;
-      document.body.classList.toggle('focus-mode', on);
-      btnFocus.classList.toggle('active', on);
-      btnFocus.setAttribute('aria-pressed', String(on));
-      btnFocus.title = on ? 'Leave focus mode' : 'Focus mode (fullscreen)';
-      btnFocus.setAttribute('aria-label', btnFocus.title);
+      document.body.classList.toggle("focus-mode", on);
+      btnFocus.classList.toggle("active", on);
+      btnFocus.setAttribute("aria-pressed", String(on));
+      btnFocus.title = on ? "Leave focus mode" : "Focus mode (fullscreen)";
+      btnFocus.setAttribute("aria-label", btnFocus.title);
     });
   }
 
-  const btnAddTag = document.getElementById('btn-add-tag');
+  const btnAddTag = document.getElementById("btn-add-tag");
   if (btnAddTag) {
-    btnAddTag.addEventListener('click', e => {
+    btnAddTag.addEventListener("click", (e) => {
       // stopPropagation matters: without it this click reaches the document
       // handler that closes menus, and the picker would open and vanish in the
       // same tick (same reason the theme/font/auto-lock buttons stop it).
       e.stopPropagation();
-      if (state.trashPreviewId) return;   // trash preview is read-only, tags included
-      const note = state.notes.find(n => n.id === state.activeNoteId);
+      if (state.trashPreviewId) return; // trash preview is read-only, tags included
+      const note = state.notes.find((n) => n.id === state.activeNoteId);
       if (!note) return;
       const rect = btnAddTag.getBoundingClientRect();
       openTagMenu(note, rect.left, rect.bottom);
@@ -2655,15 +3311,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Live editing with auto-save
-  document.getElementById('markdown-textarea').addEventListener('input', e => {
-    renderPreview(e.target.value);
-    renderTOC();
-    renderMetrics();
-    triggerAutoSave();
-  });
+  document
+    .getElementById("markdown-textarea")
+    .addEventListener("input", (e) => {
+      renderPreview(e.target.value);
+      renderTOC();
+      renderMetrics();
+      triggerAutoSave();
+    });
 
   // New note button
-  document.getElementById('btn-new-note').addEventListener('click', () => {
+  document.getElementById("btn-new-note").addEventListener("click", () => {
     // Always creates: with no live folder, one is made. The old version picked
     // state.activeFolderId unchecked, so a note could land in a trashed folder
     // and never appear in the tree, and with no folders it silently did nothing.
@@ -2671,43 +3329,51 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // New folder button
-  document.getElementById('btn-new-folder').addEventListener('click', async () => {
-    const name = await showPromptModal('New Folder', 'Enter a name for the new folder:', '', { placeholder: 'Folder name' });
-    if (!name || !name.trim()) return;
-    const folder = { id: newId('f'), name: name.trim(), parentId: null };
-    state.folders.push(folder);
-    state.activeFolderId = folder.id;
-    state.openFolderIds.add(folder.id);
-    saveTreeState();
-    await saveStore();
-    renderAll();
-    focusTreeItem('folder:' + folder.id);
-  });
+  document
+    .getElementById("btn-new-folder")
+    .addEventListener("click", async () => {
+      const name = await showPromptModal(
+        "New Folder",
+        "Enter a name for the new folder:",
+        "",
+        { placeholder: "Folder name" },
+      );
+      if (!name || !name.trim()) return;
+      const folder = { id: newId("f"), name: name.trim(), parentId: null };
+      state.folders.push(folder);
+      state.activeFolderId = folder.id;
+      state.openFolderIds.add(folder.id);
+      saveTreeState();
+      await saveStore();
+      renderAll();
+      focusTreeItem("folder:" + folder.id);
+    });
 
   // MANDATORY E2EE LOCK SCREEN & CRYPTOGRAPHIC PASSPHRASE VALIDATION
-  const lockScreen = document.getElementById('lock-screen');
-  const lockInput = document.getElementById('lock-passphrase');
-  const lockConfirmInput = document.getElementById('lock-passphrase-confirm');
-  const lockBtn = document.getElementById('lock-unlock-btn');
-  const lockError = document.getElementById('lock-error');
+  const lockScreen = document.getElementById("lock-screen");
+  const lockInput = document.getElementById("lock-passphrase");
+  const lockConfirmInput = document.getElementById("lock-passphrase-confirm");
+  const lockBtn = document.getElementById("lock-unlock-btn");
+  const lockError = document.getElementById("lock-error");
 
   updateLockScreenUI();
-
 
   async function unlockVault() {
     // J-10: in unreachable mode the button reads Retry — attempt the fetch again.
     if (!state.storeLoaded) {
-      lockBtn.textContent = 'Retrying…';
+      lockBtn.textContent = "Retrying…";
       lockBtn.disabled = true;
       await fetchStore();
       updateLockScreenUI();
       return;
     }
-    const pass = lockInput ? lockInput.value : '';
+    const pass = lockInput ? lockInput.value : "";
 
-    lockBtn.textContent = !state.authVerifier ? 'Creating Vault…' : 'Verifying Passphrase…';
+    lockBtn.textContent = !state.authVerifier
+      ? "Creating Vault…"
+      : "Verifying Passphrase…";
     lockBtn.disabled = true;
-    lockError.classList.add('hidden');
+    lockError.classList.add("hidden");
 
     try {
       // First-time setup mints fresh per-vault KDF params (random salt).
@@ -2721,31 +3387,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (check !== AUTH_MAGIC_SENTINEL) {
           // Shake the field and keep the words for assistive tech only: the
           // visible line would cost a row of height on every failure.
-          lockError.textContent = 'Wrong passphrase';
-          lockError.classList.remove('hidden');
-          lockError.classList.add('visually-hidden');
+          lockError.textContent = "Wrong passphrase";
+          lockError.classList.remove("hidden");
+          lockError.classList.add("visually-hidden");
           if (lockInput) {
             // Clear the field, then say refused twice over in one gesture: the
             // edge turns danger and the box shakes, together, for one beat.
-            lockInput.value = '';
-            lockInput.classList.remove('shake', 'is-mismatch', 'is-matched', 'is-refused');
+            lockInput.value = "";
+            lockInput.classList.remove(
+              "shake",
+              "is-mismatch",
+              "is-matched",
+              "is-refused",
+            );
             // Gate FIRST: it repaints the button for the now-empty field and it
             // also strips these classes, so adding them after it is the only
             // order that survives.
             refreshLockGate();
-            void lockInput.offsetWidth;          // restart the animation
-            lockInput.classList.add('shake', 'is-refused');
+            void lockInput.offsetWidth; // restart the animation
+            lockInput.classList.add("shake", "is-refused");
             // A timer, not animationend: with reduced motion there is no
             // animation to end, and a throttled background tab never fires it
             // either. Duration comes from the same token that drives the shake,
             // so the two can never drift apart.
             clearTimeout(refusalTimer);
             refusalTimer = setTimeout(() => {
-              lockInput.classList.remove('shake', 'is-refused');
+              lockInput.classList.remove("shake", "is-refused");
             }, refusalHoldMs());
             lockInput.focus();
           }
-          lockBtn.textContent = 'Unlock';
+          lockBtn.textContent = "Unlock";
           lockBtn.disabled = false;
           state.encryptionKey = null;
           await clearSessionKey();
@@ -2762,7 +3433,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         // Returning user: decrypt the stored vault into memory as plaintext.
         state.encryptionKey = derived;
-        const src = state.rawStore || { folders: state.folders, notes: state.notes };
+        const src = state.rawStore || {
+          folders: state.folders,
+          notes: state.notes,
+        };
         const plain = await decryptVaultIntoState(src, derived);
         state.folders = plain.folders;
         state.notes = plain.notes;
@@ -2776,45 +3450,50 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       await settleVaultOnEntry();
 
-      await persistSessionKey(derived);   // stores the non-extractable key, not the passphrase
-      lockScreen.classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
+      await persistSessionKey(derived); // stores the non-extractable key, not the passphrase
+      lockScreen.classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
       updateVaultShield();
       renderAll();
     } catch (err) {
-      if (err && err.message === 'SECURE_CONTEXT_REQUIRED') {
-        lockError.textContent = 'Web Crypto E2EE requires HTTPS or localhost. Plain HTTP to an IP address blocks browser encryption.';
+      if (err && err.message === "SECURE_CONTEXT_REQUIRED") {
+        lockError.textContent =
+          "Web Crypto E2EE requires HTTPS or localhost. Plain HTTP to an IP address blocks browser encryption.";
       } else {
-        lockError.textContent = 'Authentication error. Access denied.';
+        lockError.textContent = "Authentication error. Access denied.";
       }
-      lockError.classList.remove('hidden');
-      lockBtn.textContent = !state.authVerifier ? 'Next' : 'Unlock';
+      lockError.classList.remove("hidden");
+      lockBtn.textContent = !state.authVerifier ? "Next" : "Unlock";
       lockBtn.disabled = !state.authVerifier;
     }
   }
 
   if (lockInput) {
-    lockInput.addEventListener('input', refreshLockGate);
-    lockInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !lockBtn.disabled) unlockVault(); });
+    lockInput.addEventListener("input", refreshLockGate);
+    lockInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !lockBtn.disabled) unlockVault();
+    });
   }
 
   if (lockConfirmInput) {
-    lockConfirmInput.addEventListener('input', refreshLockGate);
-    lockConfirmInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !lockBtn.disabled) unlockVault(); });
+    lockConfirmInput.addEventListener("input", refreshLockGate);
+    lockConfirmInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !lockBtn.disabled) unlockVault();
+    });
   }
 
-  if (lockBtn) lockBtn.addEventListener('click', unlockVault);
+  if (lockBtn) lockBtn.addEventListener("click", unlockVault);
 
   // Show/hide passphrase toggle (eye ↔ eye-slash)
-  const lockReveal = document.getElementById('lock-reveal-btn');
+  const lockReveal = document.getElementById("lock-reveal-btn");
   if (lockReveal && lockInput) {
-    lockReveal.addEventListener('click', () => {
-      const show = lockInput.type === 'password';
-      lockInput.type = show ? 'text' : 'password';
-      lockReveal.classList.toggle('revealed', show);
-      const label = show ? 'Hide passphrase' : 'Show passphrase';
+    lockReveal.addEventListener("click", () => {
+      const show = lockInput.type === "password";
+      lockInput.type = show ? "text" : "password";
+      lockReveal.classList.toggle("revealed", show);
+      const label = show ? "Hide passphrase" : "Show passphrase";
       lockReveal.title = label;
-      lockReveal.setAttribute('aria-label', label);
+      lockReveal.setAttribute("aria-label", label);
       lockInput.focus();
     });
   }
@@ -2825,104 +3504,131 @@ document.addEventListener('DOMContentLoaded', async () => {
   // carry the modifier state too, so clicking in with Caps already on reports it
   // immediately. Only KeyboardEvent and MouseEvent expose getModifierState, which
   // is why focus events cannot be used for this.
-  const lockCaps = document.getElementById('lock-capslock');
+  const lockCaps = document.getElementById("lock-capslock");
   function capsCheck(e) {
     if (!lockCaps || !e.getModifierState) return;
-    if (lockScreen && lockScreen.classList.contains('hidden')) return;
-    lockCaps.classList.toggle('hidden', !e.getModifierState('CapsLock'));
+    if (lockScreen && lockScreen.classList.contains("hidden")) return;
+    lockCaps.classList.toggle("hidden", !e.getModifierState("CapsLock"));
   }
-  document.addEventListener('keydown', capsCheck);
-  document.addEventListener('keyup', capsCheck);
-  document.addEventListener('mousedown', capsCheck);
-  [lockInput, lockConfirmInput].forEach(el => {
+  document.addEventListener("keydown", capsCheck);
+  document.addEventListener("keyup", capsCheck);
+  document.addEventListener("mousedown", capsCheck);
+  [lockInput, lockConfirmInput].forEach((el) => {
     if (!el) return;
-    el.addEventListener('keydown', capsCheck);
-    el.addEventListener('keyup', capsCheck);
+    el.addEventListener("keydown", capsCheck);
+    el.addEventListener("keyup", capsCheck);
   });
 
   // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
   async function lockVault() {
-    await flushPendingSave();   // J-02's last gap: a lock inside the debounce window must not drop the edit
-    clearSessionKey();          // wipes the stored CryptoKey + session token
+    await flushPendingSave(); // J-02's last gap: a lock inside the debounce window must not drop the edit
+    clearSessionKey(); // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
-    document.getElementById('app').classList.add('hidden');
-    lockScreen.classList.remove('hidden');
-    lockInput.value = '';
-    if (lockError) { lockError.classList.add('hidden'); lockError.classList.remove('visually-hidden'); }
+    document.getElementById("app").classList.add("hidden");
+    lockScreen.classList.remove("hidden");
+    lockInput.value = "";
+    if (lockError) {
+      lockError.classList.add("hidden");
+      lockError.classList.remove("visually-hidden");
+    }
     updateLockScreenUI();
     lockBtn.disabled = false;
   }
-  const lockVaultBtn = document.getElementById('btn-lock-vault');
+  const lockVaultBtn = document.getElementById("btn-lock-vault");
   if (lockVaultBtn) {
-    lockVaultBtn.addEventListener('click', e => { e.preventDefault(); lockVault(); });
+    lockVaultBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      lockVault();
+    });
   }
 
   // ── Idle auto-lock ──
   // Soft timeout is user-chosen (Off/5/15/30 min, default 5); a fixed 60-min
   // hard ceiling always locks even when soft is Off. Only in-tab activity counts.
-  const markActivity = () => { idleLastActivity = Date.now(); };
-  ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt =>
-    document.addEventListener(evt, markActivity, { passive: true }));
+  const markActivity = () => {
+    idleLastActivity = Date.now();
+  };
+  ["mousemove", "mousedown", "keydown", "scroll", "touchstart"].forEach((evt) =>
+    document.addEventListener(evt, markActivity, { passive: true }),
+  );
   setInterval(() => {
-    if (!state.encryptionKey) return;                          // only while unlocked
-    if (Date.now() - idleLastActivity >= getAutolockMs()) { lockVault(); return; }
-    updateVaultShield();     // the warning mark has to be able to appear on its own
+    if (!state.encryptionKey) return; // only while unlocked
+    if (Date.now() - idleLastActivity >= getAutolockMs()) {
+      lockVault();
+      return;
+    }
+    updateVaultShield(); // the warning mark has to be able to appear on its own
   }, 15000);
 
   // ── Auto-lock timeout picker (footer) ──
   const AUTOLOCK_OPTIONS = [
-    { min: 0,  label: 'Off (60 minutes)' },
-    { min: 5,  label: '5 minutes' },
-    { min: 15, label: '15 minutes' },
-    { min: 30, label: '30 minutes' },
+    { min: 0, label: "Off (60 minutes)" },
+    { min: 5, label: "5 minutes" },
+    { min: 15, label: "15 minutes" },
+    { min: 30, label: "30 minutes" },
   ];
-  const btnAutolock = document.getElementById('btn-autolock');
+  const btnAutolock = document.getElementById("btn-autolock");
   function autolockLabel() {
     const soft = autolockSoftMin();
-    if (soft <= 0) return `Auto-lock: Off (${AUTOLOCK_HARD_CEILING_MIN} minutes)`;
-    return soft < 1 ? `Auto-lock: ${Math.round(soft * 60)} seconds` : `Auto-lock: ${soft} min`;
+    if (soft <= 0)
+      return `Auto-lock: Off (${AUTOLOCK_HARD_CEILING_MIN} minutes)`;
+    return soft < 1
+      ? `Auto-lock: ${Math.round(soft * 60)} seconds`
+      : `Auto-lock: ${soft} min`;
   }
   if (btnAutolock) {
     const syncAutolockLabel = () => {
       btnAutolock.title = autolockLabel();
-      btnAutolock.setAttribute('aria-label', autolockLabel());
+      btnAutolock.setAttribute("aria-label", autolockLabel());
     };
     syncAutolockLabel();
-    btnAutolock.addEventListener('click', e => {
+    btnAutolock.addEventListener("click", (e) => {
       e.stopPropagation();
       const current = autolockSoftMin();
       const rect = btnAutolock.getBoundingClientRect();
-      const items = AUTOLOCK_OPTIONS.map(o => ({
+      const items = AUTOLOCK_OPTIONS.map((o) => ({
         label: o.label,
         // Same marking rule as the theme and font menus: colour says which one is
         // current. These entries are durations and have no glyph of their own.
         active: o.min === current,
-        icon: o.min === current ? ICONS.watchStatus : '<span class="menu-icon-blank"></span>',
+        icon:
+          o.min === current
+            ? ICONS.watchStatus
+            : '<span class="menu-icon-blank"></span>',
         action: () => {
-          localStorage.setItem('lucid-autolock-min', String(o.min));
+          localStorage.setItem("lucid-autolock-min", String(o.min));
           idleLastActivity = Date.now();
           syncAutolockLabel();
           updateVaultShield();
-        }
+        },
       }));
       showTreeContextMenu(rect.left, rect.top, items);
     });
   }
 
   // INC-43b: the status badges earn their hover — sync now / recheck health.
-  const syncBadge = document.getElementById('save-indicator');
+  const syncBadge = document.getElementById("save-indicator");
   if (syncBadge) {
-    const syncNow = () => { flushPendingSave(); saveStore(); };
-    syncBadge.addEventListener('click', syncNow);
-    syncBadge.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); syncNow(); }
+    const syncNow = () => {
+      flushPendingSave();
+      saveStore();
+    };
+    syncBadge.addEventListener("click", syncNow);
+    syncBadge.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        syncNow();
+      }
     });
   }
-  const runtimeBadge = document.getElementById('runtime-indicator');
+  const runtimeBadge = document.getElementById("runtime-indicator");
   if (runtimeBadge) {
-    runtimeBadge.addEventListener('click', updateRuntimeIndicator);
-    runtimeBadge.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); updateRuntimeIndicator(); }
+    runtimeBadge.addEventListener("click", updateRuntimeIndicator);
+    runtimeBadge.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        updateRuntimeIndicator();
+      }
     });
   }
 
@@ -2930,17 +3636,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (restored) {
     await preloadDecryptedTitles();
     await settleVaultOnEntry();
-    lockScreen.classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
+    lockScreen.classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
     updateVaultShield();
     renderAll();
   } else {
-    lockScreen.classList.remove('hidden');
+    lockScreen.classList.remove("hidden");
     updateLockScreenUI();
   }
 
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "s") {
       e.preventDefault();
       triggerAutoSave();
     }
