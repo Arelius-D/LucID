@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.8.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.7.0] - 2026-08-06
 ### Added
 - **Five standalone OKLCH theme presets**: added **Dracula** (`dracula-official`) and **Catppuccin Palette** (**Latte** `catppuccin-latte`, **Frappé** `catppuccin-frappe`, **Macchiato** `catppuccin-macchiato`, **Mocha** `catppuccin-mocha`). Each theme is declared via 30 standalone OKLCH design tokens with zero component logic changes. Paired with authentic Iconsax Linear icons (`lin-ghost.svg`, `lin-pet.svg`) vendored in `public/icons/` and inlined into `app.js`. All themes feature dynamic theme-adaptive scrollbar rules (`var(--scrollbar-thumb)`).
