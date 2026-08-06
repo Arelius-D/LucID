@@ -2901,7 +2901,7 @@ async function checkVersionAndUpdateIndicator() {
   const githubLink = document.querySelector(".footer-github-link");
   if (!githubLink) return;
 
-  let currentVersion = "2.7.0-dev";
+  let currentVersion = "2.7.0";
   try {
     const res = await fetch(apiPath("api/version"));
     if (res.ok) {
