@@ -396,13 +396,13 @@
   color-scheme: dark;
 
   --bg-base: oklch(0.268 0.027 277.5);
-  --bg-surface: oklch(0.37 0.032 277.5);
-  --bg-elevated: oklch(0.535 0.065 264.8);
-  --bg-input: oklch(0.23 0.025 277.5);
+  --bg-surface: oklch(0.23 0.025 277.5);
+  --bg-elevated: oklch(0.37 0.032 277.5);
+  --bg-input: oklch(0.21 0.023 277.5);
   --bg-hover: oklch(0.724 0.145 298.5 / 0.14);
   --bg-active: oklch(0.724 0.145 298.5 / 0.22);
   --bg-drop: oklch(0.724 0.145 298.5 / 0.34);
-  --surface-hover: oklch(0.535 0.065 264.8);
+  --surface-hover: oklch(0.37 0.032 277.5);
 
   --accent: oklch(0.724 0.145 298.5);
   --accent-hover: oklch(0.67 0.14 298);
@@ -410,8 +410,8 @@
   --on-accent: oklch(0.268 0.027 277.5);
 
   --text-primary: oklch(0.978 0.005 106.8);
-  --text-secondary: oklch(0.865 0.078 200.4);
-  --text-muted: oklch(0.72 0.05 264.8);
+  --text-secondary: oklch(0.7 0.14 290);
+  --text-muted: oklch(0.535 0.065 264.8);
 
   --border: oklch(0.978 0.005 106.8 / 0.12);
   --border-hover: oklch(0.978 0.005 106.8 / 0.24);
