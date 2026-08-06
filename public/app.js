@@ -38,7 +38,6 @@ const ICONS = {
   tickSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   copy: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"/><path d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"/></svg>`,
   sunFog: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke-width="1.5" d="M18.5 12a6.5 6.5 0 10-13 0"/><path stroke-width="2" d="M4.99 4.99l-.13-.13m14.15.13l.13-.13-.13.13zM12 2.08V2v.08zM2.08 12H2h.08zM22 12h-.08.08z"/><path stroke-width="1.5" stroke-miterlimit="10" d="M4 15h16M6 18h12M9 21h6"/></svg>`,
-  more2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9.32c1.19 0 2.16-.97 2.16-2.16C14.16 5.97 13.19 5 12 5c-1.19 0-2.16.97-2.16 2.16 0 1.19.97 2.16 2.16 2.16zM6.79 19c1.19 0 2.16-.97 2.16-2.16 0-1.19-.97-2.16-2.16-2.16-1.19 0-2.16.97-2.16 2.16 0 1.19.96 2.16 2.16 2.16zM17.21 19c1.19 0 2.16-.97 2.16-2.16 0-1.19-.97-2.16-2.16-2.16-1.19 0-2.16.97-2.16 2.16 0 1.19.97 2.16 2.16 2.16z"/></svg>`,
   pet: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.41 16.75C4.17 19.64 6.35 22 9.25 22h4.79c3.26 0 5.5-2.63 4.96-5.85-.57-3.38-3.83-6.15-7.26-6.15-3.72 0-7.02 3.04-7.33 6.75zM10.47 7.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM17.3 8.7a2 2 0 100-4 2 2 0 000 4zM21 12.7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM3.97 10.7a2 2 0 100-4 2 2 0 000 4z"/></svg>`,
   ghost: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 20.07v-7.89C22 6.58 17.5 2 12 2S2 6.58 2 12.18v7.89c0 1.26.75 1.6 1.67.76l1-.91c.37-.34.97-.34 1.34 0l2 1.83c.37.34.97.34 1.34 0l2-1.83c.37-.34.97-.34 1.34 0l2 1.83c.37.34.97.34 1.34 0l2-1.83c.37-.34.97-.34 1.34 0l1 .91c.88.84 1.63.5 1.63-.76zM8 14a6.66 6.66 0 008 0"/><path d="M12 11a2 2 0 100-4 2 2 0 000 4z"/></svg>`,
   // Sync state uses one icon family so the three states read as one indicator.
@@ -2756,7 +2755,6 @@ const THEMES = [
   { id: "dusk-ember", label: "Dusk Ember", icon: "moon", hljs: "github-dark" },
   { id: "catppuccin-mocha", label: "Catppuccin Mocha", icon: "pet", hljs: "github-dark" },
   { id: "dracula-official", label: "Dracula", icon: "ghost", hljs: "github-dark" },
-  { id: "deep-space-blue", label: "Deep Space", icon: "more2", hljs: "github-dark" },
 ];
 const DEFAULT_THEME = "dusk-ember";
 
@@ -2802,12 +2800,6 @@ function initThemePicker() {
         active: current === "dracula-official",
         icon: ICONS.ghost,
         action: () => applyTheme("dracula-official"),
-      },
-      {
-        label: "Deep Space",
-        active: current === "deep-space-blue",
-        icon: ICONS.more2,
-        action: () => applyTheme("deep-space-blue"),
       },
       { divider: true },
       {

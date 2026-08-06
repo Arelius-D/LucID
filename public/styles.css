@@ -601,48 +601,6 @@
   --scrollbar-thumb: var(--bg-elevated);
 }
 
-/* ─── THEME: Deep Space & Yale Blue (dark) ─── */
-[data-theme="deep-space-blue"] {
-  color-scheme: dark;
-
-  --bg-base: oklch(0.245 0.065 240.2);
-  --bg-surface: oklch(0.305 0.075 240.2);
-  --bg-elevated: oklch(0.365 0.085 240.2);
-  --bg-input: oklch(0.21 0.055 240);
-  --bg-hover: oklch(0.71 0.078 220.5 / 0.14);
-  --bg-active: oklch(0.71 0.078 220.5 / 0.22);
-  --bg-drop: oklch(0.71 0.078 220.5 / 0.34);
-  --surface-hover: oklch(0.365 0.085 240.2);
-
-  --accent: oklch(0.71 0.078 220.5);
-  --accent-hover: oklch(0.65 0.075 220);
-  --accent-subtle: oklch(0.71 0.078 220.5 / 0.15);
-  --on-accent: oklch(0.245 0.065 240.2);
-
-  --text-primary: oklch(0.885 0.045 220);
-  --text-secondary: oklch(0.75 0.055 220);
-  --text-muted: oklch(0.61 0.07 220);
-
-  --border: oklch(0.885 0.045 220 / 0.14);
-  --border-hover: oklch(0.885 0.045 220 / 0.26);
-  --shadow: 0 0.25rem 1rem oklch(0 0 0 / 0.35);
-  --shadow-sm: 0 0.0625rem 0.1875rem oklch(0 0 0 / 0.25);
-  --shadow-md: 0 0.125rem 0.5rem oklch(0 0 0 / 0.28);
-  --shadow-lg: 0 0.5rem 1.5rem oklch(0 0 0 / 0.4);
-  --scrim: oklch(0 0 0 / 0.65);
-  --accent-glow: oklch(0.71 0.078 220.5 / 0.45);
-  --on-danger: oklch(0.22 0.02 25);
-
-  --danger: oklch(0.68 0.18 20);
-  --save-ok: var(--accent);
-  --success: var(--accent);
-  --success-glow: oklch(0.71 0.078 220.5 / 0.32);
-  --danger-subtle: oklch(0.68 0.18 20 / 0.12);
-
-  --scrollbar-track: var(--bg-base);
-  --scrollbar-thumb: var(--bg-elevated);
-}
-
 /* ─── FONT SETS — user-selectable, mirrors the theme mechanism ───
    The picker in the sidebar footer sets data-fontset; each set assigns the
    two font tokens. Geist is the out-of-the-box default (:root). */

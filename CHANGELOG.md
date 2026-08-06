@@ -9,7 +9,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.7.0-dev] - unreleased
 
 ### Added
-- **Six standalone OKLCH theme presets**: added **Dracula** (`dracula-official`), **Catppuccin Palette** (**Latte** `catppuccin-latte`, **Frappé** `catppuccin-frappe`, **Macchiato** `catppuccin-macchiato`, **Mocha** `catppuccin-mocha`), and **Deep Space & Yale Blue** (`deep-space-blue`). Each theme is declared via 30 standalone OKLCH design tokens with zero component logic changes. Paired with 3 authentic Iconsax Linear icons (`lin-ghost.svg`, `lin-pet.svg`, `lin-more-2.svg`) vendored in `public/icons/` and inlined into `app.js`. All 9 themes feature dynamic theme-adaptive scrollbar rules (`var(--scrollbar-thumb)`).
+- **Five standalone OKLCH theme presets**: added **Dracula** (`dracula-official`) and **Catppuccin Palette** (**Latte** `catppuccin-latte`, **Frappé** `catppuccin-frappe`, **Macchiato** `catppuccin-macchiato`, **Mocha** `catppuccin-mocha`). Each theme is declared via 30 standalone OKLCH design tokens with zero component logic changes. Paired with authentic Iconsax Linear icons (`lin-ghost.svg`, `lin-pet.svg`) vendored in `public/icons/` and inlined into `app.js`. All themes feature dynamic theme-adaptive scrollbar rules (`var(--scrollbar-thumb)`).
 - **Nested Catppuccin Sub-Menu Popover**: grouped the 4 Catppuccin theme flavors into a side-by-side hover flyout sub-menu (`Catppuccin Palette`), keeping the main theme picker menu compact and preventing vertical list clipping across browser viewports.
 
 ---
