@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+- `install.sh` purge: pre-cache `sudo` credentials (`sudo -v`) before the teardown block so the password prompt no longer breaks inline `[TEARDOWN]…[OK]` output formatting.
 
 ---
 
