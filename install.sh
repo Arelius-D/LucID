@@ -98,6 +98,8 @@ if [ "$PURGE" -eq 1 ]; then
   echo -e "${RED}   LucID — Complete Environment Purge & Teardown${NC}"
   echo -e "${RED}═══════════════════════════════════════════════════════════${NC}"
   echo ""
+  # Cache sudo credentials upfront so password prompts don't break inline output
+  sudo -v
   
   echo -n "[TEARDOWN] Force stopping and removing all LucID containers... "
   if [ -d "${INSTALL_DIR}" ]; then
