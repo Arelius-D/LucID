@@ -460,18 +460,27 @@ if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
   echo -e "${GREEN}[${DDNS_STATUS}]${NC}"
 
   echo -n "[TLS] Auditing Caddy Let's Encrypt TLS certificate status... "
-  sleep 3
-  CADDY_LOGS=$(${DOCKER_CMD} logs lucid-caddy 2>&1 | tail -n 30 || true)
-  if echo "${CADDY_LOGS}" | grep -qi "certificate obtained successfully"; then
+  TLS_STATUS="OBTAINING"
+  for i in $(seq 1 6); do
+    sleep 2
+    CADDY_LOGS=$(${DOCKER_CMD} logs lucid-caddy 2>&1 | tail -n 30 || true)
+    if echo "${CADDY_LOGS}" | grep -qi "certificate obtained successfully"; then
+      TLS_STATUS="SUCCESS"
+      break
+    elif echo "${CADDY_LOGS}" | grep -qi "rate limited"; then
+      TLS_STATUS="RATE_LIMITED"
+      break
+    fi
+  done
+
+  if [ "${TLS_STATUS}" = "SUCCESS" ]; then
     echo -e "${GREEN}[ACTIVE & ISSUED]${NC}"
-  elif echo "${CADDY_LOGS}" | grep -qi "rate limited"; then
+  elif [ "${TLS_STATUS}" = "RATE_LIMITED" ]; then
     echo -e "${RED}[RATE LIMITED (Let's Encrypt 5 certs/week max hit)]${NC}"
     echo -e "  ${RED}──> WARNING: Let's Encrypt rate limit hit for ${DOMAIN_NAME}!${NC}"
     echo -e "  ${RED}──> Action required: Wait for rate limit reset OR create a NEW DuckDNS subdomain.${NC}"
-  elif echo "${CADDY_LOGS}" | grep -qi "error"; then
-    echo -e "${YELLOW}[OBTAINING / RETRYING]${NC}"
   else
-    echo -e "${GREEN}[PROVISIONING]${NC}"
+    echo -e "${YELLOW}[OBTAINING / DNS PROPAGATING]${NC}"
   fi
 fi
 
