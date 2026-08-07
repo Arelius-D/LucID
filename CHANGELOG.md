@@ -15,9 +15,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Changed
 - **Unify note icon family (`lin-document-*`)**: aligned all note creation and removal actions to the authentic `lin-document-*` family. Created `lin-document-add.svg` (plus sign `+`) for note creation (`#btn-new-note` and `ICONS.noteAdd`) and `lin-document-minus.svg` (minus dash `-`) for note removal (`ICONS.noteRemove`), maintaining identical container geometry across all note actions.
 - **Centralize SVG stroke rules in CSS**: moved default stroke properties (`stroke-width: 1.5`, `stroke-linecap: round`, `stroke-linejoin: round`, `stroke-miterlimit: 10`) under `.icon-svg` in `styles.css`, stripping 87 lines of redundant inline attributes across all 24 `<svg>` tags in `index.html` (INC-46).
+- **Streamline flyout sub-menus**: updated `.context-menu.sub-context-menu` CSS specificity to `min-width: max-content` and updated `app.js` positioning to auto-fit flyout sub-menus tightly to text labels. Simplified Catppuccin theme parent label to "Catppuccin" and removed redundant sub-menu icons.
+- **Open Graph & Twitter social card meta tags**: added `og:title`, `og:description`, `og:image`, and Twitter card metadata to `index.html` `<head>` for rich link previews when sharing the web app URL.
 
 ### Documentation
-- **Align README features and release milestones with v2.7.0**: updated `README.md` to reflect all features introduced in releases `v2.1.0` through `v2.7.0` (8 OKLCH themes, full-text body search, print to PDF, focus mode, trash can recovery, tag library picker, note pinning, code block copy button, and E2EE posture report badge) and updated release milestones.
+- **Align README features and release milestones with v2.8.0**: updated `README.md` to document single-note Markdown export, folder batch ZIP export, Open Graph tags, and Phase 3 release milestones.
 
 ---
 
