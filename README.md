@@ -121,6 +121,7 @@ LucID combines zero-trust client cryptography with transport-layer security:
 - **Four locally-served font sets.** Geist + Geist Mono (default), IBM Plex Sans, Source Sans 3, and Inter + JetBrains Mono served from host origin — zero external CDN requests.
 - **Full-text decrypted search.** Typing searches note titles, tags, and decrypted note contents simultaneously, with a flat-list dedicated search view.
 - **Print & PDF export.** Integrated print button renders note preview into a clean, un-styled printable layout for native browser Save-as-PDF without app chrome.
+- **Markdown & batch ZIP export.** Single-note `.md` Markdown download with UTF-8 BOM and zero-dependency folder batch `.zip` export.
 - **Focus mode.** True fullscreen view hiding OS/browser chrome and side panels for distraction-free writing.
 - **Trash can recovery.** Soft-deletion for notes and folders with read-only trashed preview, drag-and-drop restore, or manual empty trash.
 - **Tag library & picker.** Vault-level tag library with toggleable tag picker menu for single or multi-tag assignment without typos.
@@ -425,7 +426,7 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 ### Phase 3: Export and vault backup mechanics (in progress)
 
 - [x] **PDF export.** In-browser print engine and formatted PDF generator (`v2.6.0`).
-- [ ] **UTF-8 BOM Markdown export.** Single note download and full vault batch `.zip` export.
+- [x] **UTF-8 BOM Markdown & batch ZIP export.** Single note `.md` download with UTF-8 BOM and zero-dependency folder batch `.zip` export (`v2.8.0`).
 - [ ] **Encrypted vault backup and restore (`.lucid`).** Export full encrypted vault backups for personal cloud storage such as Nextcloud, S3, Dropbox, or a NAS, with in-browser restore.
 
 ### Phase 4: Host CLI management tool (upcoming)
