@@ -40,6 +40,10 @@ const FONTS = [
   ['@fontsource/source-code-pro', [400, 500]],
   ['@fontsource/inter',           [400, 500, 600, 700]],
   ['@fontsource/jetbrains-mono',  [400, 500]],
+  ['@fontsource/inconsolata',     [400, 500, 600, 700]],
+  ['@fontsource/cascadia-code',   [400, 500, 600, 700]],
+  ['@fontsource/nunito',          [400, 500, 600, 700]],
+  ['@fontsource/roboto-slab',     [400, 500, 600, 700]],
 ];
 
 fs.mkdirSync(STYLES, { recursive: true });
