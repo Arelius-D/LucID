@@ -1241,17 +1241,22 @@ function renderTree() {
       // Right-click context menu for Folder
       header.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-        showTreeContextMenu(e.clientX, e.clientY, [
+        const hasNotes = state.notes.some((n) => n.folderId === folder.id && !n.trashed);
+        const items = [
           {
             label: "New Note",
             icon: ICONS.noteAdd,
             action: () => createNoteInFolder(folder.id),
           },
-          {
+        ];
+        if (hasNotes) {
+          items.push({
             label: "Download (.zip)",
             icon: ICONS.box,
             action: () => downloadFolder(folder),
-          },
+          });
+        }
+        items.push(
           { divider: true },
           {
             label: "Rename",
@@ -1264,8 +1269,9 @@ function renderTree() {
             icon: ICONS.folderCross,
             danger: true,
             action: () => trashFolder(folder),
-          },
-        ]);
+          }
+        );
+        showTreeContextMenu(e.clientX, e.clientY, items);
       });
 
       wrapper.appendChild(header);
