@@ -310,10 +310,8 @@ else
       USER_DDNS_SUBDOMAIN=$(echo "${USER_DDNS_SUBDOMAIN}" | tr -d '[:space:]')
       USER_DDNS_TOKEN=$(echo "${USER_DDNS_TOKEN}" | tr -d '[:space:]')
       # Strip .duckdns.org suffix if the user typed the full domain anyway
-      USER_DDNS_SUBDOMAIN="${USER_DDNS_SUBDOMAIN%.duckdns.org}"
-      USER_DDNS_DOMAIN="${USER_DDNS_SUBDOMAIN}.duckdns.org"
-      
-      if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
+      if [ -n "${USER_DDNS_SUBDOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
+        USER_DDNS_DOMAIN="${USER_DDNS_SUBDOMAIN}.duckdns.org"
         cat << EOF > "${DDNS_DIR}/config.json"
 {
     "settings": [
