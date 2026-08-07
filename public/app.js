@@ -61,6 +61,7 @@ const ICONS = {
   trashOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-12 3 5.98)"><path d="M21 5.98c-3.33-.33-6.68-.5-10.02-.5-1.98 0-3.96.1-5.94.3L3 5.98M8.5 4.97l.22-1.31C8.88 2.71 9 2 10.69 2h2.62c1.69 0 1.82.75 1.97 1.67l.22 1.3"/></g><path d="M18.85 9.14l-.65 10.07C18.09 20.78 18 22 15.21 22H8.79C6 22 5.91 20.78 5.8 19.21L5.15 9.14M10.33 16.5h3.33M9.5 12.5h5"/></svg>`,
   documentDownload: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11v6l2-2M9 17l-2-2"/><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/></svg>`,
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
+  box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
 };
 
 const AUTH_MAGIC_SENTINEL = "LUCID_VAULT_AUTHENTICATED_V1";
@@ -1242,18 +1243,24 @@ function renderTree() {
         e.preventDefault();
         showTreeContextMenu(e.clientX, e.clientY, [
           {
-            label: "New Note in Folder",
+            label: "New Note",
             icon: ICONS.noteAdd,
             action: () => createNoteInFolder(folder.id),
           },
           {
-            label: "Rename Folder",
+            label: "Download (.zip)",
+            icon: ICONS.box,
+            action: () => downloadFolder(folder),
+          },
+          { divider: true },
+          {
+            label: "Rename",
             icon: ICONS.edit,
             action: () => renameFolder(folder),
           },
           { divider: true },
           {
-            label: "Delete Folder",
+            label: "Delete",
             icon: ICONS.folderCross,
             danger: true,
             action: () => trashFolder(folder),
@@ -1919,6 +1926,120 @@ function downloadNote(note) {
   const filename = `${rawTitle.replace(/[/\\?%*:|"<>]/g, "-")}.md`;
   const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function crc32(str) {
+  const bytes = new TextEncoder().encode(str);
+  let crc = -1;
+  for (let i = 0; i < bytes.length; i++) {
+    crc ^= bytes[i];
+    for (let j = 0; j < 8; j++) {
+      crc = (crc >>> 1) ^ (crc & 1 ? 0xedb88320 : 0);
+    }
+  }
+  return (crc ^ -1) >>> 0;
+}
+
+function createZipBlob(files) {
+  const encoder = new TextEncoder();
+  const parts = [];
+  const centralDir = [];
+  let offset = 0;
+
+  files.forEach((file) => {
+    const nameBytes = encoder.encode(file.name);
+    const dataBytes = encoder.encode(file.content);
+    const crc = crc32(file.content);
+    const size = dataBytes.length;
+
+    const header = new Uint8Array(30 + nameBytes.length);
+    const view = new DataView(header.buffer);
+    view.setUint32(0, 0x04034b50, true);
+    view.setUint16(4, 20, true);
+    view.setUint16(6, 0, true);
+    view.setUint16(8, 0, true);
+    view.setUint16(10, 0, true);
+    view.setUint16(12, 0, true);
+    view.setUint32(14, crc, true);
+    view.setUint32(18, size, true);
+    view.setUint32(22, size, true);
+    view.setUint16(26, nameBytes.length, true);
+    view.setUint16(28, 0, true);
+    header.set(nameBytes, 30);
+
+    parts.push(header, dataBytes);
+
+    const cd = new Uint8Array(46 + nameBytes.length);
+    const cdView = new DataView(cd.buffer);
+    cdView.setUint32(0, 0x02014b50, true);
+    cdView.setUint16(4, 20, true);
+    cdView.setUint16(6, 20, true);
+    cdView.setUint16(8, 0, true);
+    cdView.setUint16(10, 0, true);
+    cdView.setUint16(12, 0, true);
+    cdView.setUint16(14, 0, true);
+    cdView.setUint32(16, crc, true);
+    cdView.setUint32(20, size, true);
+    cdView.setUint32(24, size, true);
+    cdView.setUint16(28, nameBytes.length, true);
+    cdView.setUint16(30, 0, true);
+    cdView.setUint16(32, 0, true);
+    cdView.setUint16(34, 0, true);
+    cdView.setUint16(36, 0, true);
+    cdView.setUint32(38, 0, true);
+    cdView.setUint32(42, offset, true);
+    cd.set(nameBytes, 46);
+
+    centralDir.push(cd);
+    offset += header.length + dataBytes.length;
+  });
+
+  const cdStart = offset;
+  let cdSize = 0;
+  centralDir.forEach((cd) => {
+    parts.push(cd);
+    cdSize += cd.length;
+  });
+
+  const eocd = new Uint8Array(22);
+  const eocdView = new DataView(eocd.buffer);
+  eocdView.setUint32(0, 0x06054b50, true);
+  eocdView.setUint16(4, 0, true);
+  eocdView.setUint16(6, 0, true);
+  eocdView.setUint16(8, files.length, true);
+  eocdView.setUint16(10, files.length, true);
+  eocdView.setUint32(12, cdSize, true);
+  eocdView.setUint32(16, cdStart, true);
+  eocdView.setUint16(20, 0, true);
+
+  parts.push(eocd);
+  return new Blob(parts, { type: "application/zip" });
+}
+
+function downloadFolder(folder) {
+  if (!folder) return;
+  const folderNotes = state.notes.filter(
+    (n) => n.folderId === folder.id && !n.trashed
+  );
+  if (folderNotes.length === 0) return;
+
+  const files = folderNotes.map((note) => ({
+    name: `${(note.title || "Untitled").replace(/[/\\?%*:|"<>]/g, "-")}.md`,
+    content: note.content || "",
+  }));
+
+  const zipBlob = createZipBlob(files);
+  const rawFolderName = folder.name || "Folder";
+  const filename = `${rawFolderName.replace(/[/\\?%*:|"<>]/g, "-")}.zip`;
+
+  const url = URL.createObjectURL(zipBlob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
