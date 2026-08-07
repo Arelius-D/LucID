@@ -108,7 +108,7 @@ Most note applications force a tradeoff between data privacy and remote access:
 
 LucID combines zero-trust client cryptography with transport-layer security:
 
-- **Zero-trust data at rest.** Note titles, note contents, tags, and folder names are all encrypted inside your browser using AES-256-GCM, with keys derived via PBKDF2-HMAC-SHA256 at 600,000 iterations using a random per-vault salt. The server receives only ciphertext. It never sees your master passphrase or any readable content.
+- **Zero-trust data at rest.** Note titles, note contents, tags, folder names, and pinned states are all encrypted inside your browser using AES-256-GCM, with keys derived via PBKDF2-HMAC-SHA256 at 600,000 iterations using a random per-vault salt. The server receives only ciphertext. It never sees your master passphrase or any readable content.
 - **In-transit protection.** TLS over HTTPS encrypts every exchange on the network, on top of the payload encryption already applied in the browser.
 
 ---
@@ -116,14 +116,20 @@ LucID combines zero-trust client cryptography with transport-layer security:
 ## Key Features
 
 - **100% free and open source.** No paid tiers, no locked features, no tracking, no telemetry.
-- **Client-side E2EE.** The native Web Crypto API (`crypto.subtle`) encrypts your data locally before anything is transmitted.
-- **Zero third-party requests.** Every script and every font is served from your own host - no external CDN can inject code into the application, and no outside party sees your traffic. Typography ships as four locally-served font sets (Geist by default, IBM Plex, Source, and Inter + JetBrains), selectable from the sidebar footer.
+- **Client-side E2EE.** Native Web Crypto API (`crypto.subtle`) encrypts your data locally before anything is transmitted.
+- **Eight standalone OKLCH themes.** Dusk Ember (dark), Amber Hour (twilight), Warm Linen (light), Dracula, and four Catppuccin palette flavors (Latte, Frappé, Macchiato, Mocha) grouped in a flyout menu with theme-adaptive scrollbars.
+- **Four locally-served font sets.** Geist + Geist Mono (default), IBM Plex Sans, Source Sans 3, and Inter + JetBrains Mono served from host origin — zero external CDN requests.
+- **Full-text decrypted search.** Typing searches note titles, tags, and decrypted note contents simultaneously, with a flat-list dedicated search view.
+- **Print & PDF export.** Integrated print button renders note preview into a clean, un-styled printable layout for native browser Save-as-PDF without app chrome.
+- **Focus mode.** True fullscreen view hiding OS/browser chrome and side panels for distraction-free writing.
+- **Trash can recovery.** Soft-deletion for notes and folders with read-only trashed preview, drag-and-drop restore, or manual empty trash.
+- **Tag library & picker.** Vault-level tag library with toggleable tag picker menu for single or multi-tag assignment without typos.
+- **Note pinning.** Pin notes to a dedicated third explorer view alongside Folders and Tags.
+- **Code block copy button.** Hover copy control on fenced code blocks in preview with instant tick feedback.
+- **E2EE posture & idle auto-lock.** Dynamic lock glyph reporting auto-lock posture (keyhole armed, shield off/60-min floor, X eviction warning) with configurable timeouts (off, 5, 15, or 30 minutes).
 - **Automated dynamic DNS stack.** Integrates [DDNS Updater](https://github.com/qdm12/ddns-updater) for free domain IP syncing, with zero-touch [Caddy](https://github.com/caddyserver/caddy) Let's Encrypt TLS.
-- **Native Markdown.** Full support for code blocks, tables, task lists, and blockquotes, with syntax highlighting.
+- **Native Markdown.** Full support for code blocks with syntax highlighting, task lists, tables, and blockquotes.
 - **Dual split views.** Toggle between side-by-side and top-bottom editor layouts.
-- **Folders and tags.** Organised hierarchy, with a third view for pinned notes and instant search across note titles and tags.
-- **Idle auto-lock.** Configurable inactivity timeout (off, 5, 15, or 30 minutes) with a fixed 60-minute hard ceiling that applies even when the timeout is disabled.
-- **Three themes.** Dusk Ember (dark), Amber Hour (twilight) and Warm Linen (light) — picked from the footer, applied before first paint.
 
 ---
 
@@ -191,7 +197,7 @@ sequenceDiagram
 
     User->>Crypto: Master passphrase (never leaves the browser, never stored)
     Crypto->>Crypto: PBKDF2-SHA256, 600,000 iterations, random per-vault salt
-    Crypto->>Crypto: AES-256-GCM encrypt titles, bodies, tags and folder names
+    Crypto->>Crypto: AES-256-GCM encrypt titles, bodies, tags, folder names, pinned flags
     Crypto->>Caddy: HTTPS request carrying ciphertext only
     Caddy->>Caddy: Automatic Let's Encrypt TLS provisioning
     Caddy->>Server: Reverse proxy to app:3000 on the compose network (sole ingress)
@@ -207,6 +213,7 @@ sequenceDiagram
 | Note contents | Encrypted (AES-256-GCM) |
 | Tags | Encrypted (AES-256-GCM) |
 | Folder names | Encrypted (AES-256-GCM) |
+| Pinned flags | Encrypted (AES-256-GCM) |
 | Master passphrase | Never transmitted and never stored, anywhere |
 | Record IDs and timestamps | Plaintext. Randomly generated or timestamp-derived, so they describe nothing |
 | KDF parameters (salt, iterations) | Plaintext by design. A salt is not a secret and must be readable to derive your key |
@@ -236,7 +243,7 @@ While unlocked, the non-extractable key is held in IndexedDB and gated by a per-
 
 > This section states the maintainer's dependency policy. Draft wording, to be finalised.
 
-LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and three vendored libraries in the browser. Everything else is written in-house.
+LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and 11 vendored browser packages (3 runtime libraries and 8 font packages across 4 font sets). Everything else is written in-house.
 
 **Policy: always prefer the latest version.** An out-of-date dependency is treated as a standing vulnerability. When a new version ships it is usually because a bug, an issue, or a security flaw was fixed, and staying behind means knowingly serving that flaw to users. Major versions are therefore not held back. If a major upgrade breaks the build, that breakage is caught by CI and fixed. A broken build is a problem for the maintainer. An outdated dependency is a problem for every user.
 
@@ -396,23 +403,29 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 - [x] Zero-touch Let's Encrypt TLS reverse proxy.
 - [x] Zero-touch automated installer and complete purge teardown utility.
 
-### Phase 2: Security hardening and vault format v2 (completed in 2.0.0)
+### Phase 2: Security hardening, vault format v2 & feature evolution (completed in 2.0.0 – 2.7.0)
 
-- [x] Full-vault encryption. Tags and folder names are now encrypted alongside titles and contents.
-- [x] Random per-vault PBKDF2 salt, replacing a shared hardcoded salt.
-- [x] PBKDF2 iterations raised from 100,000 to 600,000.
-- [x] Master passphrase no longer stored. A non-extractable CryptoKey is held in IndexedDB instead.
-- [x] Rendered Markdown sanitised with DOMPurify, backed by a strict Content-Security-Policy.
-- [x] All browser libraries vendored and version-pinned. No third-party CDNs.
-- [x] Cross-origin vault access closed, services bound to loopback.
-- [x] Atomic vault writes, corrupt-store protection, and honest save reporting.
-- [x] Accessible names, dialog semantics, live regions, and visible keyboard focus.
-- [x] Automated dependency updates and a CI vulnerability gate.
+- [x] Full-vault encryption (titles, bodies, tags, folder names, pinned flags encrypted client-side).
+- [x] Random per-vault PBKDF2 salt (600,000 iterations), non-extractable CryptoKey in IndexedDB (`v2.0.0`).
+- [x] Rendered Markdown sanitised with DOMPurify, backed by a strict Content-Security-Policy (`v2.0.0`).
+- [x] Note Pinning and dedicated Pinned Explorer view (`v2.1.0`).
+- [x] Trash can soft-deletion, read-only trashed preview, and drag-and-drop restore (`v2.2.0`).
+- [x] Four locally-served font sets (Geist, IBM Plex, Source, Inter+JetBrains Mono) with in-app picker (`v2.2.0`).
+- [x] Amber Hour twilight theme & footer theme picker menu (`v2.3.0`).
+- [x] License changed to AGPL-3.0-only (`v2.3.0`).
+- [x] Vault-level tag library and single-click tag assignment picker menu (`v2.4.0`).
+- [x] Lock screen UX refactor with inline Caps Lock detection & heartbeat server-unreachable mode (`v2.5.0`).
+- [x] Print note preview / browser Save-as-PDF engine (`v2.6.0`).
+- [x] Full-text search across decrypted note bodies with flat-list search view (`v2.6.0`).
+- [x] Focus Mode true fullscreen view (`v2.6.0`).
+- [x] Copy-to-clipboard button on fenced code blocks (`v2.6.0`).
+- [x] Dynamic auto-lock posture indicator (keyhole / shield / X eviction warning) (`v2.6.0`).
+- [x] 8 Standalone OKLCH themes including Dracula & Catppuccin palette (Latte, Frappé, Macchiato, Mocha) (`v2.7.0`).
 
-### Phase 3: Export and vault backup mechanics (upcoming)
+### Phase 3: Export and vault backup mechanics (in progress)
 
+- [x] **PDF export.** In-browser print engine and formatted PDF generator (`v2.6.0`).
 - [ ] **UTF-8 BOM Markdown export.** Single note download and full vault batch `.zip` export.
-- [ ] **PDF export.** In-browser print engine and formatted PDF generator.
 - [ ] **Encrypted vault backup and restore (`.lucid`).** Export full encrypted vault backups for personal cloud storage such as Nextcloud, S3, Dropbox, or a NAS, with in-browser restore.
 
 ### Phase 4: Host CLI management tool (upcoming)
