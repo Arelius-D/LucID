@@ -6,8 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.8.0-dev] - unreleased
-
+## [2.8.0] - 2026-08-07
 ### Added
 - **Single note Markdown download (.md)**: added a download action button (`btn-download`) in the center toolbar beside the Print button using `lin-document-download.svg`. Added **Download** and **Print** directly into the note right-click context menu across all tree views with clean, concise menu labels.
 - **Folder batch .zip export**: added client-side zero-dependency `.zip` file generator (`createZipBlob`) and **Download (.zip)** action to folder right-click context menus using `lin-box.svg`, allowing instant batch download of all notes within any folder.
