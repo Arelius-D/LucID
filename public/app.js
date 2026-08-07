@@ -2965,13 +2965,12 @@ function initThemePicker() {
       },
       { divider: true },
       {
-        label: "Catppuccin Palette",
+        label: "Catppuccin",
         active: isCatppuccinActive,
         icon: ICONS.pet,
         submenuItems: catppuccinFlavors.map((f) => ({
           label: f.label,
           active: f.id === current,
-          icon: ICONS.pet,
           action: () => applyTheme(f.id),
         })),
       },
