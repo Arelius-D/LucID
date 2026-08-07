@@ -1734,8 +1734,10 @@ function openSubmenuForItem(parentBtn, subItems) {
   document.body.appendChild(subMenu);
   activeSubmenuEl = subMenu;
 
-  const left = Math.min(rect.right + 4, window.innerWidth - 200);
-  const top = Math.min(rect.top, window.innerHeight - 180);
+  const subWidth = subMenu.offsetWidth || 140;
+  const subHeight = subMenu.offsetHeight || 180;
+  const left = Math.min(rect.right + 4, window.innerWidth - subWidth - 8);
+  const top = Math.min(rect.top, window.innerHeight - subHeight - 8);
   subMenu.style.left = left + "px";
   subMenu.style.top = top + "px";
   subMenu.style.position = "fixed";
