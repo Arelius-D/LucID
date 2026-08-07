@@ -2992,6 +2992,10 @@ const FONT_SETS = [
   { id: "plex", label: "IBM Plex Sans + IBM Plex Mono" },
   { id: "source", label: "Source Sans 3 + Source Code Pro" },
   { id: "inter", label: "Inter + JetBrains Mono" },
+  { id: "terminal", label: "Meslo / Inconsolata Terminal" },
+  { id: "cascadia", label: "Cascadia Code" },
+  { id: "nunito", label: "Nunito (Soft Rounded)" },
+  { id: "slab", label: "Roboto Slab (Industrial)" },
 ];
 const DEFAULT_FONT_SET = "geist";
 

@@ -179,17 +179,141 @@
 @font-face {
   font-family: "JetBrains Mono";
   font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("vendor/fonts/jetbrains-mono/jetbrains-mono-latin-400-normal.woff2")
-    format("woff2");
-}
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
   font-weight: 500;
   font-display: swap;
   src: url("vendor/fonts/jetbrains-mono/jetbrains-mono-latin-500-normal.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Inconsolata";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/inconsolata/inconsolata-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Inconsolata";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/inconsolata/inconsolata-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Inconsolata";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/inconsolata/inconsolata-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Inconsolata";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/inconsolata/inconsolata-latin-700-normal.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/cascadia-code/cascadia-code-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/cascadia-code/cascadia-code-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/cascadia-code/cascadia-code-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Cascadia Code";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/cascadia-code/cascadia-code-latin-700-normal.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/nunito/nunito-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/nunito/nunito-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/nunito/nunito-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/nunito/nunito-latin-700-normal.woff2")
+    format("woff2");
+}
+
+@font-face {
+  font-family: "Roboto Slab";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("vendor/fonts/roboto-slab/roboto-slab-latin-400-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Roboto Slab";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("vendor/fonts/roboto-slab/roboto-slab-latin-500-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Roboto Slab";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("vendor/fonts/roboto-slab/roboto-slab-latin-600-normal.woff2")
+    format("woff2");
+}
+@font-face {
+  font-family: "Roboto Slab";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("vendor/fonts/roboto-slab/roboto-slab-latin-700-normal.woff2")
     format("woff2");
 }
 
@@ -620,6 +744,22 @@
 [data-fontset="inter"] {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+[data-fontset="terminal"] {
+  --font-sans: "Inconsolata", ui-monospace, monospace;
+  --font-mono: "Inconsolata", ui-monospace, monospace;
+}
+[data-fontset="cascadia"] {
+  --font-sans: "Cascadia Code", ui-monospace, monospace;
+  --font-mono: "Cascadia Code", ui-monospace, monospace;
+}
+[data-fontset="nunito"] {
+  --font-sans: "Nunito", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+[data-fontset="slab"] {
+  --font-sans: "Roboto Slab", Georgia, serif;
+  --font-mono: "Source Code Pro", ui-monospace, monospace;
 }
 
 /* ─── RESETS & BASE ────────────────────────────── */
