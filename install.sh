@@ -302,11 +302,16 @@ else
     echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
     read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS < "$TTY_DEV" || true
     if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
-      read -p "  - Enter DuckDNS Domain (e.g. lucid-selfhosted.duckdns.org): " USER_DDNS_DOMAIN < "$TTY_DEV" || true
+      read -p "  - Enter DuckDNS Subdomain (e.g. lucid-selfhosted): " USER_DDNS_SUBDOMAIN < "$TTY_DEV" || true
+      echo ""
       read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN < "$TTY_DEV" || true
+      echo ""
       # Clean input strings (strip whitespace / line breaks)
-      USER_DDNS_DOMAIN=$(echo "${USER_DDNS_DOMAIN}" | tr -d '[:space:]')
+      USER_DDNS_SUBDOMAIN=$(echo "${USER_DDNS_SUBDOMAIN}" | tr -d '[:space:]')
       USER_DDNS_TOKEN=$(echo "${USER_DDNS_TOKEN}" | tr -d '[:space:]')
+      # Strip .duckdns.org suffix if the user typed the full domain anyway
+      USER_DDNS_SUBDOMAIN="${USER_DDNS_SUBDOMAIN%.duckdns.org}"
+      USER_DDNS_DOMAIN="${USER_DDNS_SUBDOMAIN}.duckdns.org"
       
       if [ -n "${USER_DDNS_DOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
         cat << EOF > "${DDNS_DIR}/config.json"
@@ -433,7 +438,7 @@ if [ -n "$SUDO_USER" ]; then
 fi
 sudo chown -R "${LUCID_UID}:${LUCID_GID}" ./data 2>/dev/null || chown -R "${LUCID_UID}:${LUCID_GID}" ./data 2>/dev/null || true
 
-# 12. Post-Deploy Health Check & DNS Resolution Audit
+# 12. Post-Deploy Health Check, TLS Audit & DNS Resolution Audit
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
   echo ""
   echo -n "[AUDIT] Auditing DNS resolution for domain ${DOMAIN_NAME}... "
@@ -453,6 +458,21 @@ if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
   echo -n "[HEALTH] Auditing ddns-updater container status... "
   DDNS_STATUS=$(${DOCKER_CMD} inspect --format='{{.State.Health.Status}}' lucid-ddns 2>/dev/null || echo "running")
   echo -e "${GREEN}[${DDNS_STATUS}]${NC}"
+
+  echo -n "[TLS] Auditing Caddy Let's Encrypt TLS certificate status... "
+  sleep 3
+  CADDY_LOGS=$(${DOCKER_CMD} logs lucid-caddy 2>&1 | tail -n 30 || true)
+  if echo "${CADDY_LOGS}" | grep -qi "certificate obtained successfully"; then
+    echo -e "${GREEN}[ACTIVE & ISSUED]${NC}"
+  elif echo "${CADDY_LOGS}" | grep -qi "rate limited"; then
+    echo -e "${RED}[RATE LIMITED (Let's Encrypt 5 certs/week max hit)]${NC}"
+    echo -e "  ${RED}──> WARNING: Let's Encrypt rate limit hit for ${DOMAIN_NAME}!${NC}"
+    echo -e "  ${RED}──> Action required: Wait for rate limit reset OR create a NEW DuckDNS subdomain.${NC}"
+  elif echo "${CADDY_LOGS}" | grep -qi "error"; then
+    echo -e "${YELLOW}[OBTAINING / RETRYING]${NC}"
+  else
+    echo -e "${GREEN}[PROVISIONING]${NC}"
+  fi
 fi
 
 echo ""
@@ -463,6 +483,10 @@ echo ""
 if [ "${DOMAIN_NAME}" != "${DETECTED_IP}" ]; then
   echo -e "  ${BOLD}${MAGENTA}[URL]  Primary production URL (Caddy + Let's Encrypt TLS):${NC}"
   echo -e "         ${CYAN}${BOLD}https://${DOMAIN_NAME}${NC}"
+  echo ""
+else
+  echo -e "  ${BOLD}${YELLOW}[URL]  Direct IP Access (No HTTPS/E2EE - Domain required for remote E2EE):${NC}"
+  echo -e "         ${YELLOW}http://${DETECTED_IP}:${PORT}${NC}"
   echo ""
 fi
 echo -e "  [DIR]  Installed directory:    ${GREEN}${INSTALL_DIR}${NC}"
