@@ -59,6 +59,8 @@ const ICONS = {
   // Open state derived from lin-trash: lid+handle rotated -12deg about the lid's
   // left hinge, path data unmodified (Iconsax draws no open-trash glyph).
   trashOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><g transform="rotate(-12 3 5.98)"><path d="M21 5.98c-3.33-.33-6.68-.5-10.02-.5-1.98 0-3.96.1-5.94.3L3 5.98M8.5 4.97l.22-1.31C8.88 2.71 9 2 10.69 2h2.62c1.69 0 1.82.75 1.97 1.67l.22 1.3"/></g><path d="M18.85 9.14l-.65 10.07C18.09 20.78 18 22 15.21 22H8.79C6 22 5.91 20.78 5.8 19.21L5.15 9.14M10.33 16.5h3.33M9.5 12.5h5"/></svg>`,
+  documentDownload: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11v6l2-2M9 17l-2-2"/><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/></svg>`,
+  printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
 };
 
 const AUTH_MAGIC_SENTINEL = "LUCID_VAULT_AUTHENTICATED_V1";
@@ -1910,6 +1912,23 @@ async function renameNote(note) {
 }
 
 // The right-click menu for a note, identical in every view. Items reflect state
+function downloadNote(note) {
+  if (!note) return;
+  const content = note.content || "";
+  const rawTitle = note.title || "Untitled";
+  const filename = `${rawTitle.replace(/[/\\?%*:|"<>]/g, "-")}.md`;
+  const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// The right-click menu for a note, identical in every view. Items reflect state
 // rather than listing both halves of a toggle: a pinned note offers only Remove
 // Pin, a note with no tags offers no Remove Tag. Offering an action that cannot
 // apply is the same defect as hiding one that can.
@@ -1926,15 +1945,31 @@ function noteContextItems(note) {
       keepOpen: true,
       action: () => openTagMenu(note, lastMenuX, lastMenuY),
     },
+    {
+      label: "Download",
+      icon: ICONS.documentDownload,
+      action: () => downloadNote(note),
+    },
+    {
+      label: "Print",
+      icon: ICONS.printer,
+      action: () => {
+        if (state.activeNoteId !== note.id) {
+          state.activeNoteId = note.id;
+          renderAll();
+        }
+        window.print();
+      },
+    },
   ];
   items.push({
-    label: "Rename Note",
+    label: "Rename",
     icon: ICONS.edit,
     action: () => renameNote(note),
   });
   items.push({ divider: true });
   items.push({
-    label: "Delete Note",
+    label: "Delete",
     icon: ICONS.noteRemove,
     danger: true,
     action: () => trashNote(note),
@@ -3256,6 +3291,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // Interactive Tag Add Button
+  // Download: exports the active note as a UTF-8 Markdown file (.md).
+  const btnDownload = document.getElementById("btn-download");
+  if (btnDownload) {
+    btnDownload.addEventListener("click", () => {
+      const activeNote = state.notes.find((n) => n.id === state.activeNoteId);
+      if (activeNote) downloadNote(activeNote);
+    });
+  }
+
   // Print: always the rendered note, never the editor. The @media print block does
   // the work, so this is one call and no state — and the browser's own dialog
   // supplies Save-as-PDF for free.
