@@ -152,7 +152,7 @@ function writeData(data) {
 }
 
 const pkg = require('./package.json');
-const APP_VERSION = process.env.VERSION || pkg.version || '2.9.0';
+const APP_VERSION = process.env.VERSION || pkg.version || '2.10.0-dev';
 
 // REST Endpoints
 app.get('/api/version', (req, res) => {
