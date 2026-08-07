@@ -8,6 +8,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.8.0-dev] - unreleased
 
+### Added
+- **Single note Markdown download (.md)**: added a download action button (`btn-download`) in the center toolbar beside the Print button using `lin-document-download.svg`. Added **Download** and **Print** directly into the note right-click context menu across all tree views with clean, concise menu labels.
+
 ### Documentation
 - **Align README features and release milestones with v2.7.0**: updated `README.md` to reflect all features introduced in releases `v2.1.0` through `v2.7.0` (8 OKLCH themes, full-text body search, print to PDF, focus mode, trash can recovery, tag library picker, note pinning, code block copy button, and E2EE posture report badge) and updated release milestones.
 
