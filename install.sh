@@ -16,6 +16,11 @@
 
 set -e
 
+# Force stdin to read directly from /dev/tty if piped via curl ... | bash
+if [ ! -t 0 ] && [ -c /dev/tty ]; then
+  exec < /dev/tty
+fi
+
 # Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -295,17 +300,14 @@ EOF
   export DOMAIN_NAME="${DUCKDNS_DOMAIN}"
 else
   # Force reading interactive prompts from /dev/tty if available
-  TTY_DEV="/dev/tty"
-  if [ -c "$TTY_DEV" ]; then
+  if [ -t 0 ] || [ -c /dev/tty ]; then
     echo ""
     echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
     echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
-    read -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS < "$TTY_DEV" || true
+    read -r -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS || true
     if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
-      read -p "  - Enter DuckDNS Subdomain (e.g. lucid-selfhosted): " USER_DDNS_SUBDOMAIN < "$TTY_DEV" || true
-      echo ""
-      read -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN < "$TTY_DEV" || true
-      echo ""
+      read -r -p "  - Enter DuckDNS Subdomain (e.g. lucid-selfhosted): " USER_DDNS_SUBDOMAIN || true
+      read -r -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN || true
       # Clean input strings (strip whitespace / line breaks)
       USER_DDNS_SUBDOMAIN=$(echo "${USER_DDNS_SUBDOMAIN}" | tr -d '[:space:]')
       USER_DDNS_TOKEN=$(echo "${USER_DDNS_TOKEN}" | tr -d '[:space:]')
