@@ -1929,13 +1929,12 @@ function downloadNote(note) {
 }
 
 // The right-click menu for a note, identical in every view. Items reflect state
-// rather than listing both halves of a toggle: a pinned note offers only Remove
-// Pin, a note with no tags offers no Remove Tag. Offering an action that cannot
-// apply is the same defect as hiding one that can.
+// rather than listing both halves of a toggle: a pinned note offers Unpin, an
+// unpinned note offers Pin.
 function noteContextItems(note) {
-  const items = [
+  return [
     {
-      label: note.pinned ? "Remove Pin" : "Pin Note",
+      label: note.pinned ? "Unpin" : "Pin",
       icon: note.pinned ? ICONS.pinRemove : ICONS.pinAdd,
       action: () => togglePin(note),
     },
@@ -1945,6 +1944,7 @@ function noteContextItems(note) {
       keepOpen: true,
       action: () => openTagMenu(note, lastMenuX, lastMenuY),
     },
+    { divider: true },
     {
       label: "Download",
       icon: ICONS.documentDownload,
@@ -1961,20 +1961,20 @@ function noteContextItems(note) {
         window.print();
       },
     },
+    { divider: true },
+    {
+      label: "Rename",
+      icon: ICONS.edit,
+      action: () => renameNote(note),
+    },
+    { divider: true },
+    {
+      label: "Delete",
+      icon: ICONS.noteRemove,
+      danger: true,
+      action: () => trashNote(note),
+    },
   ];
-  items.push({
-    label: "Rename",
-    icon: ICONS.edit,
-    action: () => renameNote(note),
-  });
-  items.push({ divider: true });
-  items.push({
-    label: "Delete",
-    icon: ICONS.noteRemove,
-    danger: true,
-    action: () => trashNote(note),
-  });
-  return items;
 }
 
 // ─── TAGS ──────────────────────────────────────────
