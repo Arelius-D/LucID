@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+- `install.sh` DuckDNS Onboarding: simplified prompt to enter subdomain (automatically appends `.duckdns.org` or strips duplicated domain suffixes), added explicit newline padding so tokens do not bleed into subsequent configuration lines, added Caddy TLS Let's Encrypt rate-limit audit (`[TLS]`), and ensured primary HTTPS URL is always displayed in the final summary banner.
 - `install.sh` purge: pre-cache `sudo` credentials (`sudo -v`) before the teardown block so the password prompt no longer breaks inline `[TEARDOWN]…[OK]` output formatting.
 
 ---
