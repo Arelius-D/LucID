@@ -1295,8 +1295,8 @@ select:focus-visible,
 .context-menu.hidden {
   display: none;
 }
-.sub-context-menu {
-  min-width: auto;
+.context-menu.sub-context-menu {
+  min-width: max-content;
   white-space: nowrap;
 }
 

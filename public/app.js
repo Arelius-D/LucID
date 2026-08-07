@@ -1713,6 +1713,7 @@ function openSubmenuForItem(parentBtn, subItems) {
   subMenu.style.flexDirection = "column";
   subMenu.style.gap = "0.125rem";
   subMenu.style.padding = "0.25rem";
+  subMenu.style.minWidth = "max-content";
 
   subItems.forEach((item) => {
     const btn = document.createElement("button");
