@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.12.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.11.0] - 2026-08-08
 ### Added
 - **Bi-Directional Synchronized Scrolling & Cursor Following**: Added real-time proportional scroll syncing between the Markdown Editor (`#markdown-textarea`) and HTML Preview (`#markdown-preview`) in Split View mode with re-entrant loop protection guards and smooth cursor line auto-tracking.
