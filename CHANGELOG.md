@@ -17,6 +17,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Interactive Font Size Stepper (`lin-computing`)**: Added a dual-zone diagonal stepper button (`lin-computing.svg`) in the sidebar footer next to the font family picker. Clicking the top-left corner (`-`) or bottom-right corner (`+`) steps through 4 relational `rem` size presets (`0.8125rem`, `0.9375rem`, `1.125rem`, `1.3125rem`) with automatic `localStorage` persistence and live toast feedback.
 
 ### Fixed
+- **Dynamic Context & Font Menu Positioning**: Replaced hardcoded 200px menu offset in `showTreeContextMenu` (`app.js`) with dynamic DOM measurement (`offsetWidth` / `offsetHeight`). Popup menus anchored in the sidebar footer (such as the 8-item Fontset picker and Tag membership menu) now measure their live rendered height and automatically open upward when near the bottom screen edge, eliminating menu clipping across all viewports.
 
 ---
 
