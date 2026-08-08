@@ -1,6 +1,6 @@
 {
   "name": "lucid",
-  "version": "2.11.0-dev",
+  "version": "2.11.0",
   "description": "100% Free, E2EE, 3-Pane Web Note-Taking Application",
   "license": "AGPL-3.0-only",
   "private": true,
