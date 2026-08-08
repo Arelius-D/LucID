@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
   - **Cascadia Code**: Modern Windows Terminal style with programming ligatures.
   - **Nunito (Soft Rounded)**: Friendly, curved humanist sans-serif.
   - **Roboto Slab (Industrial)**: Heavy block-serif headers for technical documentation.
+- **Interactive Font Size Stepper (`lin-computing`)**: Added a dual-zone diagonal stepper button (`lin-computing.svg`) in the sidebar footer next to the font family picker. Clicking the top-left corner (`-`) or bottom-right corner (`+`) steps through 4 relational `rem` size presets (`0.8125rem`, `0.9375rem`, `1.125rem`, `1.3125rem`) with automatic `localStorage` persistence and live toast feedback.
 
 ### Fixed
 
