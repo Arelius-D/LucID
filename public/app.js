@@ -62,7 +62,7 @@ const ICONS = {
   documentDownload: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11v6l2-2M9 17l-2-2"/><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/></svg>`,
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
   box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
-  computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M22 2L2 22"/><path d="M5 8h4"/><path d="M15 16h4M17 14v4"/></svg>`,
+  computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.97 15V9c0-5-2-7-7-7h-6c-5 0-7 2-7 7v6c0 5 2 7 7 7h6c5 0 7-2 7-7zM19.72 3.25L3.27 19.7"/><path d="M16.06 18v-5M18.5 15.5h-5M10.5 7.5h-5"/></svg>`,
 };
 
 const AUTH_MAGIC_SENTINEL = "LUCID_VAULT_AUTHENTICATED_V1";
