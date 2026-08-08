@@ -1699,9 +1699,22 @@ function showTreeContextMenu(x, y, items) {
     menu.appendChild(btn);
   });
 
-  menu.style.left = Math.min(x, window.innerWidth - 200) + "px";
-  menu.style.top = Math.min(y, window.innerHeight - 200) + "px";
   menu.classList.remove("hidden");
+  const menuWidth = menu.offsetWidth;
+  const menuHeight = menu.offsetHeight;
+
+  let posX = x;
+  let posY = y;
+
+  if (posX + menuWidth > window.innerWidth - 8) {
+    posX = Math.max(8, window.innerWidth - menuWidth - 8);
+  }
+  if (posY + menuHeight > window.innerHeight - 8) {
+    posY = Math.max(8, posY - menuHeight);
+  }
+
+  menu.style.left = posX + "px";
+  menu.style.top = posY + "px";
 }
 
 function openSubmenuForItem(parentBtn, subItems) {
