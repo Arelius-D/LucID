@@ -3086,6 +3086,85 @@ function initFontSizePicker() {
   });
 }
 
+// ─── BI-DIRECTIONAL SYNCHRONIZED SCROLLING & CURSOR TRACKING ───
+let isSyncingScroll = null; // 'editor' | 'preview' | null
+let syncScrollTimer = null;
+
+function initSynchronizedScrolling() {
+  const textarea = document.getElementById("markdown-textarea");
+  const preview = document.getElementById("markdown-preview");
+  if (!textarea || !preview) return;
+
+  function handleEditorScroll() {
+    if (isSyncingScroll === "preview") return;
+    const maxTa = textarea.scrollHeight - textarea.clientHeight;
+    if (maxTa <= 0) return;
+
+    isSyncingScroll = "editor";
+    const ratio = textarea.scrollTop / maxTa;
+    const maxPv = preview.scrollHeight - preview.clientHeight;
+    if (maxPv > 0) {
+      preview.scrollTop = ratio * maxPv;
+    }
+
+    clearTimeout(syncScrollTimer);
+    syncScrollTimer = setTimeout(() => {
+      if (isSyncingScroll === "editor") isSyncingScroll = null;
+    }, 60);
+  }
+
+  function handlePreviewScroll() {
+    if (isSyncingScroll === "editor") return;
+    const maxPv = preview.scrollHeight - preview.clientHeight;
+    if (maxPv <= 0) return;
+
+    isSyncingScroll = "preview";
+    const ratio = preview.scrollTop / maxPv;
+    const maxTa = textarea.scrollHeight - textarea.clientHeight;
+    if (maxTa > 0) {
+      textarea.scrollTop = ratio * maxTa;
+    }
+
+    clearTimeout(syncScrollTimer);
+    syncScrollTimer = setTimeout(() => {
+      if (isSyncingScroll === "preview") isSyncingScroll = null;
+    }, 60);
+  }
+
+  textarea.addEventListener("scroll", handleEditorScroll, { passive: true });
+  preview.addEventListener("scroll", handlePreviewScroll, { passive: true });
+
+  function syncCursorToPreview() {
+    if (isSyncingScroll) return;
+    const val = textarea.value;
+    const selStart = textarea.selectionStart || 0;
+    const linesBefore = val.slice(0, selStart).split("\n").length;
+    const totalLines = val.split("\n").length;
+    if (totalLines <= 1) return;
+
+    const lineRatio = (linesBefore - 1) / (totalLines - 1);
+    const maxPv = preview.scrollHeight - preview.clientHeight;
+    if (maxPv > 0) {
+      isSyncingScroll = "editor";
+      preview.scrollTo({
+        top: lineRatio * maxPv,
+        behavior: "smooth",
+      });
+      clearTimeout(syncScrollTimer);
+      syncScrollTimer = setTimeout(() => {
+        if (isSyncingScroll === "editor") isSyncingScroll = null;
+      }, 150);
+    }
+  }
+
+  textarea.addEventListener("keyup", (e) => {
+    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", "Enter"].includes(e.key)) {
+      syncCursorToPreview();
+    }
+  });
+  textarea.addEventListener("click", syncCursorToPreview);
+}
+
 // ─── EXPLORER MODE PILL TOGGLE (Folders / Tags / Pinned) ─
 function initExplorerModeToggle() {
   const pinBtn = document.getElementById("btn-mode-pinned");
@@ -3321,6 +3400,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initThemePicker();
   initFontPicker();
   initFontSizePicker();
+  initSynchronizedScrolling();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
   updateRuntimeIndicator();
