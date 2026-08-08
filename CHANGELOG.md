@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.11.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.10.0] - 2026-08-08
 ### Added
 - **4 New Distinct Font Sets**: Expanded LucID's typography options with 4 locally-vendored, visually distinct font archetypes (100% offline self-hosted under SIL OFL 1.1):
