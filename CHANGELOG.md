@@ -9,6 +9,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.12.0-dev] - unreleased
 
 ### Added
+- **GitHub Sponsor Configuration**: Added `.github/FUNDING.yml` (`github: [Arelius-D]`) to enable the GitHub Sponsor button on the repository.
 
 ### Fixed
 - **Seed Note Accuracy**: Updated initial `Start here` seed note in `server.js` to accurately reflect 8 OKLCH themes, 8 self-hosted font sets, and font size scaling controls.
