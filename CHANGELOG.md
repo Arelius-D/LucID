@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+- **Seed Note Accuracy**: Updated initial `Start here` seed note in `server.js` to accurately reflect 8 OKLCH themes, 8 self-hosted font sets, and font size scaling controls.
 
 ---
 
