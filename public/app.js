@@ -62,6 +62,7 @@ const ICONS = {
   documentDownload: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11v6l2-2M9 17l-2-2"/><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/></svg>`,
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
   box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
+  computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M22 2L2 22"/><path d="M5 8h4"/><path d="M15 16h4M17 14v4"/></svg>`,
 };
 
 const AUTH_MAGIC_SENTINEL = "LUCID_VAULT_AUTHENTICATED_V1";
@@ -3025,6 +3026,53 @@ function initFontPicker() {
   });
 }
 
+// ─── FONT SIZE PICKER (lin-computing diagonal stepper) ──────
+const FONT_SIZE_PRESETS = [
+  { id: "sm",   scale: "0.8125rem", label: "Compact (0.8125rem)" },
+  { id: "base", scale: "0.9375rem", label: "Default (0.9375rem)" },
+  { id: "lg",   scale: "1.125rem",  label: "Large (1.125rem)" },
+  { id: "xl",   scale: "1.3125rem", label: "Extra Large (1.3125rem)" },
+];
+const DEFAULT_FONT_SIZE = "base";
+
+function applyFontSize(presetId) {
+  const p = FONT_SIZE_PRESETS.find((s) => s.id === presetId) || FONT_SIZE_PRESETS[1];
+  document.documentElement.style.setProperty("--editor-font-size", p.scale);
+  document.body.style.setProperty("--editor-font-size", p.scale);
+  localStorage.setItem("lucid-fontsize", p.id);
+}
+
+function initFontSizePicker() {
+  applyFontSize(localStorage.getItem("lucid-fontsize") || DEFAULT_FONT_SIZE);
+  const btn = document.getElementById("btn-fontsize");
+  if (!btn) return;
+
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Diagonal split math: (x / width + y / height) < 1.0 -> Top-Left Zone (-), else Bottom-Right Zone (+)
+    const isMinus = (x / rect.width + y / rect.height) < 1.0;
+
+    const currentId = localStorage.getItem("lucid-fontsize") || DEFAULT_FONT_SIZE;
+    let idx = FONT_SIZE_PRESETS.findIndex((p) => p.id === currentId);
+    if (idx === -1) idx = 1;
+
+    if (isMinus) {
+      idx = Math.max(0, idx - 1);
+    } else {
+      idx = Math.min(FONT_SIZE_PRESETS.length - 1, idx + 1);
+    }
+
+    applyFontSize(FONT_SIZE_PRESETS[idx].id);
+    if (typeof showSave === "function") {
+      showSave(`Font Size: ${FONT_SIZE_PRESETS[idx].label}`);
+    }
+  });
+}
+
 // ─── EXPLORER MODE PILL TOGGLE (Folders / Tags / Pinned) ─
 function initExplorerModeToggle() {
   const pinBtn = document.getElementById("btn-mode-pinned");
@@ -3259,6 +3307,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initTreeKeyboard();
   initThemePicker();
   initFontPicker();
+  initFontSizePicker();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
   updateRuntimeIndicator();

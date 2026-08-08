@@ -1850,7 +1850,7 @@ select:focus-visible,
   box-shadow: none;
   resize: none;
   font-family: var(--font-mono);
-  font-size: var(--text-base);
+  font-size: var(--editor-font-size, var(--text-base));
   line-height: 1.6;
   box-sizing: border-box;
   overflow-y: auto;
@@ -1863,7 +1863,7 @@ select:focus-visible,
   height: 100%;
   padding: var(--space-xl) var(--space-2xl);
   overflow-y: auto;
-  font-size: var(--text-base);
+  font-size: var(--editor-font-size, var(--text-base));
   line-height: 1.6;
   color: var(--text-primary);
   box-sizing: border-box;
