@@ -404,14 +404,14 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 - [x] Zero-touch Let's Encrypt TLS reverse proxy.
 - [x] Zero-touch automated installer and complete purge teardown utility.
 
-### Phase 2: Security hardening, vault format v2 & feature evolution (completed in 2.0.0 – 2.7.0)
+### Phase 2: Security hardening, vault format v2 & feature evolution (completed in 2.0.0 – 2.11.0)
 
 - [x] Full-vault encryption (titles, bodies, tags, folder names, pinned flags encrypted client-side).
 - [x] Random per-vault PBKDF2 salt (600,000 iterations), non-extractable CryptoKey in IndexedDB (`v2.0.0`).
 - [x] Rendered Markdown sanitised with DOMPurify, backed by a strict Content-Security-Policy (`v2.0.0`).
 - [x] Note Pinning and dedicated Pinned Explorer view (`v2.1.0`).
 - [x] Trash can soft-deletion, read-only trashed preview, and drag-and-drop restore (`v2.2.0`).
-- [x] Four locally-served font sets (Geist, IBM Plex, Source, Inter+JetBrains Mono) with in-app picker (`v2.2.0`).
+- [x] Eight locally-served font sets with in-app picker (`v2.2.0`, `v2.10.0`).
 - [x] Amber Hour twilight theme & footer theme picker menu (`v2.3.0`).
 - [x] License changed to AGPL-3.0-only (`v2.3.0`).
 - [x] Vault-level tag library and single-click tag assignment picker menu (`v2.4.0`).
@@ -422,16 +422,17 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 - [x] Copy-to-clipboard button on fenced code blocks (`v2.6.0`).
 - [x] Dynamic auto-lock posture indicator (keyhole / shield / X eviction warning) (`v2.6.0`).
 - [x] 8 Standalone OKLCH themes including Dracula & Catppuccin palette (Latte, Frappé, Macchiato, Mocha) (`v2.7.0`).
-
-### Phase 3: Export and vault backup mechanics (in progress)
-
 - [x] **PDF export.** In-browser print engine and formatted PDF generator (`v2.6.0`).
 - [x] **UTF-8 BOM Markdown & batch ZIP export.** Single note `.md` download with UTF-8 BOM and zero-dependency folder batch `.zip` export (`v2.8.0`).
+- [x] Interactive dual-zone font size stepper (`lin-computing`) with 4 relational `rem` scale presets (`v2.10.0`).
+- [x] Dynamic context menu viewport collision detection with automatic upward flipping (`v2.10.0`).
+- [x] Bi-directional synchronized scrolling & cursor line auto-tracking between Editor and Preview (`v2.11.0`).
+
+### Phase 3: Export and vault backup mechanics (under consideration)
+
 - [ ] **Encrypted vault backup and restore (`.lucid`).** Export full encrypted vault backups for personal cloud storage such as Nextcloud, S3, Dropbox, or a NAS, with in-browser restore.
-
-### Phase 4: Host CLI management tool (upcoming)
-
-- [ ] **Host CLI utility.** Python or Bash tool for passphrase validation, database health inspection, and headless automated backups directly on your server.
+- [ ] **In-Browser Document & Migration Import Engine (`.docx`, `.html`, `.pdf`, `.xlsx`).** 100% client-side conversion of Word documents (`mammoth.js`), HTML (`turndown.js`), and PDF text (`pdf.js`) into Markdown before client-side encryption.
+- [ ] **Zero-Trust Ephemeral Note Sharing.** Encrypt individual notes in-browser using temporary fragment keys (`#key`) for secure public sharing without giving the server decryption access.
 
 ---
 
