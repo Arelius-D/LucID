@@ -66,9 +66,11 @@ const ICONS = {
   textBold: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.88 4.5c0-1.1.9-2 2-2H12c2.62 0 4.75 2.13 4.75 4.75S14.62 12 12 12H4.88V4.5zM4.88 12h9.5c2.62 0 4.75 2.13 4.75 4.75S17 21.5 14.38 21.5h-7.5c-1.1 0-2-.9-2-2V12v0z"/></svg>`,
   textItalic: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.62 3h9.25M5.12 21h9.25M14.25 3l-4.5 18"/></svg>`,
   textUnderline: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21h14M5 3v7c0 3.87 3.13 7 7 7s7-3.13 7-7V3"/></svg>`,
+  textStrikethrough: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.67 7.17V5.35c0-1.15.93-2.07 2.07-2.07h14.52c1.15 0 2.07.93 2.07 2.07v1.82M12 20.72V4.11M8.06 20.72h7.88"/><path d="M3 12h18"/></svg>`,
   smallcaps: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7V5.5C2.5 4.67 3.17 4 4 4H14.5C15.33 4 16 4.67 16 5.5V7M9.25 20V4.5M6.25 20H12.25M13.5 12V10.75C13.5 10.06 14.06 9.5 14.75 9.5H20.25C20.94 9.5 21.5 10.06 21.5 10.75V12M17.5 20V9.88M15.5 20H19.5"/></svg>`,
   link: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.27 12A5.46 5.46 0 012 8.5C2 5.48 4.47 3 7.5 3h5C15.52 3 18 5.48 18 8.5S15.53 14 12.5 14H10"/><path d="M20.73 12A5.46 5.46 0 0122 15.5c0 3.02-2.47 5.5-5.5 5.5h-5C8.48 21 6 18.52 6 15.5S8.47 10 11.5 10H14"/></svg>`,
-  code: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.89 9c.98.49 1.82 1.23 2.43 2.15.35.52.35 1.19 0 1.71-.61.91-1.45 1.65-2.43 2.14M13 15h4"/><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/></svg>`,
+  code: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 13c-.66.33-1.21.82-1.62 1.43-.23.35-.23.79 0 1.14.41.61.96 1.1 1.62 1.43M15.21 13c.66.33 1.21.82 1.62 1.43.23.35.23.79 0 1.14-.41.61-.96 1.1-1.62 1.43"/><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7zM2.23 8.01L21.45 8"/></svg>`,
+  documentCode: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M10 13l-2 2 2 2M14 13l2 2-2 2"/></svg>`,
   quoteDownSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.7 8.7a1.8 1.8 0 00-1.8 1.8v1.8h3.6V8.7H7.7zM6.8 12.3v1.8c0 1 .8 1.8 1.8 1.8M14.5 8.7a1.8 1.8 0 00-1.8 1.8v1.8h3.6V8.7h-1.8zM13.6 12.3v1.8c0 1 .8 1.8 1.8 1.8"/></svg>`,
   grid2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7zM2 12h20M12 2v20"/></svg>`,
   minus: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg>`,
@@ -3273,6 +3275,8 @@ function initEditorFormatting() {
     if (start !== end) {
       let selected = val.slice(start, end);
       selected = selected
+        .replace(/```[\s\S]*?```/g, (m) => m.slice(3, -3).trim())
+        .replace(/~~(.*?)~~/g, "$1")
         .replace(/\*\*(.*?)\*\*/g, "$1")
         .replace(/\*(.*?)\*/g, "$1")
         .replace(/<u>(.*?)<\/u>/gi, "$1")
@@ -3287,6 +3291,7 @@ function initEditorFormatting() {
       if (lineEnd === -1) lineEnd = val.length;
       const line = val.slice(lineStart, lineEnd);
       const cleaned = line
+        .replace(/~~(.*?)~~/g, "$1")
         .replace(/\*\*(.*?)\*\*/g, "$1")
         .replace(/\*(.*?)\*/g, "$1")
         .replace(/<u>(.*?)<\/u>/gi, "$1")
@@ -3373,6 +3378,11 @@ function initEditorFormatting() {
         action: () => wrapSelection("<u>", "</u>", "underlined text"),
       },
       {
+        label: "Strikethrough",
+        icon: ICONS.textStrikethrough,
+        action: () => wrapSelection("~~", "~~", "strikethrough text"),
+      },
+      {
         label: "Heading",
         icon: ICONS.smallcaps,
         action: () => toggleHeading(),
@@ -3387,6 +3397,11 @@ function initEditorFormatting() {
         label: "Inline Code",
         icon: ICONS.code,
         action: () => wrapSelection("`", "`", "code"),
+      },
+      {
+        label: "Code Block",
+        icon: ICONS.documentCode,
+        action: () => wrapSelection("\n```js\n", "\n```\n", "// code block"),
       },
       {
         label: "Blockquote",
