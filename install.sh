@@ -330,12 +330,11 @@ else
     ]
 }
 EOF
-        echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" > .env
-        echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
-        echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
-        export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
-        echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME} -> ${DETECTED_IP}${NC}"
-      fi
+      echo "DUCKDNS_DOMAIN=${USER_DDNS_DOMAIN}" > .env
+      echo "DUCKDNS_TOKEN=${USER_DDNS_TOKEN}" >> .env
+      echo "DOMAIN_NAME=${USER_DDNS_DOMAIN}" >> .env
+      export DOMAIN_NAME="${USER_DDNS_DOMAIN}"
+      echo -e "  - ${GREEN}[CONFIGURED] DuckDNS dynamic IP updates enabled for ${DOMAIN_NAME} -> ${DETECTED_IP}${NC}"
     fi
   fi
 fi
