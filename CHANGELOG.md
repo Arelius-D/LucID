@@ -10,7 +10,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Added
 - **GitHub Sponsor Configuration**: Added `.github/FUNDING.yml` (`github: [Arelius-D]`) to enable the GitHub Sponsor button on the repository.
-- **Editor Context Menu & Formatting Shortcuts**: Added right-click context menu and keyboard shortcuts (`Ctrl/Cmd` + `B`/`I`/`U`/`K`) to the Markdown editor. Includes 15 upstream Iconsax Linear icons (`lin-text-bold`, `lin-text-italic`, `lin-text-underline`, `lin-smallcaps`, `lin-link`, `lin-code`, `lin-quote-down-square`, `lin-grid-2`, `lin-minus`, `lin-task`, `lin-clipboard-tick`, `lin-eraser-1`, `lin-scissor-2`, `lin-document-copy`, `lin-document`) for single-click formatting, heading cycling, table templates, lists, cut/copy/paste, and format stripping.
+- **Editor Context Menu & Formatting Shortcuts**: Added right-click context menu and keyboard shortcuts (`Ctrl/Cmd` + `B`/`I`/`U`/`K`) to the Markdown editor. Includes 16 upstream and derived Iconsax Linear icons (`lin-text-bold`, `lin-text-italic`, `lin-text-underline`, `lin-text-strikethrough`, `lin-smallcaps`, `lin-link`, `lin-code`, `lin-document-code`, `lin-quote-down-square`, `lin-grid-2`, `lin-minus`, `lin-task`, `lin-clipboard-tick`, `lin-eraser-1`, `lin-scissor-2`, `lin-document-copy`, `lin-document`) for single-click formatting, heading cycling, table templates, lists, cut/copy/paste, and format stripping.
 
 ### Fixed
 - **Seed Note Accuracy**: Updated initial `Start here` seed note in `server.js` to accurately reflect 8 OKLCH themes, 8 self-hosted font sets, and font size scaling controls.

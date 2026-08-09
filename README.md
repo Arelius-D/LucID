@@ -404,7 +404,7 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 - [x] Zero-touch Let's Encrypt TLS reverse proxy.
 - [x] Zero-touch automated installer and complete purge teardown utility.
 
-### Phase 2: Security hardening, vault format v2 & feature evolution (completed in 2.0.0 – 2.11.0)
+### Phase 2: Security hardening, vault format v2 & feature evolution (completed in 2.0.0 – 2.12.0)
 
 - [x] Full-vault encryption (titles, bodies, tags, folder names, pinned flags encrypted client-side).
 - [x] Random per-vault PBKDF2 salt (600,000 iterations), non-extractable CryptoKey in IndexedDB (`v2.0.0`).
@@ -427,6 +427,7 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 - [x] Interactive dual-zone font size stepper (`lin-computing`) with 4 relational `rem` scale presets (`v2.10.0`).
 - [x] Dynamic context menu viewport collision detection with automatic upward flipping (`v2.10.0`).
 - [x] Bi-directional synchronized scrolling & cursor line auto-tracking between Editor and Preview (`v2.11.0`).
+- [x] Right-click editor formatting context menu, clipboard actions, and cross-platform formatting shortcuts (`v2.12.0`).
 
 ### Phase 3: Export and vault backup mechanics (under consideration)
 
