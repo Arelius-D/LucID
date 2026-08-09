@@ -63,6 +63,21 @@ const ICONS = {
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
   box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
   computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.97 15V9c0-5-2-7-7-7h-6c-5 0-7 2-7 7v6c0 5 2 7 7 7h6c5 0 7-2 7-7zM19.72 3.25L3.27 19.7"/><path d="M16.06 18v-5M18.5 15.5h-5M10.5 7.5h-5"/></svg>`,
+  textBold: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.88 4.5c0-1.1.9-2 2-2H12c2.62 0 4.75 2.13 4.75 4.75S14.62 12 12 12H4.88V4.5zM4.88 12h9.5c2.62 0 4.75 2.13 4.75 4.75S17 21.5 14.38 21.5h-7.5c-1.1 0-2-.9-2-2V12v0z"/></svg>`,
+  textItalic: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.62 3h9.25M5.12 21h9.25M14.25 3l-4.5 18"/></svg>`,
+  textUnderline: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21h14M5 3v7c0 3.87 3.13 7 7 7s7-3.13 7-7V3"/></svg>`,
+  smallcaps: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7V5.5C2.5 4.67 3.17 4 4 4H14.5C15.33 4 16 4.67 16 5.5V7M9.25 20V4.5M6.25 20H12.25M13.5 12V10.75C13.5 10.06 14.06 9.5 14.75 9.5H20.25C20.94 9.5 21.5 10.06 21.5 10.75V12M17.5 20V9.88M15.5 20H19.5"/></svg>`,
+  link: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.27 12A5.46 5.46 0 012 8.5C2 5.48 4.47 3 7.5 3h5C15.52 3 18 5.48 18 8.5S15.53 14 12.5 14H10"/><path d="M20.73 12A5.46 5.46 0 0122 15.5c0 3.02-2.47 5.5-5.5 5.5h-5C8.48 21 6 18.52 6 15.5S8.47 10 11.5 10H14"/></svg>`,
+  code: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.89 9c.98.49 1.82 1.23 2.43 2.15.35.52.35 1.19 0 1.71-.61.91-1.45 1.65-2.43 2.14M13 15h4"/><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/></svg>`,
+  quoteDownSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/><path d="M7.7 8.7a1.8 1.8 0 00-1.8 1.8v1.8h3.6V8.7H7.7zM6.8 12.3v1.8c0 1 .8 1.8 1.8 1.8M14.5 8.7a1.8 1.8 0 00-1.8 1.8v1.8h3.6V8.7h-1.8zM13.6 12.3v1.8c0 1 .8 1.8 1.8 1.8"/></svg>`,
+  grid2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7zM2 12h20M12 2v20"/></svg>`,
+  minus: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg>`,
+  task: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19.5h10M11 12.5h10M11 5.5h10M3 5.5l1 1 3-3M3 12.5l1 1 3-3M3 19.5l1 1 3-3"/></svg>`,
+  clipboardTick: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5c0 .83-.67 1.5-1.5 1.5h-4c-.83 0-1.5-.67-1.5-1.5V3c0-.83.67-1.5 1.5-1.5h4c.83 0 1.5.67 1.5 1.5v1.5z"/><path d="M16 3.5h2c1.66 0 3 1.34 3 3v12.5c0 1.66-1.34 3-3 3H6c-1.66 0-3-1.34-3-3V6.5c0-1.66 1.34-3 3-3h2"/><path d="M9 13.5l2 2 4-4"/></svg>`,
+  eraser1: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21h10M3.5 12.5l5.5 5.5c.83.83 2.17.83 3 0l8.5-8.5c.83-.83.83-2.17 0-3l-3.5-3.5c-.83-.83-2.17-.83-3 0L3.5 12.5zM9 7l7 7"/></svg>`,
+  scissor2: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a3 3 0 100-6 3 3 0 000 6zM6 21a3 3 0 100-6 3 3 0 000 6zM8.5 7.5L20 18M8.5 16.5L20 6"/></svg>`,
+  documentCopy: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9z"/><path d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9z"/></svg>`,
+  document: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/></svg>`,
 };
 
 const AUTH_MAGIC_SENTINEL = "LUCID_VAULT_AUTHENTICATED_V1";
@@ -3165,6 +3180,257 @@ function initSynchronizedScrolling() {
   textarea.addEventListener("click", syncCursorToPreview);
 }
 
+// ─── EDITOR FORMATTING CONTEXT MENU & SHORTCUTS ───
+function initEditorFormatting() {
+  const textarea = document.getElementById("markdown-textarea");
+  if (!textarea) return;
+
+  function triggerChange() {
+    textarea.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function wrapSelection(before, after, placeholder = "") {
+    textarea.focus();
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const val = textarea.value;
+    const selected = val.slice(start, end);
+
+    if (selected) {
+      if (selected.startsWith(before) && selected.endsWith(after) && selected.length >= before.length + after.length) {
+        const unwrapped = selected.slice(before.length, selected.length - after.length);
+        textarea.setRangeText(unwrapped, start, end, "select");
+      } else {
+        textarea.setRangeText(`${before}${selected}${after}`, start, end, "select");
+      }
+    } else {
+      const textToInsert = placeholder || "text";
+      textarea.setRangeText(`${before}${textToInsert}${after}`, start, end, "select");
+      textarea.setSelectionRange(start + before.length, start + before.length + textToInsert.length);
+    }
+    triggerChange();
+  }
+
+  function toggleHeading() {
+    textarea.focus();
+    const val = textarea.value;
+    const start = textarea.selectionStart;
+
+    const lineStart = val.lastIndexOf("\n", start - 1) + 1;
+    let lineEnd = val.indexOf("\n", start);
+    if (lineEnd === -1) lineEnd = val.length;
+
+    const line = val.slice(lineStart, lineEnd);
+    let newLine = "";
+
+    if (line.startsWith("# ")) {
+      newLine = "## " + line.slice(2);
+    } else if (line.startsWith("## ")) {
+      newLine = "### " + line.slice(3);
+    } else if (line.startsWith("### ")) {
+      newLine = line.slice(4);
+    } else {
+      newLine = "# " + line;
+    }
+
+    textarea.setRangeText(newLine, lineStart, lineEnd, "select");
+    triggerChange();
+  }
+
+  function prefixLines(prefix) {
+    textarea.focus();
+    const val = textarea.value;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+
+    const lineStart = val.lastIndexOf("\n", start - 1) + 1;
+    let lineEnd = val.indexOf("\n", end);
+    if (lineEnd === -1) lineEnd = val.length;
+
+    const lines = val.slice(lineStart, lineEnd).split("\n");
+    const allPrefixed = lines.every((l) => l.startsWith(prefix));
+    const newLines = lines.map((l) => (allPrefixed ? l.slice(prefix.length) : prefix + l.replace(/^#+\s*|^>\s*|^-\s*(\[\s*\]\s*)?/, "")));
+    const replacement = newLines.join("\n");
+
+    textarea.setRangeText(replacement, lineStart, lineEnd, "select");
+    triggerChange();
+  }
+
+  function insertTable() {
+    textarea.focus();
+    const start = textarea.selectionStart;
+    const tableTemplate = `\n| Header 1 | Header 2 |\n| :--- | :--- |\n| Cell 1 | Cell 2 |\n| Cell 3 | Cell 4 |\n`;
+    textarea.setRangeText(tableTemplate, start, textarea.selectionEnd, "end");
+    triggerChange();
+  }
+
+  function removeFormatting() {
+    textarea.focus();
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const val = textarea.value;
+
+    if (start !== end) {
+      let selected = val.slice(start, end);
+      selected = selected
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .replace(/\*(.*?)\*/g, "$1")
+        .replace(/<u>(.*?)<\/u>/gi, "$1")
+        .replace(/`(.*?)`/g, "$1")
+        .replace(/^#+\s*/gm, "")
+        .replace(/^>\s*/gm, "")
+        .replace(/^-\s*(\[\s*\]\s*)?/gm, "");
+      textarea.setRangeText(selected, start, end, "select");
+    } else {
+      const lineStart = val.lastIndexOf("\n", start - 1) + 1;
+      let lineEnd = val.indexOf("\n", start);
+      if (lineEnd === -1) lineEnd = val.length;
+      const line = val.slice(lineStart, lineEnd);
+      const cleaned = line
+        .replace(/\*\*(.*?)\*\*/g, "$1")
+        .replace(/\*(.*?)\*/g, "$1")
+        .replace(/<u>(.*?)<\/u>/gi, "$1")
+        .replace(/`(.*?)`/g, "$1")
+        .replace(/^#+\s*/, "")
+        .replace(/^>\s*/, "")
+        .replace(/^-\s*(\[\s*\]\s*)?/, "");
+      textarea.setRangeText(cleaned, lineStart, lineEnd, "select");
+    }
+    triggerChange();
+  }
+
+  textarea.addEventListener("keydown", (e) => {
+    const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+    const ctrlCmd = isMac ? e.metaKey : e.ctrlKey;
+    if (!ctrlCmd) return;
+
+    const key = e.key.toLowerCase();
+    if (key === "b") {
+      e.preventDefault();
+      wrapSelection("**", "**", "bold text");
+    } else if (key === "i") {
+      e.preventDefault();
+      wrapSelection("*", "*", "italic text");
+    } else if (key === "u") {
+      e.preventDefault();
+      wrapSelection("<u>", "</u>", "underlined text");
+    } else if (key === "k") {
+      e.preventDefault();
+      wrapSelection("[", "](https://)", "link text");
+    }
+  });
+
+  textarea.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    const items = [
+      {
+        label: "Cut",
+        icon: ICONS.scissor2,
+        action: () => {
+          textarea.focus();
+          document.execCommand("cut");
+        },
+      },
+      {
+        label: "Copy",
+        icon: ICONS.documentCopy,
+        action: () => {
+          textarea.focus();
+          document.execCommand("copy");
+        },
+      },
+      {
+        label: "Paste",
+        icon: ICONS.document,
+        action: async () => {
+          textarea.focus();
+          try {
+            const text = await navigator.clipboard.readText();
+            if (text) {
+              const start = textarea.selectionStart;
+              textarea.setRangeText(text, start, textarea.selectionEnd, "end");
+              triggerChange();
+            }
+          } catch (err) {
+            document.execCommand("paste");
+          }
+        },
+      },
+      { divider: true },
+      {
+        label: "Bold",
+        icon: ICONS.textBold,
+        action: () => wrapSelection("**", "**", "bold text"),
+      },
+      {
+        label: "Italic",
+        icon: ICONS.textItalic,
+        action: () => wrapSelection("*", "*", "italic text"),
+      },
+      {
+        label: "Underline",
+        icon: ICONS.textUnderline,
+        action: () => wrapSelection("<u>", "</u>", "underlined text"),
+      },
+      {
+        label: "Heading",
+        icon: ICONS.smallcaps,
+        action: () => toggleHeading(),
+      },
+      { divider: true },
+      {
+        label: "Link",
+        icon: ICONS.link,
+        action: () => wrapSelection("[", "](https://)", "link text"),
+      },
+      {
+        label: "Inline Code",
+        icon: ICONS.code,
+        action: () => wrapSelection("`", "`", "code"),
+      },
+      {
+        label: "Blockquote",
+        icon: ICONS.quoteDownSquare,
+        action: () => prefixLines("> "),
+      },
+      {
+        label: "Table",
+        icon: ICONS.grid2,
+        action: () => insertTable(),
+      },
+      {
+        label: "Horizontal Rule",
+        icon: ICONS.minus,
+        action: () => {
+          textarea.focus();
+          const start = textarea.selectionStart;
+          textarea.setRangeText("\n---\n", start, textarea.selectionEnd, "end");
+          triggerChange();
+        },
+      },
+      { divider: true },
+      {
+        label: "Bullet List",
+        icon: ICONS.task,
+        action: () => prefixLines("- "),
+      },
+      {
+        label: "Checklist",
+        icon: ICONS.clipboardTick,
+        action: () => prefixLines("- [ ] "),
+      },
+      { divider: true },
+      {
+        label: "Remove Formatting",
+        icon: ICONS.eraser1,
+        action: () => removeFormatting(),
+      },
+    ];
+
+    showTreeContextMenu(e.clientX, e.clientY, items);
+  });
+}
+
 // ─── EXPLORER MODE PILL TOGGLE (Folders / Tags / Pinned) ─
 function initExplorerModeToggle() {
   const pinBtn = document.getElementById("btn-mode-pinned");
@@ -3401,6 +3667,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initFontPicker();
   initFontSizePicker();
   initSynchronizedScrolling();
+  initEditorFormatting();
   initExplorerModeToggle();
   checkVersionAndUpdateIndicator();
   updateRuntimeIndicator();

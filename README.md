@@ -431,6 +431,7 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 ### Phase 3: Export and vault backup mechanics (under consideration)
 
 - [ ] **Encrypted vault backup and restore (`.lucid`).** Export full encrypted vault backups for personal cloud storage such as Nextcloud, S3, Dropbox, or a NAS, with in-browser restore.
+- [ ] **Word Document Export (`.doc` / `.docx`).** In-browser Markdown-to-Word conversion using `marked.js` HTML output wrapped in Microsoft Office MIME headers for direct `.doc` download, preserving LucID's zero-trust E2EE boundary.
 - [ ] **In-Browser Document & Migration Import Engine (`.docx`, `.html`, `.pdf`, `.xlsx`).** 100% client-side conversion of Word documents (`mammoth.js`), HTML (`turndown.js`), and PDF text (`pdf.js`) into Markdown before client-side encryption.
 - [ ] **Zero-Trust Ephemeral Note Sharing.** Encrypt individual notes in-browser using temporary fragment keys (`#key`) for secure public sharing without giving the server decryption access.
 
