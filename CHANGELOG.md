@@ -6,11 +6,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.14.0-dev] - unreleased
+## [2.13.1-dev] - unreleased
 
 ### Added
 
 ### Fixed
+- **Installer Syntax Fix**: Resolved `syntax error near unexpected token fi` in `install.sh` DuckDNS onboarding block.
 
 ---
 
