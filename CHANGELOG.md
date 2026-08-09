@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+- **Installer Pipe Fix (`curl ... | bash`)**: Removed global `exec < /dev/tty` redirection from top of `install.sh` which caused premature stdin pipe closure (`curl: (23)`). Redirected stdin from `/dev/tty` specifically on interactive DuckDNS onboarding prompts instead.
 
 ---
 

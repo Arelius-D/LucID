@@ -16,11 +16,6 @@
 
 set -e
 
-# Force stdin to read directly from /dev/tty if piped via curl ... | bash
-if [ ! -t 0 ] && [ -c /dev/tty ]; then
-  exec < /dev/tty
-fi
-
 # Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -304,17 +299,26 @@ else
     echo ""
     echo -e "${BLUE}────── Dynamic DNS (DuckDNS) Onboarding ──────${NC}"
     echo -e "Your Server Public IP is: ${GREEN}${DETECTED_IP}${NC}"
-    read -r -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS || true
-    if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
-      read -r -p "  - Enter DuckDNS Subdomain (e.g. lucid-selfhosted): " USER_DDNS_SUBDOMAIN || true
-      read -r -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN || true
-      # Clean input strings (strip whitespace / line breaks)
-      USER_DDNS_SUBDOMAIN=$(echo "${USER_DDNS_SUBDOMAIN}" | tr -d '[:space:]')
-      USER_DDNS_TOKEN=$(echo "${USER_DDNS_TOKEN}" | tr -d '[:space:]')
-      # Strip .duckdns.org suffix if the user typed the full domain anyway
-      if [ -n "${USER_DDNS_SUBDOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
-        USER_DDNS_DOMAIN="${USER_DDNS_SUBDOMAIN}.duckdns.org"
-        cat << EOF > "${DDNS_DIR}/config.json"
+    if [ -c /dev/tty ]; then
+      read -r -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS < /dev/tty || true
+      if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
+        read -r -p "  - Enter DuckDNS Subdomain (e.g. lucid-selfhosted): " USER_DDNS_SUBDOMAIN < /dev/tty || true
+        read -r -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN < /dev/tty || true
+      fi
+    else
+      read -r -p "Do you have a DuckDNS domain for zero-touch HTTPS TLS? (y/N): " HAS_DUCKDNS || true
+      if [[ "${HAS_DUCKDNS}" =~ ^[Yy]$ ]]; then
+        read -r -p "  - Enter DuckDNS Subdomain (e.g. lucid-selfhosted): " USER_DDNS_SUBDOMAIN || true
+        read -r -p "  - Enter DuckDNS Token: " USER_DDNS_TOKEN || true
+      fi
+    fi
+    # Clean input strings (strip whitespace / line breaks)
+    USER_DDNS_SUBDOMAIN=$(echo "${USER_DDNS_SUBDOMAIN}" | tr -d '[:space:]')
+    USER_DDNS_TOKEN=$(echo "${USER_DDNS_TOKEN}" | tr -d '[:space:]')
+    # Strip .duckdns.org suffix if the user typed the full domain anyway
+    if [ -n "${USER_DDNS_SUBDOMAIN}" ] && [ -n "${USER_DDNS_TOKEN}" ]; then
+      USER_DDNS_DOMAIN="${USER_DDNS_SUBDOMAIN}.duckdns.org"
+      cat << EOF > "${DDNS_DIR}/config.json"
 {
     "settings": [
         {
