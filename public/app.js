@@ -791,7 +791,9 @@ function updateLockScreenUI() {
 
   if (lockInputs) lockInputs.classList.remove("hidden");
 
+  const lockCard = document.querySelector(".lock-card");
   if (!state.authVerifier) {
+    if (lockCard) lockCard.classList.add("is-onboarding");
     // First run: the footer's warning belongs here, where the irreversible
     // choice is actually made.
     setStatus(
@@ -802,6 +804,7 @@ function updateLockScreenUI() {
     if (lockConfirmInput) lockConfirmInput.classList.remove("hidden");
     if (lockFooter) lockFooter.classList.remove("hidden");
   } else {
+    if (lockCard) lockCard.classList.remove("is-onboarding");
     setStatus("lock", "Vault locked", false);
     if (lockConfirmInput) lockConfirmInput.classList.add("hidden");
     if (lockFooter) lockFooter.classList.add("hidden");
