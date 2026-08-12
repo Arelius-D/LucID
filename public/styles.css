@@ -2357,12 +2357,12 @@ select:focus-visible,
   100% {
     box-shadow:
       var(--shadow-lg),
-      0 0 0 0 oklch(0.773 0.14 78.6 / 0);
+      0 0 0 0 color-mix(in oklch, var(--accent) 0%, transparent);
   }
   50% {
     box-shadow:
       var(--shadow-lg),
-      0 0 2rem 0.35rem oklch(0.773 0.14 78.6 / 0.35);
+      0 0 2rem 0.35rem color-mix(in oklch, var(--accent) 35%, transparent);
   }
 }
 
