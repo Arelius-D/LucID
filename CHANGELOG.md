@@ -9,6 +9,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.14.0-dev] - unreleased
 
 ### Added
+- **Pure CSS Logo Animations**: Added subtle vertical breathe float with gold glow pulse for the onboarding screen, and gentle horizontal sway with lateral tilt shift for the vault lock screen, with full `prefers-reduced-motion` accessibility support.
 
 ### Fixed
 
