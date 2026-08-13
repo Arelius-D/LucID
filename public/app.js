@@ -876,7 +876,6 @@ async function saveStore() {
   } catch (err) {
     console.error("saveStore failed:", err);
     showSave("Sync error: changes were not saved to the vault", "error");
-    throw err;
   }
 }
 
