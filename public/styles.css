@@ -1732,6 +1732,7 @@ select:focus-visible,
   }
 }
 
+.import-action-btn,
 .lock-action-btn {
   font-size: var(--text-xs);
   padding: var(--space-2xs) var(--space-sm);
@@ -1748,17 +1749,23 @@ select:focus-visible,
     background var(--motion-fast) var(--ease-standard),
     border-color var(--motion-fast) var(--ease-standard);
 }
-/* Hover like everything else: the surface tints and the colour shifts. It used to
-   light the whole border accent instead, and since this is the only footer control
-   with a resting border, hovering lit the brightest, largest outline on the page —
-   louder than any ACTIVE state elsewhere, for a mere hover. The border stays at
-   --border: it is this button's resting identity as the one action among
-   indicators, not a hover channel. No glyph scale either, unlike the icon-only
-   pills: this button has a label beside the glyph, and growing one would shove the
-   other. */
+.import-action-btn:hover,
 .lock-action-btn:hover {
   background: var(--bg-hover);
   color: var(--accent);
+}
+.import-action-btn.drop-over {
+  background: var(--bg-drop);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.import-action-btn.is-importing .icon-svg {
+  color: var(--accent);
+  animation: logo-breathe-glow 2s var(--ease-standard) infinite;
+}
+.import-action-btn.is-error {
+  color: var(--danger);
+  border-color: var(--danger-subtle);
 }
 
 /* ─── CENTER PANE & 100% AUTO-FIT EDITOR ─────────── */
