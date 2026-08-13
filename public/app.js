@@ -474,6 +474,19 @@ async function restoreKeyFromSession() {
   return false;
 }
 
+function bytesToBase64(bytes) {
+  let bin = "";
+  const len = bytes.byteLength;
+  const chunkSize = 0x8000;
+  for (let i = 0; i < len; i += chunkSize) {
+    bin += String.fromCharCode.apply(
+      null,
+      bytes.subarray(i, Math.min(i + chunkSize, len)),
+    );
+  }
+  return btoa(bin);
+}
+
 async function encryptText(text, key) {
   // S-06: fail CLOSED. Returning plaintext when the key is missing would silently
   // write unencrypted notes to the server while the UI still claims E2EE.
@@ -489,7 +502,7 @@ async function encryptText(text, key) {
   const payload = new Uint8Array(iv.length + buf.length);
   payload.set(iv);
   payload.set(buf, iv.length);
-  return "ENC:" + btoa(String.fromCharCode(...payload));
+  return "ENC:" + bytesToBase64(payload);
 }
 
 // S-05: on failure this THROWS. It must never return a placeholder string that
