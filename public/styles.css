@@ -1543,17 +1543,19 @@ select:focus-visible,
   gap: var(--space-sm);
   width: 100%;
   padding: var(--space-xs) var(--space-md);
-  background: var(--bg-surface);
-  border: none;
-  border-top: var(--hairline) solid var(--border);
+  background: var(--bg-elevated);
+  border: var(--hairline) solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-size: var(--text-sm);
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
+  margin-bottom: var(--space-xs);
   transition:
     background var(--motion-fast),
-    color var(--motion-fast);
+    color var(--motion-fast),
+    border-color var(--motion-fast);
 }
 .import-row:hover {
   color: var(--text-primary);
