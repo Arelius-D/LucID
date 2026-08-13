@@ -1616,10 +1616,16 @@ select:focus-visible,
 .e2ee-row {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm);
   font-size: var(--text-xs);
   font-weight: 600;
   color: var(--text-primary);
+}
+.footer-top-right-corner {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
 }
 /* Comfort controls — theme, font, auto-lock. One family, one glyph scale
    (INC-42: the old 0.9375rem override died with the text line it balanced). */
