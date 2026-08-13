@@ -2332,7 +2332,7 @@ select:focus-visible,
   border-radius: var(--radius-lg);
   object-fit: cover;
   box-shadow: var(--shadow-lg);
-  animation: logo-sway 6.5s var(--ease-standard) infinite;
+  animation: logo-sway 6.5s ease-in-out infinite;
 }
 
 /* Onboarding State: Variant #01 Breathe Classic */
