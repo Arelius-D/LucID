@@ -9,11 +9,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.15.0-dev] - unreleased
 
 ### Added
-- **Multi-Format In-Browser Document & File Import Engine**: Added client-side parsing and Markdown conversion for `.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, and `.csv` files using vendored `turndown` (v7.2.4) and `mammoth` (v1.12.1) libraries. Converts documents 100% in browser RAM prior to client-side AES-256-GCM vault encryption.
+- **Multi-Format In-Browser Document & File Import Engine**: Added client-side parsing and Markdown conversion for `.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, and `.json` files using vendored `turndown` (v7.2.4) and `mammoth` (v1.12.1) libraries. Converts documents 100% in browser RAM prior to client-side AES-256-GCM vault encryption.
 - **Authentic Iconsax Linear Vector Import Glyphs**: Downloaded and registered `lin-document-upload.svg`, `lin-document-cloud.svg`, `lin-document-1.svg`, and `lin-document-sketch.svg` for dynamic import state transitions (`idle` → `importing` → `success` / `error`).
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Fixed
+- **Cryptographic Serialization Stack Overflow**: Replaced spread-argument `String.fromCharCode(...payload)` with 32 KB chunked `bytesToBase64` serialization in `encryptText()`, preventing `RangeError: Maximum call stack size exceeded` when encrypting files or imports larger than ~64 KB into the vault.
+- **Import Engine State & Pipeline Alignment**: Replaced non-existent `persistStore()` with standard `saveStore()` vault persistence pipeline, populated `state.decryptedTitleCache`, and assigned default live target folder (`ensureLiveFolderId()`).
+- **Import UI State & Vector Icons**: Added checkmark path to `documentDone` vector SVG icon, added `isImportingInProgress` re-entrancy lock, prevented synthetic click propagation from drop events, and added window-level drag/drop guards to prevent browser tab file navigation.
 
 ---
 
