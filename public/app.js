@@ -3951,25 +3951,50 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     };
 
-    importBtn.addEventListener("click", () => fileInput.click());
+    importBtn.addEventListener("click", (e) => {
+      // Prevent synthetic click triggers from drop events
+      if (e.detail === 0) return;
+      fileInput.click();
+    });
+
     fileInput.addEventListener("change", (e) => {
-      processImportFiles(Array.from(e.target.files));
+      const files = Array.from(e.target.files || []);
       fileInput.value = "";
+      if (files.length) {
+        processImportFiles(files);
+      }
     });
 
     importBtn.addEventListener("dragover", (e) => {
       e.preventDefault();
-      e.dataTransfer.dropEffect = "copy";
+      e.stopPropagation();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
       importBtn.classList.add("drop-over");
     });
-    importBtn.addEventListener("dragleave", () => {
+    importBtn.addEventListener("dragleave", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       importBtn.classList.remove("drop-over");
     });
     importBtn.addEventListener("drop", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       importBtn.classList.remove("drop-over");
-      if (e.dataTransfer.files && e.dataTransfer.files.length) {
-        processImportFiles(Array.from(e.dataTransfer.files));
+      const files = Array.from(e.dataTransfer.files || []);
+      if (files.length) {
+        processImportFiles(files);
+      }
+    });
+
+    // Prevent default browser file navigation when files are dragged into window
+    window.addEventListener("dragover", (e) => {
+      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
+        e.preventDefault();
+      }
+    });
+    window.addEventListener("drop", (e) => {
+      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
+        e.preventDefault();
       }
     });
   }
