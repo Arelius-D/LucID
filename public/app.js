@@ -3813,7 +3813,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     const importIcon = document.getElementById("import-row-icon");
     const importLabel = document.getElementById("import-row-label");
 
+    let importStateTimer = null;
     const setImportState = (mode, count = 0, msg = "") => {
+      if (importStateTimer) {
+        clearTimeout(importStateTimer);
+        importStateTimer = null;
+      }
       importBtn.classList.remove("drop-over", "is-importing", "is-error");
       if (mode === "importing") {
         importBtn.classList.add("is-importing");
@@ -3823,14 +3828,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         importBtn.classList.add("is-error");
         if (importIcon) importIcon.innerHTML = ICONS.documentSketch;
         if (importLabel) importLabel.textContent = msg || "Import Failed";
-        setTimeout(() => setImportState("idle"), 4000);
+        importStateTimer = setTimeout(() => setImportState("idle"), 4000);
       } else if (mode === "success") {
         if (importIcon) importIcon.innerHTML = ICONS.documentDone;
         if (importLabel) importLabel.textContent = `Imported ${count} Note${count === 1 ? "" : "s"}`;
-        setTimeout(() => setImportState("idle"), 3500);
+        importStateTimer = setTimeout(() => setImportState("idle"), 3500);
       } else {
         if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
-        if (importLabel) importLabel.textContent = "Import Notes";
+        if (importLabel) importLabel.textContent = "Import";
       }
     };
 
@@ -3839,41 +3844,46 @@ document.addEventListener("DOMContentLoaded", async () => {
       let rawMd = "";
       let title = file.name.replace(/\.[^/.]+$/, "");
 
-      if (["md", "txt", "markdown"].includes(ext)) {
-        rawMd = await file.text();
-      } else if (["html", "htm", "xml"].includes(ext)) {
-        const htmlText = await file.text();
-        if (window.TurndownService) {
-          const turndownService = new window.TurndownService({ headingStyle: "atx" });
-          rawMd = turndownService.turndown(htmlText);
-        } else {
-          rawMd = htmlText;
-        }
-      } else if (["docx", "doc"].includes(ext)) {
-        const arrayBuffer = await file.arrayBuffer();
-        if (window.mammoth) {
-          try {
-            const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
-            rawMd = result.value || "";
-          } catch (e) {
+      try {
+        if (["md", "txt", "markdown"].includes(ext)) {
+          rawMd = await file.text();
+        } else if (["html", "htm", "xml"].includes(ext)) {
+          const htmlText = await file.text();
+          if (window.TurndownService) {
+            const turndownService = new window.TurndownService({ headingStyle: "atx" });
+            rawMd = turndownService.turndown(htmlText);
+          } else {
+            rawMd = htmlText;
+          }
+        } else if (["docx", "doc"].includes(ext)) {
+          const arrayBuffer = await file.arrayBuffer();
+          if (window.mammoth) {
+            try {
+              const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
+              rawMd = result.value || "";
+            } catch (e) {
+              rawMd = await file.text();
+            }
+          } else {
             rawMd = await file.text();
           }
-        } else {
-          rawMd = await file.text();
+        } else if (ext === "csv") {
+          const csvText = await file.text();
+          const lines = csvText.split(/\r?\n/).filter((l) => l.trim());
+          if (lines.length > 0) {
+            const headers = lines[0].split(",").map((h) => h.trim());
+            const separator = headers.map(() => "---");
+            const rows = lines.slice(1).map((line) => line.split(",").map((cell) => cell.trim()));
+            rawMd = [
+              `| ${headers.join(" | ")} |`,
+              `| ${separator.join(" | ")} |`,
+              ...rows.map((r) => `| ${r.join(" | ")} |`),
+            ].join("\n");
+          }
         }
-      } else if (ext === "csv") {
-        const csvText = await file.text();
-        const lines = csvText.split(/\r?\n/).filter((l) => l.trim());
-        if (lines.length > 0) {
-          const headers = lines[0].split(",").map((h) => h.trim());
-          const separator = headers.map(() => "---");
-          const rows = lines.slice(1).map((line) => line.split(",").map((cell) => cell.trim()));
-          rawMd = [
-            `| ${headers.join(" | ")} |`,
-            `| ${separator.join(" | ")} |`,
-            ...rows.map((r) => `| ${r.join(" | ")} |`),
-          ].join("\n");
-        }
+      } catch (fileErr) {
+        console.warn("Error converting file:", file.name, fileErr);
+        return null;
       }
 
       if (!rawMd || !rawMd.trim()) return null;
@@ -3891,39 +3901,47 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!files || !files.length) return;
       setImportState("importing");
       let importedCount = 0;
+      let skippedCount = 0;
       const targetFolderId = ensureLiveFolderId();
       try {
         for (const file of files) {
-          const res = await convertFileToMarkdown(file);
-          if (res && res.markdown) {
-            const now = new Date().toISOString();
-            const noteId = newId("n");
-            const noteRecord = {
-              id: noteId,
-              folderId: targetFolderId,
-              title: res.title,
-              content: res.markdown,
-              isEncrypted: !!state.encryptionKey,
-              tags: [],
-              pinned: false,
-              trashed: false,
-              createdAt: now,
-              updatedAt: now,
-            };
-            state.notes.unshift(noteRecord);
-            state.decryptedTitleCache.set(noteId, res.title);
-            if (importedCount === 0) {
-              state.activeNoteId = noteId;
-              state.activeFolderId = targetFolderId;
+          try {
+            const res = await convertFileToMarkdown(file);
+            if (res && res.markdown) {
+              const now = new Date().toISOString();
+              const noteId = newId("n");
+              const noteRecord = {
+                id: noteId,
+                folderId: targetFolderId,
+                title: res.title,
+                content: res.markdown,
+                isEncrypted: !!state.encryptionKey,
+                tags: [],
+                pinned: false,
+                trashed: false,
+                createdAt: now,
+                updatedAt: now,
+              };
+              state.notes.unshift(noteRecord);
+              state.decryptedTitleCache.set(noteId, res.title);
+              if (importedCount === 0) {
+                state.activeNoteId = noteId;
+                state.activeFolderId = targetFolderId;
+              }
+              importedCount++;
+            } else {
+              skippedCount++;
             }
-            importedCount++;
+          } catch (itemErr) {
+            console.warn("Skipped unparseable import file:", file.name, itemErr);
+            skippedCount++;
           }
         }
         if (importedCount > 0) {
           await saveStore();
           renderAll();
           setImportState("success", importedCount);
-          showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}`);
+          showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}${skippedCount > 0 ? ` (${skippedCount} skipped)` : ""}`);
         } else {
           setImportState("error", 0, "Unsupported or Empty File");
         }
