@@ -3883,10 +3883,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const processImportFiles = async (files) => {
       if (!files || !files.length) return;
-      if (!state.cryptoKey) {
-        setImportState("error", 0, "Unlock Vault First");
-        return;
-      }
       setImportState("importing");
       let importedCount = 0;
       try {
