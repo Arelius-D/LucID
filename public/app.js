@@ -3962,18 +3962,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
         if (importedCount > 0) {
+          await saveStore();
+          renderAll();
           setImportState("success", importedCount);
           showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}${skippedCount > 0 ? ` (${skippedCount} skipped)` : ""}`);
-          try {
-            await saveStore();
-          } catch (saveErr) {
-            console.warn("Vault save warning after import:", saveErr);
-          }
-          try {
-            renderAll();
-          } catch (renderErr) {
-            console.warn("Render warning after import:", renderErr);
-          }
         } else {
           setImportState("error", 0, "Unsupported or Empty File");
         }
@@ -3985,18 +3977,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     };
 
-    importBtn.addEventListener("click", (e) => {
-      // Prevent synthetic click triggers from drop events
-      if (e.detail === 0) return;
+    importBtn.addEventListener("click", () => {
       fileInput.click();
     });
 
     fileInput.addEventListener("change", (e) => {
       const files = Array.from(e.target.files || []);
-      fileInput.value = "";
       if (files.length) {
         processImportFiles(files);
       }
+      fileInput.value = "";
     });
 
     importBtn.addEventListener("dragover", (e) => {
