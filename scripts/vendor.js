@@ -27,6 +27,8 @@ const COPY = [
   ['@highlightjs/cdn-assets/highlight.min.js',            'highlight.min.js'],
   ['@highlightjs/cdn-assets/styles/github-dark.min.css',  'hljs-styles/github-dark.min.css'],
   ['@highlightjs/cdn-assets/styles/github.min.css',       'hljs-styles/github.min.css'],
+  ['turndown/dist/turndown.js',                           'turndown.js'],
+  ['mammoth/mammoth.browser.min.js',                      'mammoth.browser.min.js'],
 ];
 
 // [package, weights] — file naming inside every @fontsource package is

@@ -3806,6 +3806,149 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // ── Import Engine: Multi-format client-side conversion & import ──
+  const importBtn = document.getElementById("btn-import-drop");
+  const fileInput = document.getElementById("file-import-input");
+  if (importBtn && fileInput) {
+    const importIcon = document.getElementById("import-row-icon");
+    const importLabel = document.getElementById("import-row-label");
+
+    const setImportState = (mode, count = 0, msg = "") => {
+      importBtn.classList.remove("drop-over", "is-importing", "is-error");
+      if (mode === "importing") {
+        importBtn.classList.add("is-importing");
+        if (importIcon) importIcon.innerHTML = ICONS.documentCloud;
+        if (importLabel) importLabel.textContent = "Importing...";
+      } else if (mode === "error") {
+        importBtn.classList.add("is-error");
+        if (importIcon) importIcon.innerHTML = ICONS.documentSketch;
+        if (importLabel) importLabel.textContent = msg || "Import Failed";
+        setTimeout(() => setImportState("idle"), 4000);
+      } else if (mode === "success") {
+        if (importIcon) importIcon.innerHTML = ICONS.documentDone;
+        if (importLabel) importLabel.textContent = `Imported ${count} Note${count === 1 ? "" : "s"}`;
+        setTimeout(() => setImportState("idle"), 3500);
+      } else {
+        if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
+        if (importLabel) importLabel.textContent = "Import Notes";
+      }
+    };
+
+    const convertFileToMarkdown = async (file) => {
+      const ext = file.name.split(".").pop().toLowerCase();
+      let rawMd = "";
+      let title = file.name.replace(/\.[^/.]+$/, "");
+
+      if (["md", "txt", "markdown"].includes(ext)) {
+        rawMd = await file.text();
+      } else if (["html", "htm"].includes(ext)) {
+        const htmlText = await file.text();
+        if (window.TurndownService) {
+          const turndownService = new window.TurndownService({ headingStyle: "atx" });
+          rawMd = turndownService.turndown(htmlText);
+        } else {
+          rawMd = htmlText;
+        }
+      } else if (ext === "docx") {
+        const arrayBuffer = await file.arrayBuffer();
+        if (window.mammoth) {
+          const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
+          rawMd = result.value || "";
+        }
+      } else if (ext === "csv") {
+        const csvText = await file.text();
+        const lines = csvText.split(/\r?\n/).filter((l) => l.trim());
+        if (lines.length > 0) {
+          const headers = lines[0].split(",").map((h) => h.trim());
+          const separator = headers.map(() => "---");
+          const rows = lines.slice(1).map((line) => line.split(",").map((cell) => cell.trim()));
+          rawMd = [
+            `| ${headers.join(" | ")} |`,
+            `| ${separator.join(" | ")} |`,
+            ...rows.map((r) => `| ${r.join(" | ")} |`),
+          ].join("\n");
+        }
+      }
+
+      if (!rawMd || !rawMd.trim()) return null;
+
+      // Extract H1 title if present in Markdown
+      const h1Match = rawMd.match(/^#\s+(.+)$/m);
+      if (h1Match && h1Match[1].trim()) {
+        title = h1Match[1].trim();
+      }
+
+      return { title, markdown: rawMd };
+    };
+
+    const processImportFiles = async (files) => {
+      if (!files || !files.length) return;
+      if (!state.cryptoKey) {
+        setImportState("error", 0, "Unlock Vault First");
+        return;
+      }
+      setImportState("importing");
+      let importedCount = 0;
+      try {
+        for (const file of files) {
+          const res = await convertFileToMarkdown(file);
+          if (res && res.markdown) {
+            const enc = await encryptNote(res.markdown);
+            const now = new Date().toISOString();
+            const noteRecord = {
+              id: "n_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+              folderId: null,
+              title: res.title,
+              tags: [],
+              ciphertext: enc.ciphertext,
+              iv: enc.iv,
+              hasPlainText: "y",
+              created: now,
+              modified: now,
+              pinned: false,
+              trashed: false,
+            };
+            state.notes.unshift(noteRecord);
+            importedCount++;
+          }
+        }
+        if (importedCount > 0) {
+          await persistStore();
+          renderAll();
+          setImportState("success", importedCount);
+          showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}`);
+        } else {
+          setImportState("error", 0, "Unsupported or Empty File");
+        }
+      } catch (err) {
+        console.error("Import error:", err);
+        setImportState("error", 0, "Import Failed");
+      }
+    };
+
+    importBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+      processImportFiles(Array.from(e.target.files));
+      fileInput.value = "";
+    });
+
+    importBtn.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "copy";
+      importBtn.classList.add("drop-over");
+    });
+    importBtn.addEventListener("dragleave", () => {
+      importBtn.classList.remove("drop-over");
+    });
+    importBtn.addEventListener("drop", (e) => {
+      e.preventDefault();
+      importBtn.classList.remove("drop-over");
+      if (e.dataTransfer.files && e.dataTransfer.files.length) {
+        processImportFiles(Array.from(e.dataTransfer.files));
+      }
+    });
+  }
+
   // EXPANDABLE SEARCH BELOW EXPLORER HEADER ROW
   const btnSearch = document.getElementById("btn-toggle-search");
   const headerRow = document.getElementById("tree-header-row");

@@ -31,6 +31,8 @@
     "@fontsource/source-sans-3": "^5.3.0",
     "@highlightjs/cdn-assets": "^11.11.1",
     "dompurify": "^3.4.13",
-    "marked": "^18.0.9"
+    "mammoth": "^1.12.1",
+    "marked": "^18.0.9",
+    "turndown": "^7.2.4"
   }
 }
