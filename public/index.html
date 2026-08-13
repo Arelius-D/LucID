@@ -280,7 +280,34 @@
         <!-- SIDEBAR FOOTER CONTAINING E2EE STATUS, SYNC INDICATOR & LOCK BUTTON -->
         <footer class="sidebar-footer">
           <div class="e2ee-card" id="e2ee-card">
-            <!-- Comfort row: theme, font, auto-lock, import — the user-preference & tool controls -->
+            <!-- IMPORT DROP ZONE — defined structural confinement row for file imports -->
+            <button
+              id="btn-import-drop"
+              class="import-confinement-card"
+              title="Import notes & documents (.md, .txt, .docx, .html, .csv)"
+              aria-label="Import notes and documents"
+            >
+              <span id="import-row-icon"
+                ><svg
+                  class="icon-svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 17v-6l-2 2M9 11l2 2" />
+                  <path
+                    d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"
+                  />
+                  <path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z" /></svg
+              ></span>
+              <span id="import-row-label">Import Notes</span>
+            </button>
+            <input type="file" id="file-import-input" class="hidden" hidden multiple accept=".md,.txt,.markdown,.docx,.html,.htm,.csv" />
+
+            <!-- Comfort row: theme, font, auto-lock — the user-preference controls -->
             <div class="e2ee-row">
               <button
                 id="btn-theme"
@@ -360,30 +387,6 @@
                   <path d="M11.5 9.5v3h3" />
                 </svg>
               </button>
-              <button
-                id="btn-import-drop"
-                class="footer-pref-btn"
-                title="Import notes & documents (.md, .txt, .docx, .html, .csv)"
-                aria-label="Import notes and documents"
-              >
-                <span id="import-row-icon"
-                  ><svg
-                    class="icon-svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M9 17v-6l-2 2M9 11l2 2" />
-                    <path
-                      d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"
-                    />
-                    <path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z" /></svg
-                ></span>
-              </button>
-              <input type="file" id="file-import-input" class="hidden" hidden multiple accept=".md,.txt,.markdown,.docx,.html,.htm,.csv" />
             </div>
             <div class="footer-actions-row">
               <div class="footer-status-cluster">

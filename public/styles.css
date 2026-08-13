@@ -1537,13 +1537,14 @@ select:focus-visible,
 }
 
 /* ─── IMPORT DROP ZONE ROW ─────────────────────── */
-.import-row {
+.import-row,
+.import-confinement-card {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   width: 100%;
   padding: var(--space-xs) var(--space-md);
-  background: var(--bg-elevated);
+  background: var(--bg-base);
   border: var(--hairline) solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
@@ -1557,31 +1558,41 @@ select:focus-visible,
     color var(--motion-fast),
     border-color var(--motion-fast);
 }
-.import-row:hover {
+.import-row:hover,
+.import-confinement-card:hover {
   color: var(--text-primary);
   background: var(--bg-hover);
+  border-color: var(--border-hover);
 }
-.import-row:hover .icon-svg {
+.import-row:hover .icon-svg,
+.import-confinement-card:hover .icon-svg {
   color: var(--accent);
   transform: scale(1.15);
   transition: transform var(--motion-fast) var(--ease-standard);
 }
-.import-row.drop-over {
+.import-row.drop-over,
+.import-confinement-card.drop-over {
   background: var(--bg-drop);
-  color: var(--text-primary);
+  color: var(--accent);
+  border-color: var(--accent);
 }
-.import-row.drop-over .icon-svg {
+.import-row.drop-over .icon-svg,
+.import-confinement-card.drop-over .icon-svg {
   color: var(--accent);
   transform: scale(1.15);
 }
-.import-row.is-importing .icon-svg {
+.import-row.is-importing .icon-svg,
+.import-confinement-card.is-importing .icon-svg {
   color: var(--accent);
   animation: logo-breathe-glow 2s var(--ease-standard) infinite;
 }
-.import-row.is-error {
+.import-row.is-error,
+.import-confinement-card.is-error {
   color: var(--danger);
+  border-color: var(--danger-subtle);
 }
-.import-row.is-error .icon-svg {
+.import-row.is-error .icon-svg,
+.import-confinement-card.is-error .icon-svg {
   color: var(--danger);
 }
 
