@@ -3822,7 +3822,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       importBtn.classList.remove("drop-over", "is-importing", "is-error");
       if (mode === "importing") {
         importBtn.classList.add("is-importing");
-        if (importIcon) importIcon.innerHTML = ICONS.documentCloud;
+        if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
         if (importLabel) importLabel.textContent = "Importing...";
       } else if (mode === "error") {
         importBtn.classList.add("is-error");
@@ -3880,6 +3880,14 @@ document.addEventListener("DOMContentLoaded", async () => {
               ...rows.map((r) => `| ${r.join(" | ")} |`),
             ].join("\n");
           }
+        } else if (ext === "json") {
+          const jsonText = await file.text();
+          try {
+            const parsed = JSON.parse(jsonText);
+            rawMd = "```json\n" + JSON.stringify(parsed, null, 2) + "\n```";
+          } catch (e) {
+            rawMd = jsonText;
+          }
         }
       } catch (fileErr) {
         console.warn("Error converting file:", file.name, fileErr);
@@ -3897,8 +3905,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       return { title, markdown: rawMd };
     };
 
+    let isImportingInProgress = false;
     const processImportFiles = async (files) => {
-      if (!files || !files.length) return;
+      if (!files || !files.length || isImportingInProgress) return;
+      isImportingInProgress = true;
       setImportState("importing");
       let importedCount = 0;
       let skippedCount = 0;
@@ -3948,6 +3958,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       } catch (err) {
         console.error("Import error:", err);
         setImportState("error", 0, "Import Failed");
+      } finally {
+        isImportingInProgress = false;
       }
     };
 
