@@ -3891,31 +3891,36 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!files || !files.length) return;
       setImportState("importing");
       let importedCount = 0;
+      const targetFolderId = ensureLiveFolderId();
       try {
         for (const file of files) {
           const res = await convertFileToMarkdown(file);
           if (res && res.markdown) {
-            const enc = await encryptNote(res.markdown);
             const now = new Date().toISOString();
+            const noteId = newId("n");
             const noteRecord = {
-              id: "n_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
-              folderId: null,
+              id: noteId,
+              folderId: targetFolderId,
               title: res.title,
+              content: res.markdown,
+              isEncrypted: !!state.encryptionKey,
               tags: [],
-              ciphertext: enc.ciphertext,
-              iv: enc.iv,
-              hasPlainText: "y",
-              created: now,
-              modified: now,
               pinned: false,
               trashed: false,
+              createdAt: now,
+              updatedAt: now,
             };
             state.notes.unshift(noteRecord);
+            state.decryptedTitleCache.set(noteId, res.title);
+            if (importedCount === 0) {
+              state.activeNoteId = noteId;
+              state.activeFolderId = targetFolderId;
+            }
             importedCount++;
           }
         }
         if (importedCount > 0) {
-          await persistStore();
+          await saveStore();
           renderAll();
           setImportState("success", importedCount);
           showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}`);
