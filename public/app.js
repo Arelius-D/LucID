@@ -3841,7 +3841,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (["md", "txt", "markdown"].includes(ext)) {
         rawMd = await file.text();
-      } else if (["html", "htm"].includes(ext)) {
+      } else if (["html", "htm", "xml"].includes(ext)) {
         const htmlText = await file.text();
         if (window.TurndownService) {
           const turndownService = new window.TurndownService({ headingStyle: "atx" });
@@ -3849,11 +3849,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else {
           rawMd = htmlText;
         }
-      } else if (ext === "docx") {
+      } else if (["docx", "doc"].includes(ext)) {
         const arrayBuffer = await file.arrayBuffer();
         if (window.mammoth) {
-          const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
-          rawMd = result.value || "";
+          try {
+            const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
+            rawMd = result.value || "";
+          } catch (e) {
+            rawMd = await file.text();
+          }
+        } else {
+          rawMd = await file.text();
         }
       } else if (ext === "csv") {
         const csvText = await file.text();
