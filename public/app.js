@@ -1279,7 +1279,9 @@ function renderTree() {
       // Right-click context menu for Folder
       header.addEventListener("contextmenu", (e) => {
         e.preventDefault();
-        const hasNotes = state.notes.some((n) => n.folderId === folder.id && !n.trashed);
+        const hasNotes = state.notes.some(
+          (n) => n.folderId === folder.id && !n.trashed,
+        );
         const items = [
           {
             label: "New Note",
@@ -1307,7 +1309,7 @@ function renderTree() {
             icon: ICONS.folderCross,
             danger: true,
             action: () => trashFolder(folder),
-          }
+          },
         );
         showTreeContextMenu(e.clientX, e.clientY, items);
       });
@@ -1702,7 +1704,9 @@ function showTreeContextMenu(x, y, items) {
     btn.style.alignItems = "center";
     btn.style.gap = "0.5rem";
 
-    let labelHtml = (item.icon || "") + `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
+    let labelHtml =
+      (item.icon || "") +
+      `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
     if (item.submenuItems) {
       labelHtml += ICONS.chevron;
     }
@@ -1768,13 +1772,13 @@ function openSubmenuForItem(parentBtn, subItems) {
 
   subItems.forEach((item) => {
     const btn = document.createElement("button");
-    btn.className =
-      "context-menu-item" +
-      (item.active ? " active" : "");
+    btn.className = "context-menu-item" + (item.active ? " active" : "");
     btn.style.display = "flex";
     btn.style.alignItems = "center";
     btn.style.gap = "0.5rem";
-    btn.innerHTML = (item.icon || "") + `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
+    btn.innerHTML =
+      (item.icon || "") +
+      `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       closeContextMenu();
@@ -2086,7 +2090,7 @@ function createZipBlob(files) {
 function downloadFolder(folder) {
   if (!folder) return;
   const folderNotes = state.notes.filter(
-    (n) => n.folderId === folder.id && !n.trashed
+    (n) => n.folderId === folder.id && !n.trashed,
   );
   if (folderNotes.length === 0) return;
 
@@ -2963,14 +2967,44 @@ function applyTheme(themeId) {
 // a footer button, a menu, localStorage, unknown values fall back to default.
 // Listed light to dark, which is how the eye reads a brightness scale.
 const THEMES = [
-  { id: "catppuccin-latte", label: "Catppuccin Latte", icon: "pet", hljs: "github" },
+  {
+    id: "catppuccin-latte",
+    label: "Catppuccin Latte",
+    icon: "pet",
+    hljs: "github",
+  },
   { id: "warm-linen", label: "Warm Linen", icon: "sun", hljs: "github" },
-  { id: "amber-hour", label: "Amber Hour", icon: "sunFog", hljs: "github-dark" },
-  { id: "catppuccin-frappe", label: "Catppuccin Frappé", icon: "pet", hljs: "github-dark" },
-  { id: "catppuccin-macchiato", label: "Catppuccin Macchiato", icon: "pet", hljs: "github-dark" },
+  {
+    id: "amber-hour",
+    label: "Amber Hour",
+    icon: "sunFog",
+    hljs: "github-dark",
+  },
+  {
+    id: "catppuccin-frappe",
+    label: "Catppuccin Frappé",
+    icon: "pet",
+    hljs: "github-dark",
+  },
+  {
+    id: "catppuccin-macchiato",
+    label: "Catppuccin Macchiato",
+    icon: "pet",
+    hljs: "github-dark",
+  },
   { id: "dusk-ember", label: "Dusk Ember", icon: "moon", hljs: "github-dark" },
-  { id: "catppuccin-mocha", label: "Catppuccin Mocha", icon: "pet", hljs: "github-dark" },
-  { id: "dracula-official", label: "Dracula", icon: "ghost", hljs: "github-dark" },
+  {
+    id: "catppuccin-mocha",
+    label: "Catppuccin Mocha",
+    icon: "pet",
+    hljs: "github-dark",
+  },
+  {
+    id: "dracula-official",
+    label: "Dracula",
+    icon: "ghost",
+    hljs: "github-dark",
+  },
 ];
 const DEFAULT_THEME = "dusk-ember";
 
@@ -3078,15 +3112,16 @@ function initFontPicker() {
 
 // ─── FONT SIZE PICKER (lin-computing diagonal stepper) ──────
 const FONT_SIZE_PRESETS = [
-  { id: "sm",   scale: "0.8125rem", label: "Compact (0.8125rem)" },
+  { id: "sm", scale: "0.8125rem", label: "Compact (0.8125rem)" },
   { id: "base", scale: "0.9375rem", label: "Default (0.9375rem)" },
-  { id: "lg",   scale: "1.125rem",  label: "Large (1.125rem)" },
-  { id: "xl",   scale: "1.3125rem", label: "Extra Large (1.3125rem)" },
+  { id: "lg", scale: "1.125rem", label: "Large (1.125rem)" },
+  { id: "xl", scale: "1.3125rem", label: "Extra Large (1.3125rem)" },
 ];
 const DEFAULT_FONT_SIZE = "base";
 
 function applyFontSize(presetId) {
-  const p = FONT_SIZE_PRESETS.find((s) => s.id === presetId) || FONT_SIZE_PRESETS[1];
+  const p =
+    FONT_SIZE_PRESETS.find((s) => s.id === presetId) || FONT_SIZE_PRESETS[1];
   document.documentElement.style.setProperty("--editor-font-size", p.scale);
   document.body.style.setProperty("--editor-font-size", p.scale);
   localStorage.setItem("lucid-fontsize", p.id);
@@ -3104,9 +3139,10 @@ function initFontSizePicker() {
     const y = e.clientY - rect.top;
 
     // Diagonal split math: (x / width + y / height) < 1.0 -> Top-Left Zone (-), else Bottom-Right Zone (+)
-    const isMinus = (x / rect.width + y / rect.height) < 1.0;
+    const isMinus = x / rect.width + y / rect.height < 1.0;
 
-    const currentId = localStorage.getItem("lucid-fontsize") || DEFAULT_FONT_SIZE;
+    const currentId =
+      localStorage.getItem("lucid-fontsize") || DEFAULT_FONT_SIZE;
     let idx = FONT_SIZE_PRESETS.findIndex((p) => p.id === currentId);
     if (idx === -1) idx = 1;
 
@@ -3195,7 +3231,19 @@ function initSynchronizedScrolling() {
   }
 
   textarea.addEventListener("keyup", (e) => {
-    if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End", "Enter"].includes(e.key)) {
+    if (
+      [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        "Enter",
+      ].includes(e.key)
+    ) {
       syncCursorToPreview();
     }
   });
@@ -3219,16 +3267,36 @@ function initEditorFormatting() {
     const selected = val.slice(start, end);
 
     if (selected) {
-      if (selected.startsWith(before) && selected.endsWith(after) && selected.length >= before.length + after.length) {
-        const unwrapped = selected.slice(before.length, selected.length - after.length);
+      if (
+        selected.startsWith(before) &&
+        selected.endsWith(after) &&
+        selected.length >= before.length + after.length
+      ) {
+        const unwrapped = selected.slice(
+          before.length,
+          selected.length - after.length,
+        );
         textarea.setRangeText(unwrapped, start, end, "select");
       } else {
-        textarea.setRangeText(`${before}${selected}${after}`, start, end, "select");
+        textarea.setRangeText(
+          `${before}${selected}${after}`,
+          start,
+          end,
+          "select",
+        );
       }
     } else {
       const textToInsert = placeholder || "text";
-      textarea.setRangeText(`${before}${textToInsert}${after}`, start, end, "select");
-      textarea.setSelectionRange(start + before.length, start + before.length + textToInsert.length);
+      textarea.setRangeText(
+        `${before}${textToInsert}${after}`,
+        start,
+        end,
+        "select",
+      );
+      textarea.setSelectionRange(
+        start + before.length,
+        start + before.length + textToInsert.length,
+      );
     }
     triggerChange();
   }
@@ -3271,7 +3339,11 @@ function initEditorFormatting() {
 
     const lines = val.slice(lineStart, lineEnd).split("\n");
     const allPrefixed = lines.every((l) => l.startsWith(prefix));
-    const newLines = lines.map((l) => (allPrefixed ? l.slice(prefix.length) : prefix + l.replace(/^#+\s*|^>\s*|^-\s*(\[\s*\]\s*)?/, "")));
+    const newLines = lines.map((l) =>
+      allPrefixed
+        ? l.slice(prefix.length)
+        : prefix + l.replace(/^#+\s*|^>\s*|^-\s*(\[\s*\]\s*)?/, ""),
+    );
     const replacement = newLines.join("\n");
 
     textarea.setRangeText(replacement, lineStart, lineEnd, "select");
@@ -3838,12 +3910,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
         if (importLabel) importLabel.textContent = "Importing...";
       } else if (mode === "error") {
-        if (msg) showToast(msg, "error");
+        if (msg) showSave(msg, "error");
         if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
         if (importLabel) importLabel.textContent = "Import";
       } else if (mode === "success") {
         if (importIcon) importIcon.innerHTML = ICONS.documentDone;
-        if (importLabel) importLabel.textContent = `Imported ${count} Note${count === 1 ? "" : "s"}`;
+        if (importLabel)
+          importLabel.textContent = `Imported ${count} Note${count === 1 ? "" : "s"}`;
         importStateTimer = setTimeout(() => setImportState("idle"), 3500);
       } else {
         if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
@@ -3852,11 +3925,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     const convertFileToMarkdown = async (file) => {
-      const ext = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "";
+      const ext = file.name.includes(".")
+        ? file.name.split(".").pop().toLowerCase()
+        : "";
       let rawMd = "";
       let title = file.name.replace(/\.[^/.]+$/, "");
 
-      const supported = ["md", "txt", "markdown", "docx", "doc", "html", "htm", "xml", "csv", "json"];
+      const supported = [
+        "md",
+        "txt",
+        "markdown",
+        "docx",
+        "doc",
+        "html",
+        "htm",
+        "xml",
+        "csv",
+        "json",
+      ];
       if (ext && !supported.includes(ext)) {
         return null;
       }
@@ -3866,7 +3952,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           const arrayBuffer = await file.arrayBuffer();
           if (window.mammoth) {
             try {
-              const result = await window.mammoth.convertToMarkdown({ arrayBuffer });
+              const result = await window.mammoth.convertToMarkdown({
+                arrayBuffer,
+              });
               rawMd = result.value || "";
             } catch (e) {
               rawMd = await file.text();
@@ -3877,7 +3965,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else if (["html", "htm", "xml"].includes(ext)) {
           const htmlText = await file.text();
           if (window.TurndownService) {
-            const turndownService = new window.TurndownService({ headingStyle: "atx" });
+            const turndownService = new window.TurndownService({
+              headingStyle: "atx",
+            });
             rawMd = turndownService.turndown(htmlText);
           } else {
             rawMd = htmlText;
@@ -3888,7 +3978,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (lines.length > 0) {
             const headers = lines[0].split(",").map((h) => h.trim());
             const separator = headers.map(() => "---");
-            const rows = lines.slice(1).map((line) => line.split(",").map((cell) => cell.trim()));
+            const rows = lines
+              .slice(1)
+              .map((line) => line.split(",").map((cell) => cell.trim()));
             rawMd = [
               `| ${headers.join(" | ")} |`,
               `| ${separator.join(" | ")} |`,
@@ -3972,13 +4064,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             renderAll();
           } catch (rErr) {}
           setImportState("success", importedCount);
-          showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}${skippedCount > 0 ? ` (${skippedCount} skipped)` : ""}`);
         } else {
-          setImportState("error", 0, "Empty File");
+          showSave("Empty or unparseable import file", "error");
+          setImportState("idle");
         }
       } catch (err) {
         console.error("Import error:", err);
-        setImportState("error", 0, "Import Failed");
+        showSave("Import error: could not parse file", "error");
+        setImportState("idle");
       } finally {
         isImportingInProgress = false;
       }
