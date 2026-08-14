@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Fixed
+- **Design System Token Architecture**: Replaced hardcoded `0.625rem` literals in `.e2ee-card` with canonical `--space-sm` and `--radius-md` design tokens in `styles.css`.
 - **Stylesheet Consolidation**: Merged redundant consecutive CSS selector blocks for status badges and lock status components in `styles.css`.
 - **Editor Accessibility**: Added explicit `aria-label="Markdown note editor"` to `#markdown-textarea` for WCAG 2.1 AA screen reader accessibility compliance.
 - **Accessibility & Semantic Markup**: Refactored clickable status indicators (`#save-indicator`, `#runtime-indicator`) from non-semantic `div` tags to native `button` elements.
