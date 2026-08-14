@@ -4019,14 +4019,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Prevent default browser file navigation when files are dragged into window
     window.addEventListener("dragover", (e) => {
-      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
-        e.preventDefault();
-      }
+      try {
+        if (e.dataTransfer && e.dataTransfer.types) {
+          const types = Array.from(e.dataTransfer.types || []);
+          if (types.includes("Files")) e.preventDefault();
+        }
+      } catch (err) {}
     });
     window.addEventListener("drop", (e) => {
-      if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes("Files")) {
-        e.preventDefault();
-      }
+      try {
+        if (e.dataTransfer && e.dataTransfer.types) {
+          const types = Array.from(e.dataTransfer.types || []);
+          if (types.includes("Files")) e.preventDefault();
+        }
+      } catch (err) {}
     });
   }
 
