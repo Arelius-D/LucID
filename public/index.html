@@ -394,13 +394,12 @@
                     ></path>
                   </svg>
                 </a>
-                <div
+                <button
+                  type="button"
                   id="save-indicator"
                   class="sync-status-badge"
                   title="Synced to vault"
                   aria-label="Synced to vault"
-                  role="button"
-                  tabindex="0"
                   aria-live="polite"
                 >
                   <svg
@@ -414,14 +413,13 @@
                     />
                   </svg>
                   <span class="visually-hidden">Synced</span>
-                </div>
-                <div
+                </button>
+                <button
+                  type="button"
                   id="runtime-indicator"
                   class="runtime-badge"
                   title="Checking server runtime"
                   aria-label="Checking server runtime"
-                  role="button"
-                  tabindex="0"
                 >
                   <svg
                     class="icon-svg"
@@ -436,7 +434,7 @@
                       d="M7.33 14.49l2.38-3.09c.34-.44.97-.52 1.41-.18l1.83 1.44c.44.34 1.07.26 1.41-.17l2.31-2.98"
                     />
                   </svg>
-                </div>
+                </button>
               </div>
               <!-- Security corner: lock button -->
               <div class="footer-security-cluster">

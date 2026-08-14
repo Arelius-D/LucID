@@ -1627,6 +1627,10 @@ select:focus-visible,
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   transition:
