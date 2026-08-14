@@ -842,9 +842,6 @@ body {
 }
 /* The app is hidden while the vault is locked. A class rather than an inline style,
    so the display value lives here with the rule that defines it. */
-.app-container.hidden {
-  display: none;
-}
 
 /* ─── SIDEBAR RESIZERS ──────────────────────────── */
 .sidebar-resizer {
@@ -926,10 +923,6 @@ body {
      with the editor content inset, not sitting 6px to its right */
   margin-left: calc(-1 * var(--space-xs));
 }
-.docked-expand-btn.hidden {
-  display: none;
-}
-
 /* right-side mirror: glyph optically aligns to the inspector edge */
 .docked-expand-btn.dock-right {
   margin-left: var(--space-2xs);
@@ -1282,11 +1275,6 @@ body {
   flex-direction: column;
   gap: var(--space-xs);
 }
-.folder-tree.hidden,
-.tag-tree.hidden {
-  display: none;
-}
-
 .tree-folder-header {
   display: flex;
   align-items: center;
@@ -1429,11 +1417,7 @@ select:focus-visible,
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}
-.context-menu.hidden {
-  display: none;
-}
-.context-menu.sub-context-menu {
+}.context-menu.sub-context-menu {
   min-width: max-content;
   white-space: nowrap;
 }
@@ -2273,10 +2257,6 @@ select:focus-visible,
   background: var(--scrim);
   backdrop-filter: blur(0.25rem);
 }
-.modal-backdrop.hidden {
-  display: none;
-}
-
 .modal-card {
   width: min(90vw, 22rem);
   padding: var(--space-xl);
@@ -2381,10 +2361,6 @@ select:focus-visible,
   justify-content: center;
   background: var(--bg-base);
 }
-.lock-screen.hidden {
-  display: none;
-}
-
 .lock-card {
   width: min(90vw, 26rem);
   padding: var(--space-2xl);
@@ -2513,12 +2489,7 @@ select:focus-visible,
 }
 .lock-msg-slot .lock-error {
   margin-bottom: 0;
-}
-.lock-inputs-group.hidden,
-.lock-footer.hidden {
-  display: none;
-}
-.lock-inputs-group {
+}.lock-inputs-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -2546,10 +2517,6 @@ select:focus-visible,
     background var(--motion-base) var(--ease-standard),
     border-color var(--motion-base) var(--ease-standard);
 }
-.lock-input.hidden {
-  display: none;
-}
-
 /* "Vault locked" cue (unlock mode only) */
 .lock-status {
   display: inline-flex;
@@ -2574,10 +2541,6 @@ select:focus-visible,
 .lock-status.bad {
   color: var(--danger);
 }
-.lock-status.hidden {
-  display: none;
-}
-
 /* Show/hide passphrase toggle */
 .lock-input-wrap {
   position: relative;
@@ -2645,11 +2608,7 @@ select:focus-visible,
 .lock-caps-flag svg {
   width: 0.9375rem;
   height: 0.9375rem;
-}
-.lock-caps-flag.hidden {
-  display: none;
-}
-.lock-input::placeholder {
+}.lock-input::placeholder {
   font-family: var(--font-sans);
   letter-spacing: normal;
   font-size: var(--text-sm);
@@ -2704,10 +2663,6 @@ select:focus-visible,
   margin-bottom: var(--space-md);
   font-weight: 500;
 }
-.lock-error.hidden {
-  display: none;
-}
-
 .lock-btn {
   width: 100%;
   display: block;
@@ -2910,6 +2865,11 @@ select:focus-visible,
 .preview-content .code-copy svg {
   width: 0.875rem;
   height: 0.875rem;
+}
+
+/* ─── VISIBILITY UTILITY ─────────────────────────────── */
+.hidden {
+  display: none;
 }
 
 /* ─── FOCUS MODE ────────────────────────────────────
