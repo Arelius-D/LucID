@@ -2055,8 +2055,8 @@ select:focus-visible,
 .btn-tag-add {
   font-size: var(--text-base);
   font-weight: 600;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: var(--radius-round);
   border: var(--hairline) solid var(--border);
   background: var(--bg-base);
