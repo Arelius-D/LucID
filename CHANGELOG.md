@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Fixed
+- **Import Button Drag-and-Drop State Styling**: Fixed missing `.import-action-btn` CSS class on `#btn-import-drop` button in `index.html`, ensuring drag-over, importing, and error state highlight styles trigger properly during file drop operations.
 - **Cryptographic Serialization Stack Overflow**: Replaced spread-argument `String.fromCharCode(...payload)` with 32 KB chunked `bytesToBase64` serialization in `encryptText()`, preventing `RangeError: Maximum call stack size exceeded` when encrypting files or imports larger than ~64 KB into the vault.
 - **Import Engine State & Pipeline Alignment**: Replaced non-existent `persistStore()` with standard `saveStore()` vault persistence pipeline, populated `state.decryptedTitleCache`, and assigned default live target folder (`ensureLiveFolderId()`).
 - **Import UI State & Vector Icons**: Added checkmark path to `documentDone` vector SVG icon, added `isImportingInProgress` re-entrancy lock, prevented synthetic click propagation from drop events, and added window-level drag/drop guards to prevent browser tab file navigation.
