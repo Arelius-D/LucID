@@ -3857,6 +3857,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       let rawMd = "";
       let title = file.name.replace(/\.[^/.]+$/, "");
 
+      const supported = ["md", "txt", "markdown", "docx", "doc", "html", "htm", "xml", "csv", "json"];
+      if (ext && !supported.includes(ext)) {
+        return null;
+      }
+
       try {
         if (["docx", "doc"].includes(ext)) {
           const arrayBuffer = await file.arrayBuffer();
@@ -3900,7 +3905,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             rawMd = jsonText;
           }
         } else {
-          // Default fallback: read as plain text for .md, .txt, .markdown, extension-less files, etc.
           rawMd = await file.text();
         }
       } catch (fileErr) {
