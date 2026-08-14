@@ -1015,6 +1015,8 @@ async function updateRuntimeIndicator() {
     el.className = "runtime-badge" + (cls ? " " + cls : "");
     el.title = msg;
     el.setAttribute("aria-label", msg);
+    const vh = el.querySelector(".visually-hidden");
+    if (vh) vh.textContent = msg;
   };
   try {
     const res = await fetch(apiPath("health"));
