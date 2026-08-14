@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Fixed
+- **File Import Filtering**: Added `.json` to `#file-import-input` `accept` filter attribute in `index.html` to allow native OS file dialog selection of JSON files.
 - **Touch Target Accessibility**: Expanded `.btn-tag-add` target size from 20px to 24px (1.5rem) in `styles.css` to satisfy WCAG 2.2 AA target size minimum requirements.
 - **Accessibility Parity**: Aligned `aria-label` with `title` on `#btn-fontsize` to include operational click region instructions for screen reader users.
 - **Runtime Indicator Accessibility**: Harmonized `#runtime-indicator` with `#save-indicator` by adding `aria-live="polite"` and a `visually-hidden` text node for live connection status announcements.
