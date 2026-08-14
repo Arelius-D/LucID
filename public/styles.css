@@ -256,32 +256,28 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("vendor/fonts/nunito/nunito-latin-400-normal.woff2")
-    format("woff2");
+  src: url("vendor/fonts/nunito/nunito-latin-400-normal.woff2") format("woff2");
 }
 @font-face {
   font-family: "Nunito";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("vendor/fonts/nunito/nunito-latin-500-normal.woff2")
-    format("woff2");
+  src: url("vendor/fonts/nunito/nunito-latin-500-normal.woff2") format("woff2");
 }
 @font-face {
   font-family: "Nunito";
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url("vendor/fonts/nunito/nunito-latin-600-normal.woff2")
-    format("woff2");
+  src: url("vendor/fonts/nunito/nunito-latin-600-normal.woff2") format("woff2");
 }
 @font-face {
   font-family: "Nunito";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("vendor/fonts/nunito/nunito-latin-700-normal.woff2")
-    format("woff2");
+  src: url("vendor/fonts/nunito/nunito-latin-700-normal.woff2") format("woff2");
 }
 
 @font-face {
@@ -1417,7 +1413,8 @@ select:focus-visible,
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
-}.context-menu.sub-context-menu {
+}
+.context-menu.sub-context-menu {
   min-width: max-content;
   white-space: nowrap;
 }
@@ -1518,66 +1515,6 @@ select:focus-visible,
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
-}
-
-/* ─── IMPORT DROP ZONE ROW ─────────────────────── */
-.import-row,
-.import-confinement-card {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  width: 100%;
-  padding: var(--space-xs) var(--space-md);
-  background: var(--bg-base);
-  border: var(--hairline) solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  margin-bottom: var(--space-xs);
-  transition:
-    background var(--motion-fast),
-    color var(--motion-fast),
-    border-color var(--motion-fast);
-}
-.import-row:hover,
-.import-confinement-card:hover {
-  color: var(--text-primary);
-  background: var(--bg-hover);
-  border-color: var(--border-hover);
-}
-.import-row:hover .icon-svg,
-.import-confinement-card:hover .icon-svg {
-  color: var(--accent);
-  transform: scale(1.15);
-  transition: transform var(--motion-fast) var(--ease-standard);
-}
-.import-row.drop-over,
-.import-confinement-card.drop-over {
-  background: var(--bg-drop);
-  color: var(--accent);
-  border-color: var(--accent);
-}
-.import-row.drop-over .icon-svg,
-.import-confinement-card.drop-over .icon-svg {
-  color: var(--accent);
-  transform: scale(1.15);
-}
-.import-row.is-importing .icon-svg,
-.import-confinement-card.is-importing .icon-svg {
-  color: var(--accent);
-  animation: logo-breathe-glow 2s var(--ease-standard) infinite;
-}
-.import-row.is-error,
-.import-confinement-card.is-error {
-  color: var(--danger);
-  border-color: var(--danger-subtle);
-}
-.import-row.is-error .icon-svg,
-.import-confinement-card.is-error .icon-svg {
-  color: var(--danger);
 }
 
 /* ─── SIDEBAR FOOTER, E2EE, SYNC BADGE & LOCK ACTION ─── */
@@ -2489,7 +2426,8 @@ select:focus-visible,
 }
 .lock-msg-slot .lock-error {
   margin-bottom: 0;
-}.lock-inputs-group {
+}
+.lock-inputs-group {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -2608,7 +2546,8 @@ select:focus-visible,
 .lock-caps-flag svg {
   width: 0.9375rem;
   height: 0.9375rem;
-}.lock-input::placeholder {
+}
+.lock-input::placeholder {
   font-family: var(--font-sans);
   letter-spacing: normal;
   font-size: var(--text-sm);
