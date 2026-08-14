@@ -6,8 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.15.0-dev] - unreleased
-
+## [2.15.0] - 2026-08-14
 ### Added
 - **Multi-Format In-Browser Document & File Import Engine**: Added client-side parsing and Markdown conversion for `.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, and `.json` files using vendored `turndown` (v7.2.4) and `mammoth` (v1.12.1) libraries. Converts documents 100% in browser RAM prior to client-side AES-256-GCM vault encryption.
 - **Authentic Iconsax Linear Vector Import Glyphs**: Downloaded and registered `lin-document-upload.svg`, `lin-document-cloud.svg`, `lin-document-1.svg`, and `lin-document-sketch.svg` for dynamic import state transitions (`idle` → `importing` → `success` / `error`).
