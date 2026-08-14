@@ -1675,8 +1675,6 @@ select:focus-visible,
   font-size: var(--text-xs);
   padding: var(--space-2xs) var(--space-sm);
   border-radius: var(--radius-sm);
-  border: var(--hairline) solid var(--border);
-  background: var(--bg-base);
   color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
@@ -1685,17 +1683,36 @@ select:focus-visible,
   transition:
     color var(--motion-fast) var(--ease-standard),
     background var(--motion-fast) var(--ease-standard),
-    border-color var(--motion-fast) var(--ease-standard);
+    border-color var(--motion-fast) var(--ease-standard),
+    box-shadow var(--motion-fast) var(--ease-standard);
+}
+.lock-action-btn {
+  border: var(--hairline) solid var(--border);
+  background: var(--bg-base);
+}
+.import-action-btn {
+  border: var(--hairline) dashed var(--border);
+  background: var(--bg-surface);
 }
 .import-action-btn:hover,
 .lock-action-btn:hover {
+  transform: none;
   background: var(--bg-hover);
   color: var(--accent);
+  border-color: var(--border-hover);
+}
+.import-action-btn:hover .icon-svg,
+.lock-action-btn:hover .icon-svg,
+.lock-action-btn:hover .lock-glyph {
+  transform: scale(1.12);
+  transition: transform var(--motion-fast) var(--ease-standard);
 }
 .import-action-btn.drop-over {
   background: var(--bg-drop);
   color: var(--accent);
+  border-style: dashed;
   border-color: var(--accent);
+  box-shadow: 0 0 0 0.125rem var(--accent-subtle);
 }
 .import-action-btn.is-importing .icon-svg {
   color: var(--accent);

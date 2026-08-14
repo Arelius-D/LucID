@@ -13,6 +13,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Authentic Iconsax Linear Vector Import Glyphs**: Downloaded and registered `lin-document-upload.svg`, `lin-document-cloud.svg`, `lin-document-1.svg`, and `lin-document-sketch.svg` for dynamic import state transitions (`idle` → `importing` → `success` / `error`).
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
+### Changed
+- **Footer Control Micro-Animations & Visual Identity**: Refined `#btn-import-drop` as a receptive dashed dropzone target and `#btn-lock-vault` as a solid security posture action in `styles.css`, eliminating container box hover scaling while animating inner glyph icons.
+
 ### Fixed
 - **File Import Filtering**: Added `.json` to `#file-import-input` `accept` filter attribute in `index.html` to allow native OS file dialog selection of JSON files.
 - **Touch Target Accessibility**: Expanded `.btn-tag-add` target size from 20px to 24px (1.5rem) in `styles.css` to satisfy WCAG 2.2 AA target size minimum requirements.
