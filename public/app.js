@@ -3838,10 +3838,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
         if (importLabel) importLabel.textContent = "Importing...";
       } else if (mode === "error") {
-        importBtn.classList.add("is-error");
-        if (importIcon) importIcon.innerHTML = ICONS.documentSketch;
-        if (importLabel) importLabel.textContent = msg || "Import Failed";
-        importStateTimer = setTimeout(() => setImportState("idle"), 4000);
+        if (msg) showToast(msg, "error");
+        if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
+        if (importLabel) importLabel.textContent = "Import";
       } else if (mode === "success") {
         if (importIcon) importIcon.innerHTML = ICONS.documentDone;
         if (importLabel) importLabel.textContent = `Imported ${count} Note${count === 1 ? "" : "s"}`;
