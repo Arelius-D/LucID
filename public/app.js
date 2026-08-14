@@ -3853,22 +3853,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     const convertFileToMarkdown = async (file) => {
-      const ext = file.name.split(".").pop().toLowerCase();
+      const ext = file.name.includes(".") ? file.name.split(".").pop().toLowerCase() : "";
       let rawMd = "";
       let title = file.name.replace(/\.[^/.]+$/, "");
 
       try {
-        if (["md", "txt", "markdown"].includes(ext)) {
-          rawMd = await file.text();
-        } else if (["html", "htm", "xml"].includes(ext)) {
-          const htmlText = await file.text();
-          if (window.TurndownService) {
-            const turndownService = new window.TurndownService({ headingStyle: "atx" });
-            rawMd = turndownService.turndown(htmlText);
-          } else {
-            rawMd = htmlText;
-          }
-        } else if (["docx", "doc"].includes(ext)) {
+        if (["docx", "doc"].includes(ext)) {
           const arrayBuffer = await file.arrayBuffer();
           if (window.mammoth) {
             try {
@@ -3879,6 +3869,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
           } else {
             rawMd = await file.text();
+          }
+        } else if (["html", "htm", "xml"].includes(ext)) {
+          const htmlText = await file.text();
+          if (window.TurndownService) {
+            const turndownService = new window.TurndownService({ headingStyle: "atx" });
+            rawMd = turndownService.turndown(htmlText);
+          } else {
+            rawMd = htmlText;
           }
         } else if (ext === "csv") {
           const csvText = await file.text();
@@ -3901,6 +3899,9 @@ document.addEventListener("DOMContentLoaded", async () => {
           } catch (e) {
             rawMd = jsonText;
           }
+        } else {
+          // Default fallback: read as plain text for .md, .txt, .markdown, extension-less files, etc.
+          rawMd = await file.text();
         }
       } catch (fileErr) {
         console.warn("Error converting file:", file.name, fileErr);
@@ -3956,17 +3957,21 @@ document.addEventListener("DOMContentLoaded", async () => {
               skippedCount++;
             }
           } catch (itemErr) {
-            console.warn("Skipped unparseable import file:", file.name, itemErr);
+            console.warn("Skipped file:", file.name, itemErr);
             skippedCount++;
           }
         }
         if (importedCount > 0) {
-          await saveStore();
-          renderAll();
+          try {
+            await saveStore();
+          } catch (sErr) {}
+          try {
+            renderAll();
+          } catch (rErr) {}
           setImportState("success", importedCount);
           showToast(`Successfully imported ${importedCount} note${importedCount === 1 ? "" : "s"}${skippedCount > 0 ? ` (${skippedCount} skipped)` : ""}`);
         } else {
-          setImportState("error", 0, "Unsupported or Empty File");
+          setImportState("error", 0, "Empty File");
         }
       } catch (err) {
         console.error("Import error:", err);
