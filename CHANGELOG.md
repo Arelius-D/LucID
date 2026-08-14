@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Fixed
+- **Editor Accessibility**: Added explicit `aria-label="Markdown note editor"` to `#markdown-textarea` for WCAG 2.1 AA screen reader accessibility compliance.
 - **Accessibility & Semantic Markup**: Refactored clickable status indicators (`#save-indicator`, `#runtime-indicator`) from non-semantic `div` tags to native `button` elements.
 - **Stylesheet Hygiene**: Removed obsolete unreferenced `.import-row` and `.import-confinement-card` CSS rules from `styles.css`.
 - **Stylesheet Utility Architecture**: Consolidated scattered element-scoped visibility rules into a single global `.hidden` utility declaration in `styles.css`.
