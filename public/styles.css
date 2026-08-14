@@ -1645,10 +1645,6 @@ select:focus-visible,
   color: var(--accent);
   background: var(--surface-hover);
 }
-.sync-status-badge,
-.runtime-badge {
-  cursor: pointer;
-}
 .sync-status-badge:focus-visible,
 .runtime-badge:focus-visible {
   outline: var(--hairline) solid var(--accent);
@@ -2468,7 +2464,7 @@ select:focus-visible,
   padding: var(--space-3xs) var(--space-sm);
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--accent);
   background: var(--bg-elevated);
   border-radius: var(--radius-pill);
 }
@@ -2476,9 +2472,6 @@ select:focus-visible,
   width: 0.875rem;
   height: 0.875rem;
   color: inherit;
-}
-.lock-status {
-  color: var(--accent);
 }
 .lock-status.bad {
   color: var(--danger);
