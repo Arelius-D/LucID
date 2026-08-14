@@ -14,6 +14,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Changed
+- **Documentation & Dependency Manifest Refresh**: Updated `README.md` to document the 10-format in-browser document import engine, added `turndown` (v7.2.4) and `mammoth` (v1.12.1) to the vendored browser dependencies manifest table, updated Phase 3 roadmap milestones, and credited library maintainers in Acknowledgments.
 - **Footer Control Micro-Animations & Visual Identity**: Refined `#btn-import-drop` as a receptive dashed dropzone target and `#btn-lock-vault` as a solid security posture action in `styles.css`, eliminating container box hover scaling while animating inner glyph icons.
 
 ### Fixed
