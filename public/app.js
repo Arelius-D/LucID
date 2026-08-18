@@ -4191,9 +4191,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Print: always the rendered note, never the editor. The @media print block does
   // the work, so this is one call and no state — and the browser's own dialog
-  // supplies Save-as-PDF for free.
+  // supplies Save-as-PDF for free. We temporarily set document.title to the
+  // note's title (≤30 chars, filesystem-safe) so the browser suggests a
+  // meaningful filename instead of the static "LucID.pdf".
   const btnPrint = document.getElementById("btn-print");
-  if (btnPrint) btnPrint.addEventListener("click", () => window.print());
+  if (btnPrint) btnPrint.addEventListener("click", () => {
+    const note = state.notes.find((n) => n.id === state.activeNoteId);
+    const raw  = (note && note.title) || "Untitled";
+    const safe = raw.replace(/[/\\?%*:|"<>]/g, "-").slice(0, 30).trim();
+    const prev = document.title;
+    document.title = safe || "LucID";
+    window.addEventListener("afterprint", () => { document.title = prev; }, { once: true });
+    window.print();
+  });
 
   // Focus mode: real fullscreen via the Fullscreen API, with both side panes out
   // of the way. The class and the button state follow the fullscreenchange EVENT,

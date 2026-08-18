@@ -11,6 +11,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+- **PDF Export Filename**: Print/Save-as-PDF now uses the active note's title (≤30 characters, filesystem-safe) as the suggested filename instead of the static `LucID.pdf` for every export.
 
 ---
 
