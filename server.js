@@ -48,6 +48,34 @@ app.use((req, res, next) => {
   next();
 });
 
+// Request log: one line per API call on stdout, so `docker logs` can answer
+// "did the client write, when, and what did the server say" after the fact.
+// Content is never seen: for a vault write only record counts and the newest
+// updatedAt are read from the body, and both are plaintext on disk already
+// (ids and timestamps are the fields the vault deliberately leaves in clear).
+// Registered before the body parser so a rejected body still leaves a line.
+app.use('/api', (req, res, next) => {
+  const started = process.hrtime.bigint();
+  res.on('finish', () => {
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    let detail = '';
+    const b = req.body;
+    if (req.method === 'POST' && b && Array.isArray(b.notes)) {
+      let newest = '';
+      for (const n of b.notes) {
+        if (n && typeof n.updatedAt === 'string' && n.updatedAt > newest) newest = n.updatedAt;
+      }
+      detail = ` notes=${b.notes.length}` +
+        ` folders=${Array.isArray(b.folders) ? b.folders.length : '?'}` +
+        ` tags=${Array.isArray(b.tags) ? b.tags.length : '?'}` +
+        ` newest=${newest || '-'}` +
+        ` bytes=${req.get('content-length') || '?'}`;
+    }
+    console.log(`${new Date().toISOString()} ${req.method} ${req.originalUrl} ${res.statusCode} ${ms.toFixed(0)}ms${detail}`);
+  });
+  next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 

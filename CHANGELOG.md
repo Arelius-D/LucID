@@ -9,8 +9,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.17.0-dev] - unreleased
 
 ### Added
+- **Server request log**: the server now prints one line per API request to stdout — timestamp, method, path, status, duration, and for a vault write the note/folder/tag counts, the newest `updatedAt` and the body size. Nothing encrypted is ever read: counts and timestamps are the fields the vault deliberately stores in clear. Until now the server printed a single startup line, so a report of "my changes were gone when I came back" could not be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it. The bundled `docker-compose.yml` caps the log at 3 × 10 MB.
 
 ### Fixed
+- **Locking and unlocking in the same tab rewound the vault, then overwrote the server with the rewind**: the ciphertext vault fetched at page load was kept as the copy to decrypt on unlock, and nothing ever refreshed it. Every save this tab made went to the server correctly, but the moment the vault was locked — by the Lock button or the idle auto-lock — and unlocked again without a reload, the page-load copy was decrypted back into memory: every note, edit, folder and tag since the page was opened vanished from the screen. The next autosave then wrote that stale vault over the server, making the loss permanent. Anyone who kept the tab open across an idle auto-lock hit this on every unlock; a reload or a fresh tab masked it, which is why it looked like a browser or connection problem. In a tab that had just initialised the vault the stale copy was still the plaintext seed, so there the unlock failed with "Authentication error" instead. Unlock now re-reads the vault from the server before decrypting — if the server cannot be reached the lock screen says so and nothing is unlocked — the lock routine discards the snapshot, and every successful save refreshes it. Present in every 2.x release.
 
 ---
 

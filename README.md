@@ -235,6 +235,10 @@ While unlocked, the non-extractable key is held in IndexedDB and gated by a per-
 - Same-origin writes only. The API rejects cross-origin writes, and services bind to loopback so Caddy is the only route in.
 - Writes are atomic. The vault is written to a temporary file, fsynced, then renamed, so an interrupted write cannot truncate it. A vault file that cannot be parsed is preserved rather than replaced.
 
+### What the server logs
+
+One line per API request on stdout (`docker logs lucid-app`): timestamp, method, path, status and duration. A vault write additionally records how many notes, folders and tags it carried and the newest `updatedAt` among them. Nothing else is read from the body, and no note title, body, tag or folder name can appear in the log — they are ciphertext by the time they reach the server. The log exists so that "I came back and my changes were gone" can be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it.
+
 > **Recovery:** there is no backdoor and no reset. If you lose your master passphrase your notes are unrecoverable. That is the direct consequence of true zero-knowledge encryption.
 
 > **Note:** LucID's cryptography has not been independently audited. See [SECURITY.md](SECURITY.md) for the full threat model and for how to report a vulnerability.

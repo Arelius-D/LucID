@@ -624,19 +624,28 @@ async function encryptVaultFromState(key) {
 }
 
 // ─── PERSISTENCE ───────────────────────────────────
+// GET the vault and hold it as-is (still encrypted) in state.rawStore until a
+// key exists. Throws on any failure so each caller decides what unreachable
+// means. Shared by the page-load fetch and by every unlock: what a returning
+// user decrypts must be what the server holds NOW, never a page-load snapshot.
+async function loadRawStore() {
+  // no-store: the answer must come from the server, never from the HTTP cache.
+  const res = await fetch(apiPath("api/store"), { cache: "no-store" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  state.rawStore = data;
+  state.schemaVersion = data.schemaVersion || 1;
+  state.kdf = data.kdf || null;
+  if (data.folders && data.folders.length) state.folders = data.folders;
+  if (data.notes && data.notes.length) state.notes = data.notes;
+  state.authVerifier = data.authVerifier || null;
+  state.storeLoaded = true;
+  return data;
+}
+
 async function fetchStore() {
   try {
-    const res = await fetch(apiPath("api/store"));
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    // Held as-is (still encrypted) until a key exists; decrypted on unlock.
-    state.rawStore = data;
-    state.schemaVersion = data.schemaVersion || 1;
-    state.kdf = data.kdf || null;
-    if (data.folders && data.folders.length) state.folders = data.folders;
-    if (data.notes && data.notes.length) state.notes = data.notes;
-    state.authVerifier = data.authVerifier || null;
-    state.storeLoaded = true;
+    await loadRawStore();
 
     // Restore saved tree open/collapse state. Ids from OTHER vaults are pruned: this
     // browser may have opened several vaults, and a saved list full of dead ids used
@@ -872,6 +881,16 @@ async function saveStore() {
       }),
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
+    // Mirror what the server now holds. rawStore is what an unlock decrypts,
+    // so it must never fall behind this tab's last successful save.
+    state.rawStore = {
+      schemaVersion: SCHEMA_VERSION,
+      kdf: state.kdf,
+      folders,
+      notes,
+      tags,
+      authVerifier: state.authVerifier,
+    };
     showSave("Synced to vault", "");
   } catch (err) {
     console.error("saveStore failed:", err);
@@ -4312,7 +4331,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       // First-time setup mints fresh per-vault KDF params (random salt).
-      const isSetup = !state.authVerifier;
+      let isSetup = !state.authVerifier;
+      if (!isSetup) {
+        // Re-read the vault from the server before decrypting anything. The
+        // copy taken at page load is stale the moment this tab saves, and every
+        // 2.x before this decrypted THAT copy here: a lock and unlock in the
+        // same tab rewound the vault to page-load state, and the next autosave
+        // wrote the rewound vault over the server — everything since page load
+        // gone. In a first-session tab the snapshot was still the plaintext
+        // seed, so unlock failed outright with "Authentication error" instead.
+        try {
+          await loadRawStore();
+        } catch (e) {
+          throw new Error("SERVER_UNREACHABLE");
+        }
+        // The vault behind this tab may have been re-initialised meanwhile.
+        isSetup = !state.authVerifier;
+        if (isSetup) {
+          updateLockScreenUI();
+          return;
+        }
+      }
       if (isSetup && !state.kdf) state.kdf = newKdfParams();
       const derived = await deriveKey(pass, state.kdf);
 
@@ -4394,6 +4433,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (err && err.message === "SECURE_CONTEXT_REQUIRED") {
         lockError.textContent =
           "Web Crypto E2EE requires HTTPS or localhost. Plain HTTP to an IP address blocks browser encryption.";
+      } else if (err && err.message === "SERVER_UNREACHABLE") {
+        lockError.textContent =
+          "Server unreachable. The vault could not be reloaded, so nothing was unlocked. Try again.";
       } else {
         lockError.textContent = "Authentication error. Access denied.";
       }
@@ -4459,6 +4501,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     await flushPendingSave(); // J-02's last gap: a lock inside the debounce window must not drop the edit
     clearSessionKey(); // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
+    // The snapshot is stale from here on; unlock re-reads it from the server.
+    // Nulled so nothing can decrypt an old copy by accident.
+    state.rawStore = null;
     document.getElementById("app").classList.add("hidden");
     lockScreen.classList.remove("hidden");
     lockInput.value = "";

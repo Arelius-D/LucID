@@ -8,6 +8,12 @@ services:
       - "127.0.0.1:58243:3000"
     volumes:
       - ./data:/app/data
+    # The app writes one line per API request; cap what Docker keeps of it.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   caddy:
     image: caddy:latest
