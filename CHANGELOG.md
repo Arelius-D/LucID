@@ -6,6 +6,14 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
+## [2.18.0-dev] - unreleased
+
+### Added
+
+### Fixed
+
+---
+
 ## [2.17.0] - 2026-08-27
 ### Added
 - **Server request log**: the server now prints one line per API request to stdout — timestamp, method, path, status, duration, and for a vault write the note/folder/tag counts, the newest `updatedAt` and the body size. Nothing encrypted is ever read: counts and timestamps are the fields the vault deliberately stores in clear. Until now the server printed a single startup line, so a report of "my changes were gone when I came back" could not be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it. The bundled `docker-compose.yml` caps the log at 3 × 10 MB.
