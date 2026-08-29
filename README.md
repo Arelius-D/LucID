@@ -2,12 +2,9 @@
   <img src="public/assets/branding/logo.png" alt="LucID Logo" width="120" height="120" style="border-radius: 1rem; box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.3);" />
   <h1>LucID</h1>
   <p><strong>Ultra-lightweight, self-hosted, open-source note application with client-side AES-256-GCM end-to-end encryption, native Markdown, and zero subscriptions.</strong></p>
-
-  [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-gold.svg)](LICENSE)
-  [![Docker Hub Image](https://img.shields.io/badge/Docker_Hub-assarelius%2Flucid%3Alatest-blue.svg)](https://hub.docker.com/r/assarelius/lucid)
-  [![GHCR Image](https://img.shields.io/badge/GHCR-ghcr.io%2Farelius--d%2Flucid%3Alatest-purple.svg)](https://github.com/Arelius-D/LucID/pkgs/container/lucid)
-  [![Client-Side E2EE](https://img.shields.io/badge/Encryption-AES--256--GCM-emerald.svg)](#security--architecture)
 </div>
+
+[![Release](https://img.shields.io/github/v/release/Arelius-D/LucID?label=release&color=blue)](https://github.com/Arelius-D/LucID/releases) [![License](https://img.shields.io/github/license/Arelius-D/LucID)](LICENSE) [![Docker Pulls](https://img.shields.io/docker/pulls/assarelius/lucid?logo=docker&logoColor=white)](https://hub.docker.com/r/assarelius/lucid) [![Image Size](https://img.shields.io/docker/image-size/assarelius/lucid/latest?logo=docker&logoColor=white)](https://hub.docker.com/r/assarelius/lucid) [![GHCR](https://img.shields.io/badge/GHCR-ghcr.io%2Farelius--d%2Flucid-purple.svg)](https://github.com/Arelius-D/LucID/pkgs/container/lucid) [![E2EE](https://img.shields.io/badge/Encryption-AES--256--GCM-emerald.svg)](#security--architecture)
 
 ---
 
