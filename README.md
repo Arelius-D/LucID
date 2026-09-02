@@ -114,9 +114,9 @@ LucID combines zero-trust client cryptography with transport-layer security:
 
 - **100% free and open source.** No paid tiers, no locked features, no tracking, no telemetry.
 - **Client-side E2EE.** Native Web Crypto API (`crypto.subtle`) encrypts your data locally before anything is transmitted.
-- **Multi-format in-browser document import engine.** 100% client-side RAM parsing and Markdown conversion for 10 document formats (`.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, `.json`) prior to zero-trust AES-256-GCM vault encryption.
+- **Multi-format in-browser document import engine.** 100% client-side RAM parsing and Markdown conversion for 10 document formats (`.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, `.json`) prior to zero-trust AES-256-GCM vault encryption. A post-import summary on the import glyph shows every file's outcome and can file the whole batch into any folder, or a new one, in one click.
 - **Eight standalone OKLCH themes.** Dusk Ember (dark), Amber Hour (twilight), Warm Linen (light), Dracula, and four Catppuccin palette flavors (Latte, Frappé, Macchiato, Mocha) grouped in a flyout menu with theme-adaptive scrollbars.
-- **Four locally-served font sets.** Geist + Geist Mono (default), IBM Plex Sans, Source Sans 3, and Inter + JetBrains Mono served from host origin — zero external CDN requests.
+- **Eight locally-served font sets.** Geist (default), IBM Plex, Source Code Pro, Inter, Monospace Terminal, Cascadia Code, Nunito, and Roboto Slab — 12 `@fontsource` packages served from host origin, zero external CDN requests.
 - **Full-text decrypted search.** Typing searches note titles, tags, and decrypted note contents simultaneously, with a flat-list dedicated search view.
 - **Print & PDF export.** Integrated print button renders note preview into a clean, un-styled printable layout for native browser Save-as-PDF without app chrome.
 - **Markdown & batch ZIP export.** Single-note `.md` Markdown download with UTF-8 BOM and zero-dependency folder batch `.zip` export.
@@ -246,7 +246,7 @@ One line per API request on stdout (`docker logs lucid-app`): timestamp, method,
 
 > This section states the maintainer's dependency policy. Draft wording, to be finalised.
 
-LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and 13 vendored browser packages (5 runtime libraries and 8 font packages across 4 font sets). Everything else is written in-house.
+LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and 17 vendored browser packages (5 runtime libraries and 12 font packages across 8 font sets). Everything else is written in-house.
 
 **Policy: always prefer the latest version.** An out-of-date dependency is treated as a standing vulnerability. When a new version ships it is usually because a bug, an issue, or a security flaw was fixed, and staying behind means knowingly serving that flaw to users. Major versions are therefore not held back. If a major upgrade breaks the build, that breakage is caught by CI and fixed. A broken build is a problem for the maintainer. An outdated dependency is a problem for every user.
 
@@ -266,7 +266,7 @@ LucID deliberately runs on a very small dependency surface: two runtime packages
 | `turndown` | HTML-to-Markdown client-side conversion engine for document imports |
 | `mammoth` | Word document (`.docx`) client-side raw text and formatting parser |
 | `@highlightjs/cdn-assets` | Syntax highlighting for code blocks and its themes |
-| `@fontsource/*` (8 packages) | The four user-selectable UI/editor font sets, served from your origin |
+| `@fontsource/*` (12 packages) | The eight user-selectable UI/editor font sets, served from your origin |
 
 **How the policy is enforced:**
 
@@ -437,7 +437,7 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 
 - [ ] **Encrypted vault backup and restore (`.lucid`).** Export full encrypted vault backups for personal cloud storage such as Nextcloud, S3, Dropbox, or a NAS, with in-browser restore.
 - [ ] **Word Document Export (`.doc` / `.docx`).** In-browser Markdown-to-Word conversion using `marked.js` HTML output wrapped in Microsoft Office MIME headers for direct `.doc` download, preserving LucID's zero-trust E2EE boundary.
-- [x] **In-Browser Document & Migration Import Engine (`.docx`, `.html`, `.xml`, `.csv`, `.json`).** 100% client-side conversion of Word documents (`mammoth.js`), HTML (`turndown.js`), XML, CSV, and JSON into Markdown before client-side encryption (`v2.15.0-dev`).
+- [x] **In-Browser Document & Migration Import Engine (`.docx`, `.html`, `.xml`, `.csv`, `.json`).** 100% client-side conversion of Word documents (`mammoth.js`), HTML (`turndown.js`), XML, CSV, and JSON into Markdown before client-side encryption (`v2.15.0`).
 - [ ] **Zero-Trust Ephemeral Note Sharing.** Encrypt individual notes in-browser using temporary fragment keys (`#key`) for secure public sharing without giving the server decryption access.
 
 ---
