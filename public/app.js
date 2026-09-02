@@ -13,6 +13,7 @@ const ICONS = {
   folderClosed: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/><path d="M8 2h9c2 0 3 1 3 3v1.38"/></svg>`,
   folderOpen: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.67 14.3l-.4 5c-.15 1.53-.27 2.7-2.98 2.7H5.71C3 22 2.88 20.83 2.73 19.3l-.4-5c-.08-.83.18-1.6.65-2.19l.02-.02C3.55 11.42 4.38 11 5.31 11h13.38c.93 0 1.75.42 2.29 1.07.01.01.02.02.02.03.49.59.76 1.36.67 2.2z"/><path d="M3.5 11.43V6.28c0-3.4.85-4.25 4.25-4.25h1.27c1.27 0 1.56.38 2.04 1.02l1.27 1.7c.32.42.51.68 1.36.68h2.55c3.4 0 4.25.85 4.25 4.25v1.79M9.43 17h5.14"/></svg>`,
   folderCross: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13.81 15.73l-3.54-3.54M13.77 12.23l-3.54 3.54"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`,
+  folderAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.06 16.5v-5M14.5 14h-5"/><path d="M22 11v6c0 4-1 5-5 5H7c-4 0-5-1-5-5V7c0-4 1-5 5-5h1.5c1.5 0 1.83.44 2.4 1.2l1.5 2c.38.5.6.8 1.6.8h3c4 0 5 1 5 5z"/></svg>`,
   note: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M11 22h5c3.5 0 5-2 5-5V7c0-3-1.5-5-5-5H8C4.5 2 3 4 3 7v7"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M4 17l-2 2 2 2M7 17l2 2-2 2"/></svg>`,
   noteAdd: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M12 12.5v5M9.5 15h5"/></svg>`,
   noteRemove: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M21 7v10c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V7c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5z"/><path d="M14.5 4.5v2c0 1.1.9 2 2 2h2M9.5 15h5"/></svg>`,
@@ -1734,9 +1735,13 @@ function showTreeContextMenu(x, y, items) {
     btn.style.alignItems = "center";
     btn.style.gap = "0.5rem";
 
-    let labelHtml =
-      (item.icon || "") +
-      `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
+    // Leading icon = an action's affordance; trailing icon = an outcome read
+    // at the end of the line. Status rows use iconTrailing.
+    let labelHtml = item.iconTrailing
+      ? `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>` +
+        (item.icon || "")
+      : (item.icon || "") +
+        `<span style="flex:1;text-align:left;">${escapeHtml(item.label)}</span>`;
     if (item.submenuItems) {
       labelHtml += ICONS.chevron;
     }
@@ -4114,6 +4119,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               ? o.name
               : `${o.name} — ${IMPORT_STATUS_LABELS[o.status] || o.status}`,
           icon: o.status === "imported" ? ICONS.tickCircle : ICONS.slash,
+          iconTrailing: true,
           action: null,
         })),
       ];
@@ -4137,7 +4143,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (destinations.length) {
           items.push({
             label: "Move all to",
-            icon: ICONS.folder,
+            icon: ICONS.folderOpen,
             submenuItems: destinations.map((f) => ({
               label: f.name,
               action: () => moveImportedBatch(f.id, importedIds),
@@ -4146,7 +4152,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         items.push({
           label: "New folder…",
-          icon: ICONS.folder,
+          icon: ICONS.folderAdd,
           action: async () => {
             const name = await showPromptModal(
               "New Folder",
