@@ -20,6 +20,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.17.0] - 2026-08-27
+
 ### Added
 
 - **Server request log**: the server now prints one line per API request to stdout — timestamp, method, path, status, duration, and for a vault write the note/folder/tag counts, the newest `updatedAt` and the body size. Nothing encrypted is ever read: counts and timestamps are the fields the vault deliberately stores in clear. Until now the server printed a single startup line, so a report of "my changes were gone when I came back" could not be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it. The bundled `docker-compose.yml` caps the log at 3 × 10 MB.
@@ -31,6 +32,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.16.0] - 2026-08-18
+
 ### Added
 
 ### Fixed
@@ -40,6 +42,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.15.0] - 2026-08-14
+
 ### Added
 
 - **Multi-Format In-Browser Document & File Import Engine**: Added client-side parsing and Markdown conversion for `.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, and `.json` files using vendored `turndown` (v7.2.4) and `mammoth` (v1.12.1) libraries. Converts documents 100% in browser RAM prior to client-side AES-256-GCM vault encryption.
@@ -71,6 +74,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.14.0] - 2026-08-13
+
 ### Added
 
 - **Pure CSS Logo Animations**: Added subtle vertical breathe float with gold glow pulse for the onboarding screen, and gentle horizontal sway with lateral tilt shift for the vault lock screen, with full `prefers-reduced-motion` accessibility support.
@@ -80,6 +84,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.13.1] - 2026-08-09
+
 ### Added
 
 ### Fixed
@@ -89,6 +94,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.13.0] - 2026-08-09
+
 ### Added
 
 ### Fixed
@@ -98,6 +104,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.12.0] - 2026-08-09
+
 ### Added
 
 - **GitHub Sponsor Configuration**: Added `.github/FUNDING.yml` (`github: [Arelius-D]`) to enable the GitHub Sponsor button on the repository.
@@ -110,6 +117,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.11.0] - 2026-08-08
+
 ### Added
 
 - **Bi-Directional Synchronized Scrolling & Cursor Following**: Added real-time proportional scroll syncing between the Markdown Editor (`#markdown-textarea`) and HTML Preview (`#markdown-preview`) in Split View mode with re-entrant loop protection guards and smooth cursor line auto-tracking.
@@ -119,6 +127,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.10.0] - 2026-08-08
+
 ### Added
 
 - **4 New Distinct Font Sets**: Expanded LucID's typography options with 4 locally-vendored, visually distinct font archetypes (100% offline self-hosted under SIL OFL 1.1):
@@ -135,6 +144,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.9.0] - 2026-08-08
+
 ### Added
 
 ### Fixed
@@ -145,6 +155,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.8.0] - 2026-08-07
+
 ### Added
 
 - **Single note Markdown download (.md)**: added a download action button (`btn-download`) in the center toolbar beside the Print button using `lin-document-download.svg`. Added **Download** and **Print** directly into the note right-click context menu across all tree views with clean, concise menu labels.
@@ -164,6 +175,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.7.0] - 2026-08-06
+
 ### Added
 
 - **Five standalone OKLCH theme presets**: added **Dracula** (`dracula-official`) and **Catppuccin Palette** (**Latte** `catppuccin-latte`, **Frappé** `catppuccin-frappe`, **Macchiato** `catppuccin-macchiato`, **Mocha** `catppuccin-mocha`). Each theme is declared via 30 standalone OKLCH design tokens with zero component logic changes. Paired with authentic Iconsax Linear icons (`lin-ghost.svg`, `lin-pet.svg`) vendored in `public/icons/` and inlined into `app.js`. All themes feature dynamic theme-adaptive scrollbar rules (`var(--scrollbar-thumb)`).
@@ -172,6 +184,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.6.0] - 2026-08-04
+
 ### Added
 
 - **Print the note, not the application**: a printer button beside the view tabs prints the rendered note — no sidebars, no toolbars, no footer — and the browser's own dialog gives Save-as-PDF for free. It always prints the preview, whichever view mode is on screen — including Editor mode, where the raw markdown would otherwise have printed above the rendered note — and forces ink-on-paper colour so neither theme prints its background. Code blocks, quotes, tables and images avoid breaking across pages. No library, no new dependency, nothing added to the CSP.
@@ -203,6 +216,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.5.0] - 2026-08-03
+
 ### Added
 
 ### Changed
@@ -229,6 +243,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.4.0] - 2026-08-03
+
 ### Added
 
 - **Tags are chosen, not retyped**: the note's right-click menu and the inspector's **+** now open one **Tags…** picker listing every tag in your vault with a toggle per row — on where the note carries it, off where the tag is available to apply. Click to flip; the menu stays open so tagging several at once costs one open. Typing is reserved for the single **New tag…** entry, so a typo can no longer silently mint a near-duplicate, and removing a tag never means typing it back from memory. Long lists scroll inside the menu.
@@ -253,6 +268,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.3.0] - 2026-08-03
+
 ### Added
 
 - **Third theme: Amber Hour (twilight)** — the in-between: mid-dark warm bronze (bg L≈0.40) with light text and the gold accent pulled between the two shipped themes. Same token names, zero component changes needed.
@@ -275,6 +291,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.2.0] - 2026-08-03
+
 ### Added
 
 - **Four locally-served font sets with an in-app picker**: Geist + Geist Mono (the new default), IBM Plex Sans + Plex Mono, Source Sans 3 + Source Code Pro, and Inter + JetBrains Mono, all vendored from @fontsource packages by `npm run vendor` into `public/vendor/fonts/` (latin subset, only the weights the UI uses - 412 KB for all four sets, and the browser downloads only the active one). A new footer button (Iconsax smallcaps glyph) opens the same picker pattern as the auto-lock timeout; the choice persists per browser like the theme and applies live with no reload. Google Fonts is gone entirely: the `<link>` tags are removed and `style-src`/`font-src` tighten to `'self'` in both the CSP header and meta - the app now makes zero third-party requests of any kind, completing genuine offline/air-gapped operation. Every set ships with its upstream OFL 1.1 license file, and Dependabot tracks font updates through the same devDependency pipeline as the vendored libraries.
@@ -315,6 +332,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.1.0] - 2026-08-02
+
 ### Added
 
 - **Pin a note**: right-click any note and pin it. Pinned notes carry a marker on their row and appear together under a third explorer view alongside Folders and Tags. Only notes pin — a folder is a container, and pinning one would mean deciding whether its contents came with it. The pinned view is a flat list: there is no hierarchy among pinned notes and nothing to expand.
@@ -355,6 +373,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.0.0] - 2026-08-01
+
 ### Breaking
 
 - **Vault format v2 (`schemaVersion: 2`)**: The store now carries a `schemaVersion` and a `kdf` block (`algo`, `iterations`, `salt`). Vaults written by 1.x cannot be read by 2.x. LucID has had no public installs, so no migration path is provided — 2.0.0 establishes the format.
@@ -439,6 +458,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 ## [1.4.1] - 2026-07-31
+
 ### Added
 
 - Idle Auto-Lock: Automatic vault lock on inactivity — user-selectable timeout (Off / 5 / 15 / 30 min, default 5) with a fixed 60-minute hard ceiling; footer timer picker persisted to localStorage. Reuses the existing lock flow (no new cryptography).
