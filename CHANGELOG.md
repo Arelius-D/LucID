@@ -9,9 +9,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.18.0-dev] - unreleased
 
 ### Added
+
 - **Import summary popover**: the moment an import finishes, a popover on the footer's import glyph lists every file with its outcome — imported, or skipped with the reason on hover (unsupported file type, empty, unreadable; skipped files were previously counted but never shown). From the same popover the whole batch can be moved to any live folder or into a folder created on the spot, for the case where the right destination was noticed one drop too late. It obeys the same rule as every menu: the next click anywhere else dismisses it, and a fully successful import fades on its own after 8 seconds unless the pointer is over it — reading is not dismissing — so the user who was already standing in the right folder pays nothing. Each row carries its outcome glyph — authentic Iconsax `lin-tick-circle` for imported, `lin-slash` for skipped, a circle family kept distinct from the app's square control glyphs — and when anything was skipped a `lin-refresh-2` "Choose files again…" action reopens the file chooser for a fresh pick.
 
 ### Fixed
+
 - **Mutations render first, the vault write follows**: every structural operation — delete, restore, rename, move, tag, pin, create — re-encrypted the entire vault, uploaded it whole, waited for the server to fsync, and only then redrew the tree. Deleting a handful of folders in quick succession left them all on screen until their round-trips returned, and the concurrent whole-vault uploads throttled each other (measured: three simultaneous 440 KB writes stretching to 30-43 s on a slow link). The tree now redraws from memory in the same frame as the click, and writes go through a coalescer: one in flight, at most one queued, so a burst of twenty operations costs two vault writes carrying the end state instead of twenty racing ones. The cloud badge remains the truth of persistence, exactly as it already was for typing; locking, hiding the tab and leaving the page drain any write still flying before proceeding, and the leave-warning now covers in-flight writes, not only the editor debounce.
 - **Import no longer reports success when the vault write failed**: the batch save's outcome was swallowed, so the glyph could announce "Imported 3 Notes" while the sync badge showed the write had failed and the notes existed only in memory. The save now reports its result; a failed write shows an error state instead of a success label, and the red sync badge carries the failure as it always has.
 
@@ -19,9 +21,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.17.0] - 2026-08-27
 ### Added
+
 - **Server request log**: the server now prints one line per API request to stdout — timestamp, method, path, status, duration, and for a vault write the note/folder/tag counts, the newest `updatedAt` and the body size. Nothing encrypted is ever read: counts and timestamps are the fields the vault deliberately stores in clear. Until now the server printed a single startup line, so a report of "my changes were gone when I came back" could not be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it. The bundled `docker-compose.yml` caps the log at 3 × 10 MB.
 
 ### Fixed
+
 - **Locking and unlocking in the same tab rewound the vault, then overwrote the server with the rewind**: the ciphertext vault fetched at page load was kept as the copy to decrypt on unlock, and nothing ever refreshed it. Every save this tab made went to the server correctly, but the moment the vault was locked — by the Lock button or the idle auto-lock — and unlocked again without a reload, the page-load copy was decrypted back into memory: every note, edit, folder and tag since the page was opened vanished from the screen. The next autosave then wrote that stale vault over the server, making the loss permanent. Anyone who kept the tab open across an idle auto-lock hit this on every unlock; a reload or a fresh tab masked it, which is why it looked like a browser or connection problem. In a tab that had just initialised the vault the stale copy was still the plaintext seed, so there the unlock failed with "Authentication error" instead. Unlock now re-reads the vault from the server before decrypting — if the server cannot be reached the lock screen says so and nothing is unlocked — the lock routine discards the snapshot, and every successful save refreshes it. Present in every 2.x release.
 
 ---
@@ -30,21 +34,25 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+
 - **PDF Export Filename**: Print/Save-as-PDF now uses the active note's title (≤30 characters, filesystem-safe) as the suggested filename instead of the static `LucID.pdf` for every export.
 
 ---
 
 ## [2.15.0] - 2026-08-14
 ### Added
+
 - **Multi-Format In-Browser Document & File Import Engine**: Added client-side parsing and Markdown conversion for `.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, and `.json` files using vendored `turndown` (v7.2.4) and `mammoth` (v1.12.1) libraries. Converts documents 100% in browser RAM prior to client-side AES-256-GCM vault encryption.
 - **Authentic Iconsax Linear Vector Import Glyphs**: Downloaded and registered `lin-document-upload.svg`, `lin-document-cloud.svg`, `lin-document-1.svg`, and `lin-document-sketch.svg` for dynamic import state transitions (`idle` → `importing` → `success` / `error`).
 - **Footer Card Import Placement**: Formatted `#btn-import-drop` as a `.lock-action-btn` element positioned in `.footer-top-right-corner` of `.e2ee-card` directly above the Lock button.
 
 ### Changed
+
 - **Documentation & Dependency Manifest Refresh**: Updated `README.md` to document the 10-format in-browser document import engine, added `turndown` (v7.2.4) and `mammoth` (v1.12.1) to the vendored browser dependencies manifest table, updated Phase 3 roadmap milestones, and credited library maintainers in Acknowledgments.
 - **Footer Control Micro-Animations & Visual Identity**: Refined `#btn-import-drop` as a receptive dashed dropzone target and `#btn-lock-vault` as a solid security posture action in `styles.css`, eliminating container box hover scaling while animating inner glyph icons.
 
 ### Fixed
+
 - **File Import Filtering**: Added `.json` to `#file-import-input` `accept` filter attribute in `index.html` to allow native OS file dialog selection of JSON files.
 - **Touch Target Accessibility**: Expanded `.btn-tag-add` target size from 20px to 24px (1.5rem) in `styles.css` to satisfy WCAG 2.2 AA target size minimum requirements.
 - **Accessibility Parity**: Aligned `aria-label` with `title` on `#btn-fontsize` to include operational click region instructions for screen reader users.
@@ -64,6 +72,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.14.0] - 2026-08-13
 ### Added
+
 - **Pure CSS Logo Animations**: Added subtle vertical breathe float with gold glow pulse for the onboarding screen, and gentle horizontal sway with lateral tilt shift for the vault lock screen, with full `prefers-reduced-motion` accessibility support.
 
 ### Fixed
@@ -74,6 +83,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+
 - **Installer Syntax Fix**: Resolved `syntax error near unexpected token fi` in `install.sh` DuckDNS onboarding block.
 
 ---
@@ -82,22 +92,26 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+
 - **Installer Pipe Fix (`curl ... | bash`)**: Removed global `exec < /dev/tty` redirection from top of `install.sh` which caused premature stdin pipe closure (`curl: (23)`). Redirected stdin from `/dev/tty` specifically on interactive DuckDNS onboarding prompts instead.
 
 ---
 
 ## [2.12.0] - 2026-08-09
 ### Added
+
 - **GitHub Sponsor Configuration**: Added `.github/FUNDING.yml` (`github: [Arelius-D]`) to enable the GitHub Sponsor button on the repository.
 - **Editor Context Menu & Formatting Shortcuts**: Added right-click context menu and keyboard shortcuts (`Ctrl/Cmd` + `B`/`I`/`U`/`K`) to the Markdown editor. Includes 16 upstream and derived Iconsax Linear icons (`lin-text-bold`, `lin-text-italic`, `lin-text-underline`, `lin-text-strikethrough`, `lin-smallcaps`, `lin-link`, `lin-code`, `lin-document-code`, `lin-quote-down-square`, `lin-grid-2`, `lin-minus`, `lin-task`, `lin-clipboard-tick`, `lin-eraser-1`, `lin-scissor-2`, `lin-document-copy`, `lin-document`) for single-click formatting, heading cycling, table templates, lists, cut/copy/paste, and format stripping.
 
 ### Fixed
+
 - **Seed Note Accuracy**: Updated initial `Start here` seed note in `server.js` to accurately reflect 8 OKLCH themes, 8 self-hosted font sets, and font size scaling controls.
 
 ---
 
 ## [2.11.0] - 2026-08-08
 ### Added
+
 - **Bi-Directional Synchronized Scrolling & Cursor Following**: Added real-time proportional scroll syncing between the Markdown Editor (`#markdown-textarea`) and HTML Preview (`#markdown-preview`) in Split View mode with re-entrant loop protection guards and smooth cursor line auto-tracking.
 
 ### Fixed
@@ -106,6 +120,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.10.0] - 2026-08-08
 ### Added
+
 - **4 New Distinct Font Sets**: Expanded LucID's typography options with 4 locally-vendored, visually distinct font archetypes (100% offline self-hosted under SIL OFL 1.1):
   - **Meslo / Inconsolata Terminal**: Full CLI / Powerlevel10k prompt monospace aesthetic.
   - **Cascadia Code**: Modern Windows Terminal style with programming ligatures.
@@ -114,6 +129,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Interactive Font Size Stepper (`lin-computing`)**: Added a dual-zone diagonal stepper button (`lin-computing.svg`) in the sidebar footer next to the font family picker. Clicking the top-left corner (`-`) or bottom-right corner (`+`) steps through 4 relational `rem` size presets (`0.8125rem`, `0.9375rem`, `1.125rem`, `1.3125rem`) with automatic `localStorage` persistence and live toast feedback.
 
 ### Fixed
+
 - **Dynamic Context & Font Menu Positioning**: Replaced hardcoded 200px menu offset in `showTreeContextMenu` (`app.js`) with dynamic DOM measurement (`offsetWidth` / `offsetHeight`). Popup menus anchored in the sidebar footer (such as the 8-item Fontset picker and Tag membership menu) now measure their live rendered height and automatically open upward when near the bottom screen edge, eliminating menu clipping across all viewports.
 
 ---
@@ -122,6 +138,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Fixed
+
 - `install.sh` DuckDNS Onboarding: simplified prompt to enter subdomain (automatically appends `.duckdns.org` or strips duplicated domain suffixes), added explicit newline padding so tokens do not bleed into subsequent configuration lines, added Caddy TLS Let's Encrypt rate-limit audit (`[TLS]`), and ensured primary HTTPS URL is always displayed in the final summary banner.
 - `install.sh` purge: pre-cache `sudo` credentials (`sudo -v`) before the teardown block so the password prompt no longer breaks inline `[TEARDOWN]…[OK]` output formatting.
 
@@ -129,22 +146,26 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.8.0] - 2026-08-07
 ### Added
+
 - **Single note Markdown download (.md)**: added a download action button (`btn-download`) in the center toolbar beside the Print button using `lin-document-download.svg`. Added **Download** and **Print** directly into the note right-click context menu across all tree views with clean, concise menu labels.
 - **Folder batch .zip export**: added client-side zero-dependency `.zip` file generator (`createZipBlob`) and **Download (.zip)** action to folder right-click context menus using `lin-box.svg`, allowing instant batch download of all notes within any folder.
 
 ### Changed
+
 - **Unify note icon family (`lin-document-*`)**: aligned all note creation and removal actions to the authentic `lin-document-*` family. Created `lin-document-add.svg` (plus sign `+`) for note creation (`#btn-new-note` and `ICONS.noteAdd`) and `lin-document-minus.svg` (minus dash `-`) for note removal (`ICONS.noteRemove`), maintaining identical container geometry across all note actions.
 - **Centralize SVG stroke rules in CSS**: moved default stroke properties (`stroke-width: 1.5`, `stroke-linecap: round`, `stroke-linejoin: round`, `stroke-miterlimit: 10`) under `.icon-svg` in `styles.css`, stripping 87 lines of redundant inline attributes across all 24 `<svg>` tags in `index.html` (INC-46).
 - **Streamline flyout sub-menus**: updated `.context-menu.sub-context-menu` CSS specificity to `min-width: max-content` and updated `app.js` positioning to auto-fit flyout sub-menus tightly to text labels. Simplified Catppuccin theme parent label to "Catppuccin" and removed redundant sub-menu icons.
 - **Open Graph & Twitter social card meta tags**: added `og:title`, `og:description`, `og:image`, and Twitter card metadata to `index.html` `<head>` for rich link previews when sharing the web app URL.
 
 ### Documentation
+
 - **Align README features and release milestones with v2.8.0**: updated `README.md` to document single-note Markdown export, folder batch ZIP export, Open Graph tags, and Phase 3 release milestones.
 
 ---
 
 ## [2.7.0] - 2026-08-06
 ### Added
+
 - **Five standalone OKLCH theme presets**: added **Dracula** (`dracula-official`) and **Catppuccin Palette** (**Latte** `catppuccin-latte`, **Frappé** `catppuccin-frappe`, **Macchiato** `catppuccin-macchiato`, **Mocha** `catppuccin-mocha`). Each theme is declared via 30 standalone OKLCH design tokens with zero component logic changes. Paired with authentic Iconsax Linear icons (`lin-ghost.svg`, `lin-pet.svg`) vendored in `public/icons/` and inlined into `app.js`. All themes feature dynamic theme-adaptive scrollbar rules (`var(--scrollbar-thumb)`).
 - **Nested Catppuccin Sub-Menu Popover**: grouped the 4 Catppuccin theme flavors into a side-by-side hover flyout sub-menu (`Catppuccin Palette`), keeping the main theme picker menu compact and preventing vertical list clipping across browser viewports.
 
@@ -152,6 +173,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.6.0] - 2026-08-04
 ### Added
+
 - **Print the note, not the application**: a printer button beside the view tabs prints the rendered note — no sidebars, no toolbars, no footer — and the browser's own dialog gives Save-as-PDF for free. It always prints the preview, whichever view mode is on screen — including Editor mode, where the raw markdown would otherwise have printed above the rendered note — and forces ink-on-paper colour so neither theme prints its background. Code blocks, quotes, tables and images avoid breaking across pages. No library, no new dependency, nothing added to the CSP.
 - **Search reaches inside your notes**: it matched titles and tags only, while the note bodies sat decrypted in memory a line away. Typing now finds notes by their contents too, at no cost — the text was already there, search simply never looked at it.
 - **Search is its own view**: while you are typing, the pane shows one flat list of matches — no folder headers, no tag groups, no pinned scaffolding to read around, and no folders sitting there looking empty because their notes did not match. Close the search and your previous view comes back exactly as it was; the mode was never changed. Behaves the same from all three views.
@@ -159,6 +181,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Focus mode**: the maximise button puts LucID into real fullscreen — no tab strip, no bookmarks bar, no OS chrome — with both side panes out of the way, so the note is the only thing on the display. Escape leaves, and the button follows the browser's own fullscreen state rather than assuming, so it can never claim focus mode while you are out of it.
 
 ### Changed
+
 - **The lock button reports the vault's posture instead of a badge repeating a promise**: a shield sat beside it announcing *E2EE Active · AES-256-GCM*, and that claim could not be false where it lived — reaching the app at all requires deriving a key, which is impossible without Web Crypto, so the badge's error state was unreachable and its `role="status"` announced a value with one possible value. What actually varies while you are inside is how long the key will sit in memory, and nothing showed it. The lock button now carries that in its own glyph, from Iconsax's shield family so one silhouette changes only its mark: a keyhole when auto-lock is armed, an empty shield when it is switched off and only the 60-minute ceiling remains, and an X when eviction is under a minute away — so being thrown out mid-sentence stops being a surprise. The tooltip names the algorithm and the real timeout. The honest report of missing Web Crypto stays on the lock screen, where it blocks entry rather than decorating a footer.
 - **The lock button stops out-shouting the whole page on hover**: it was the only footer control with a resting border, and hover lit that entire border accent — the largest, brightest outline on screen, for a hover, louder than any *active* state anywhere else. It now tints its surface and shifts colour like every other control, and keeps its neutral border as what it is: the resting mark of the one action among indicators.
 - **Auto-lock accepts a duration under a minute**, which the stored value could not represent before: it was read with `parseInt`, so anything smaller floored to zero and silently meant Off.
@@ -166,6 +189,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Pane toggles say which side and which state**: `lin-grid-4`'s off-centre line marks the side the pane occupies, and each pane's hidden state is its shown state turned 180 degrees — so showing and hiding can never be mistaken for one another, and the left and right pairs are mirror images. The split tab does the same with `lin-grid-9` — upright for two columns, turned for two rows, so the icon *is* the layout it produces — and shows `lin-grid-3` when the split is not the active view. The theme button is now a colour filter rather than a paint brush, and auto-lock is a watch rather than an hourglass.
 
 ### Fixed
+
 - **A new vault opened collapsed if you had used LucID before**: the remembered open-folder list is stored per browser, not per vault, so a browser that had opened earlier vaults carried ids that no longer existed — and the "first run opens everything" rule only fired when there was no saved list at all. Ids that do not belong to the vault being opened are now ignored, and if none of the saved ids belong to it, it is treated as a first run and opens. Genuine collapse choices are untouched.
 - **The band lines up now**: the content area draws a top edge — the same hairline, same token, as the folder tree's indent guide — and the pieces around it were measured against it rather than guessed. They were badly out of step: the view tabs had ONE pixel of air above that edge while the print and focus buttons in the same band had eleven, and the explorer pills sat eighteen pixels below it. Now nine above the edge for the tabs, eleven for the buttons, twelve below for the pills, so the band reads as a single row. The side panels keep blending into their own surfaces — only the centre closes its band with a line, because that is the edge the content sits under. The line costs no layout height and is not printed.
 - **The split divider drew two lines**: a 0.375rem handle with a hairline on both edges read as an object sitting between the panes rather than the seam where they meet. One line now, in both orientations.
@@ -182,6 +206,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ### Added
 
 ### Changed
+
 - **Lock-screen controls are proportionate to their card**: the passphrase field and the button were within a fifth of a rem of each other and nearly filled the card. Both now sit at a fixed 2.5rem with the gaps scaled to match, so the controls read as parts of the card rather than as the card's contents. The accent fill already makes the button the obvious action; it does not need to be bigger as well.
 - **Empty folders stop pretending**: a folder with no notes shows no expand caret and no `0` badge, and keeps its closed glyph whatever its stored open state. Nothing about remembered state changed — there is simply nothing to paint until a note arrives.
 - **The lock screen says each thing once**: it used to state "this vault is locked" four times over (heading, chip, paragraph, button) and "this is a passphrase field" up to five. What remains is a logo, one status line, the field, and the button. The line carries the state with its own glyph — *Set a passphrase to initialize your LucID*, *Vault locked*, or *Server unreachable* — the heading and the AES-256-GCM paragraph are gone, and the "cannot be recovered" warning now appears only on first run, where that choice is actually made.
@@ -189,9 +214,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Server-unreachable state no longer offers a passphrase box**. Retry re-fetches the vault and never tested a passphrase, so the field, the eye and the footer are hidden and the only control is the one that does something. Its glyph is a stopped heartbeat, matching the runtime badge in the footer.
 
 ### Removed
+
 - Three icon sources left without a consumer by this round's swaps: `lin-danger.svg`, `lin-arrow-up.svg` and the earlier checkbox pair. Every file in `public/icons/` has a consumer or is a documented derivation source.
 
 ### Fixed
+
 - **A refused passphrase clears the field and shakes it** — one gesture, nothing else. No message line pushes into the card, no red edge sits on an empty box, and the cursor stays where you need it, because retyping is the only next step. The words *Wrong passphrase* remain in the page for screen readers, and with reduced motion switched on the visible line returns instead of the shake, since without motion a colour change alone would be the only signal.
 
 - **One gate for the button and the Enter key**. Enter used to bypass the disabled button, which is why "Please enter a passphrase", "Please confirm your master passphrase" and "Passphrases do not match" existed at all. The button and Enter now share a single gate, so those three messages became unreachable and were deleted: the field glow and the button state already say it.
@@ -203,18 +230,22 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.4.0] - 2026-08-03
 ### Added
+
 - **Tags are chosen, not retyped**: the note's right-click menu and the inspector's **+** now open one **Tags…** picker listing every tag in your vault with a toggle per row — on where the note carries it, off where the tag is available to apply. Click to flip; the menu stays open so tagging several at once costs one open. Typing is reserved for the single **New tag…** entry, so a typo can no longer silently mint a near-duplicate, and removing a tag never means typing it back from memory. Long lists scroll inside the menu.
 - **Your tags are a library now**: a tag exists in the vault in its own right (encrypted like everything else), so taking it off its last note no longer destroys it — it stays in the picker, switched off, ready to re-apply months later. Renaming follows it; **Delete Tag** is the one action that removes a tag from every note *and* from the library.
 
 ### Changed
+
 - **A first run that shows you the app**: a new vault now opens with *Getting Started* and *Personal*, a tag library of `guide`, `markdown` and `ideas` (that last one attached to nothing, so the tag toggles show both states immediately), and two notes. **Start here** is pinned and tours what is not guessable: the Split re-click that flips the layout, the three explorer views, tags as a vault-level library, what the trash actually does, and every footer control by name. **Markdown playground** exercises the renderer. The old welcome note explained encryption three times and the interface never; encryption is now one paragraph, framed by the consequence that matters when you host it yourself.
 - **Task lists have their boxes back**: `marked` renders them as form inputs, which the sanitizer forbids in note content, so they had been silently reduced to plain bullets. They now render as themed boxes — ticked and empty — with no relaxation of the sanitizer.
 - **One tag path, one tag rule**: every tag change in the app — picker, chip ×, new-tag prompt, global rename — now runs through a single mutation and a single normalizer (leading `#` stripped, whitespace collapsed, lowercased, capped at 32 characters). Two divergent add-tag implementations, which normalized in different orders, are gone.
 
 ### Removed
+
 - Dead `activeTagFilter` state and the filter branch that read it — an unreachable stub; tag filtering is the tags view.
 
 ### Fixed
+
 - **A deleted note could still be sitting in the editor**: if every remaining note was in the trash, unlocking or reloading selected one of them — the tree showed nothing while the centre pane loaded a deleted note in an editable state, where autosave would have written to it. Note selection now happens after decryption (the trashed flag is encrypted, so it cannot be read before), keeps your current note if it is still live, and the editor refuses a trashed note whatever route selected it. The read-only trash preview is unchanged. This also removes the phantom "New Note" that could appear when the last-open note had been deleted.
 - **A new note could land where nothing shows it**: the toolbar's New Note filed into the active folder without checking it was live, so with that folder in the trash the note existed in the vault but appeared in no view, and creating a fresh folder did not adopt it — with no folders at all the button silently did nothing. Every creation path now resolves to a live folder, recreating *General* when none remains, and notes already stranded by this are re-homed on unlock.
 - **The inspector's + button opened a menu that closed itself** in the same click (a missing propagation stop), and the context-menu engine had no height cap — a long tag list would have run off the viewport.
@@ -223,18 +254,21 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.3.0] - 2026-08-03
 ### Added
+
 - **Third theme: Amber Hour (twilight)** — the in-between: mid-dark warm bronze (bg L≈0.40) with light text and the gold accent pulled between the two shipped themes. Same token names, zero component changes needed.
 - **Theme picker in the footer** — the top-bar sun/moon toggle retires; a brush button joins the comfort controls (theme, font, auto-lock) and opens a menu like the auto-lock one: Dusk Ember (moon), Amber Hour (sun-fog), Warm Linen (sun), tick on the active choice. Same mechanism as the font picker: stored per browser, unknown values fall back to the default.
 - **No more wrong-theme first paint**: a tiny hashed inline script stamps the stored theme on `<html>` before anything renders; the hash is carried in both the CSP header and its meta twin, so the strict `script-src 'self'` policy stays intact.
 - **Sync and runtime badges are now buttons**: click the cloud to flush and sync now, click the activity badge to re-check server health immediately — the hover they always had finally points at something real. Keyboard-reachable (Enter/Space).
 
 ### Changed
+
 - **License: MIT → AGPL-3.0-only** (from this release forward; all releases up to v2.2.0 remain MIT). LucID stays free to run, self-host and modify — but operating a modified LucID as a network service now requires publishing those modifications. LICENSE, package metadata and README updated; every vendored dependency (OFL fonts, BSD highlight.js, MIT marked/DOMPurify, MIT/ISC server deps) is AGPL-compatible. FOSSA license & dependency analysis added to CI (runs on pushes with the `FOSSA_API_KEY` secret).
 - **Footer regrouped by purpose**: comfort controls (theme, font, auto-lock) in the top row; system row below with the GitHub link + sync + runtime cluster bottom-left and a security corner bottom-right (E2EE shield beside the Lock button that enforces it). The shield no longer paints a hover it can't honor.
 - **One glyph scale in the footer**: the 0.9375rem override on the old autolock/fontset pair (a leftover balancing the deleted E2EE text line) is gone — every footer glyph renders at the family size.
 - **The update pulse whispers now**: 4s slow breath at scale 1.04 on the system easing curve, instead of a 2s throb — awareness for a self-hosted install that may see it for days, not a rave.
 
 ### Fixed
+
 - **One easing curve everywhere**: 15 transition declarations (footer Lock button, toolbar pills, view tabs, tree rows, modals, search) declared literal `ease` beside the motion-duration tokens; all now use the system's `--ease-standard` curve, so every hover and state change in the app moves with the same feel.
 - **Dependabot no longer proposes runtime majors**: node major bumps in the Docker image are ignored by config — runtime majors are a deliberate LTS-day decision, not bot noise; patch/minor image updates still flow.
 
@@ -242,11 +276,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.2.0] - 2026-08-03
 ### Added
+
 - **Four locally-served font sets with an in-app picker**: Geist + Geist Mono (the new default), IBM Plex Sans + Plex Mono, Source Sans 3 + Source Code Pro, and Inter + JetBrains Mono, all vendored from @fontsource packages by `npm run vendor` into `public/vendor/fonts/` (latin subset, only the weights the UI uses - 412 KB for all four sets, and the browser downloads only the active one). A new footer button (Iconsax smallcaps glyph) opens the same picker pattern as the auto-lock timeout; the choice persists per browser like the theme and applies live with no reload. Google Fonts is gone entirely: the `<link>` tags are removed and `style-src`/`font-src` tighten to `'self'` in both the CSP header and meta - the app now makes zero third-party requests of any kind, completing genuine offline/air-gapped operation. Every set ships with its upstream OFL 1.1 license file, and Dependabot tracks font updates through the same devDependency pipeline as the vendored libraries.
 - **A trash can, replacing hard deletion**: Delete Note and Delete Folder now move things to a trash row above the sidebar footer, with no confirmation dialog — the trash is the undo. Deleting a folder trashes the folder and its notes together. Clicking the row reveals the trash panel: right-click any item to restore it or delete it permanently, drag a note onto a live folder to restore it there, right-click the trash row to Empty Trash, or drag a live note onto the row to delete it — the counterpart of dragging out to restore. The can's lid opens while the panel is open and while a note hovers over it mid-drag (`lin-trash-open`, derived from `lin-trash` by rotating the lid about its hinge — Iconsax draws no open-trash glyph — path data unmodified), following the same closed/open glyph convention as folders. Selecting a trashed note previews it READ-ONLY in the center pane — the editor never loads it, so no edit path exists — letting notes be identified by content before restoring; the inspector follows (table of contents and metrics from the trashed content, tags shown without their remove controls). The user's own view mode is never touched by this: leaving the preview — by selecting any live note, choosing a view tab, or closing the trash — re-applies the exact prior mode including split orientation, because it was never overwritten. Restoring the previewed note opens it live in that mode. The permanent operations are the only ones behind the confirm modal, and emptying is manual only — nothing expires on a timer. Restore semantics: a note goes back to its own folder; if that folder is in the trash too, the folder comes back with it while the folder's OTHER trashed notes stay in the trash (each still remembers it, so restoring them later lands them back inside); if the folder was permanently deleted, the note lands in the first live folder, and if none exists LucID recreates General. Trash membership rides in the vault encrypted exactly like the pinned flag, so the server cannot see what you keep versus discard and the trash follows the vault across devices. This also removes 1.x behavior where deleting the last folder stranded its notes invisibly with a dangling folder reference, behind a dialog that promised a move to an "Uncategorized" folder that never existed.
 
 
 ### Fixed
+
 - **CI boots the image it publishes**: a smoke test starts the freshly built image and fails the build unless `/health` and `/api/version` answer, catching a dependency major that installs cleanly but crashes at startup — a class of breakage nothing in the pipeline previously covered.
 - **Documentation corrected**: SECURITY.md no longer describes record ids as timestamp-derived (they are randomly generated); the README architecture diagram shows the bundled Caddy proxying to `app:3000` on the compose network rather than the host loopback publish; GitHub Actions Dependabot updates raised from weekly to daily, matching the documented policy; the explanatory comments in dependabot.yml (whose rationale already lives in the README) are removed; and the README no longer claims GitHub-style alerts — the markdown engine does not support them natively and LucID ships no grammar bolt-ons around its dependencies, so `> [!NOTE]` renders as the plain blockquote it is (if `marked` ever gains alerts natively, they will simply start working).
 - **The Content-Security-Policy is now sent as an HTTP header, so `frame-ancestors` actually applies**: the policy existed only as a `<meta>` tag, and browsers ignore `frame-ancestors` in a meta-delivered policy — no HTTP layer sent a CSP at all, so the anti-clickjacking directive the policy has advertised since 2.0.0 protected nothing and the app could be framed by any site. Verified before the fix by embedding the running app in an iframe: it loaded. The header is sent from `server.js` rather than the Caddyfile so every deployment shape carries it, including a bare `node server.js` and loopback-direct access that never passes through the reverse proxy. `X-Frame-Options: DENY` accompanies it for older browsers. The same iframe probe after the fix is refused.
@@ -271,6 +307,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **The vault is owned by the installing user — detected, never guessed**: the installer reads the invoking user's uid and gid into `.env` (`LUCID_UID`/`LUCID_GID`) and the compose file runs the app container as exactly that user, so `data/store.json` is created with the user's own ownership and normal permissions. This replaces the previous `chmod 666` world-writable workaround that papered over uid mismatches. Existing installs upgraded from versions where the container wrote as uid 1000 get `data/` ownership realigned on the next installer run; manual `docker run` and bare `node server.js` users keep the image's built-in unprivileged `node` user exactly as before (the compose `user:` defaults to 1000:1000 when the variables are absent).
 
 ### Removed
+
 - **The orphaned pre-2.1.0 favicon**: `public/favicon.png` — the 857 KB, 1024x1024 original whose 2.5 KB replacement 2.1.0 shipped — was still tracked, still copied into every Docker image, and still served to any client requesting the default `/favicon.png` URL, despite zero code references (proven by repo-wide grep before removal). The image loses 857 KB of dead weight and stale artwork can no longer be served from the root path.
 - **Inert head residue in index.html**: the `http-equiv="Cache-Control"` meta, which browsers ignore (cache busting is the `?v=` version query), and two comment fossils addressed to a past editing conversation instead of to the code.
 - **Orphaned icon sources**: `lin-close-circle.svg` and `lin-video-square.svg` (never consumed), plus `lin-note-add.svg`, `lin-arrow-circle-right.svg` and `lin-document-text.svg` (consumers replaced during the icon purification) — all removed after proven zero references, the same sweep discipline that retired `lin-bookmark-2.svg` in 2.1.0. Every remaining file in `public/icons/` has a consumer or is a documented derivation source.
@@ -279,22 +316,26 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.1.0] - 2026-08-02
 ### Added
+
 - **Pin a note**: right-click any note and pin it. Pinned notes carry a marker on their row and appear together under a third explorer view alongside Folders and Tags. Only notes pin — a folder is a container, and pinning one would mean deciding whether its contents came with it. The pinned view is a flat list: there is no hierarchy among pinned notes and nothing to expand.
 - **Pinned state is encrypted**: the flag rides in the vault so it follows you between devices, but it is encrypted rather than sent as a plain boolean. A bare `pinned: true` would travel in clear alongside `folderId` and hand the server the list of notes you consider most important — precisely the metadata the vault exists to hide. Vaults written before pinning existed have no such field and are treated as unpinned, so they open unchanged.
 - **Drag a note onto a folder to move it**: notes in the folder tree are now draggable and folder headers are drop targets. The dragged row fades, the folder under the cursor fills with a new `--bg-drop` token, and the destination folder opens so the note is visible where it landed. The in-flight edit is flushed before the move, so a note dragged mid-typing keeps its text. Dropping a note on the folder it already lives in, or anywhere that is not a folder, is refused and the browser animates it back to where it came from. `state.dragNoteId` had been declared and unused since 1.4.1; it is now what it was always meant to be.
 - **`--bg-drop` design token**: added to both themes at a value clear of `--bg-active`, because a drop target is hovered by definition and had to stay legible underneath the hover state. Tree items signal state through background fill, so the drop cue is a fill rather than a ring — rings in this system belong to inputs — and the text uses `--text-primary`, never accent, per the existing note that accent's lightness relative to the default icon inverts between themes.
 
 ### Documentation
+
 - **Footprint figures re-measured on 2.0.0 code**: the README's numbers dated from 1.4.1. Re-sampled on the live host at 5-second intervals for 20 minutes, 240 samples. The application backend now registers 0.00% CPU across every sample, its cgroup memory falls from 22.27 to 14.10 MiB, and the whole stack drops from 38.67 to 31.26 MiB cgroup and 141.63 to 128.81 MB host RSS. The section now states outright that these are at-rest figures and explains why that is the number that matters, since encryption happens in the browser rather than on the server. Peak columns and compressed image sizes were added, and the stale claim that the application container carries no healthcheck was removed.
 - **README claimed "instant fuzzy search across notes and tags"**: the search is a substring match over note titles and tag names. It is not fuzzy and it does not search note bodies. Corrected, and the third explorer view named on the same line.
 
 ### Changed
+
 - **Node runtime moves from 22 to 24 (Krypton), the line that is Active LTS**: v22 entered maintenance on 2025-10-21. Dependabot proposed `node:25-alpine`, which would have been a downgrade in support rather than an upgrade: v25 is an odd-numbered Current line that reached end of life on 2026-06-01 and receives no further security patches, so the higher number carried less safety than the older pin it replaced. v24 is supported to 2028-04-30. v26 is deliberately not taken yet — it does not enter LTS until 2026-10-28 and is a Current line until then. The rule this project now follows is written into the Dockerfile: even-numbered majors only, and only once they are actually in LTS.
 - **All GitHub Actions taken to their current majors**: `actions/checkout` v4 to v7, `docker/setup-qemu-action` and `docker/setup-buildx-action` v3 to v4, `docker/login-action` v3 to v4 (both occurrences), `docker/metadata-action` v5 to v6, `docker/build-push-action` v5 to v7. Dependabot had raised five of these; `metadata-action` it had missed entirely.
 - **One right-click menu for a note, in every view**: the folder, tag and pinned views each built their own menu, so they drifted. They now share one builder and the items reflect the note's state rather than listing both halves of a toggle — a pinned note offers Remove Pin and nothing else, a note with no tags offers no Remove Tag. Manage Tags, which asked you to retype the whole comma-separated list to change one tag, is replaced by Add Tag and Remove Tag.
 - **The explorer toolbar is one container of six icons**: the three view buttons and the three action buttons were separate pills with their own borders, padding and gap. Adding a third view made the labelled arrangement impossible — measured, three labelled buttons plus the actions pill need 362px of toolbar while even a 400px sidebar offers 340 — so the labels are gone and the two pills are now one. The container spans the toolbar row, which makes its inset to the sidebar edge identical on the left and the right at every panel width; previously it was fixed-width and left-anchored, leaving a widening band of empty space as the sidebar grew. The container query that hid labels below 19.5rem is removed along with the labels it hid. Sidebar `min-width` rises from 13rem to 15rem: six icon buttons measure 205px of content and 13rem left only 184px of row, so the cluster clipped at the narrow end.
 
 ### Fixed
+
 - **Branding restored to the agreed artwork**: `3de54c7` overwrote all three branding files by taking main's copies wholesale during a docs backport. Main carried a different render and a `logo.png` at 256px, against the 512px recorded when the derivation was first done. All three are regenerated from the master: `logo-source.png` bit-identical to the supplied original, `logo.png` at 512x512 and `favicon.png` at 48x48, each resampled once from the 1024 by Lanczos into lossless PNG with alpha preserved. `logo.png` lands at 123007 bytes, matching the size on record, so the pipeline reproduces the original derivation exactly.
 - **Pressing Enter in a prompt dialog appeared not to close it**: the key handler called submit but never `preventDefault`, and closing the dialog restores focus to the control that opened it. The same Enter, or its key-repeat, then reached that control and reopened the dialog — indistinguishable from a dialog refusing to close. Clicking the button worked because no key event followed it. Enter and Escape now stop the event.
 - **A newly created folder gave no sign of being created**: the folder was made active, but the active state for a folder header is a slight change in text colour and nothing else, so it was easy to miss among the others. Focus now moves onto the new row, which also means arrow-key navigation continues from there instead of the top of the tree.
@@ -306,6 +347,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Split-view button showed the wrong glyph on first paint**: the markup carried the side-by-side icon while the default view mode is top/bottom, so the button rendered one shape and was immediately overwritten with another. The markup now matches the icon the default mode injects — the same class of mismatch already fixed on the Pinned button.
 
 ### Removed
+
 - Dead code found by reading each file end to end: `manageNoteTags()` (replaced by Add Tag / Remove Tag but never deleted), the `bookmark2` icon and the retired `lin-bookmark-2.svg` behind it, `.icon-spin` with its keyframes, `container-type: inline-size` left behind when the container query went, and the `check-icon` and `github-icon-svg` classes, which no stylesheet rule and no script ever referenced. `PIN_GLYPH` was a `let` from when it was still being chosen between two glyphs and is now `const`.
 - The last JS-injected inline styles for layout: `#lock-error` (nine sites) and `#app` (four) set `style.display` directly, the pattern removed everywhere else under J-04, and the tag view's empty state carried `style="padding:1rem;text-align:center"`. All now use the `.hidden` class convention the rest of the app already used. The remaining `.style` writes are drag geometry and cursor state, which have to be computed.
 - `.toc-container` matched nothing: the element it was written for is `<div id="toc-container" class="toc-list">`, so the rule setting `display: flex` and the gap between entries had never applied. Renamed to `.toc-list`.
@@ -314,11 +356,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.0.0] - 2026-08-01
 ### Breaking
+
 - **Vault format v2 (`schemaVersion: 2`)**: The store now carries a `schemaVersion` and a `kdf` block (`algo`, `iterations`, `salt`). Vaults written by 1.x cannot be read by 2.x. LucID has had no public installs, so no migration path is provided — 2.0.0 establishes the format.
 - **Full-vault encryption**: Folder names and tags are now encrypted alongside note titles and bodies. Previously only titles and content were encrypted, leaving taxonomy and topic metadata readable on the server. Only non-descriptive record IDs, timestamps and the KDF parameters (which must be readable to derive the key) remain in clear.
 - **Key derivation changed**: random per-vault salt and 600,000 PBKDF2 iterations (was a hardcoded shared salt at 100,000). Keys derived by 1.x will not open a 2.x vault.
 
 ### Security
+
 - **Per-Vault Random Salt (was hardcoded)**: PBKDF2 used the constant salt `vaultnotes-e2ee-salt-v2` on every installation, so the same passphrase produced the same key on every LucID instance worldwide and one precomputed table could attack every vault. Each vault now generates a random 16-byte salt at initialization, stored in the vault (a salt is not secret; it exists to make derivation unique).
 - **PBKDF2 Iterations 100,000 -> 600,000**: Raised to current OWASP guidance for PBKDF2-HMAC-SHA256, with the parameters now recorded in the vault so they can be raised again later without breaking existing vaults.
 - **All User Content Encrypted**: Folder names and tags are encrypted at rest. Because AES-GCM ciphertext is non-deterministic, the vault is decrypted once into memory on unlock and re-encrypted at the save boundary — tags still group and filter correctly while never being stored in clear.
@@ -331,10 +375,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Service Ports Bound to Loopback**: `docker-compose.yml` published the app on `0.0.0.0:58243` (reachable over plain HTTP, bypassing Caddy TLS) and the DDNS updater UI — which handles the provider token — on `0.0.0.0:8000`. Both are now bound to `127.0.0.1`, making Caddy the sole ingress.
 
 ### Added
+
 - Links surviving sanitization are automatically given `target="_blank"` and `rel="noopener noreferrer"`.
 - `CORS_ORIGIN` environment variable for deployments that intentionally serve the UI from a different origin.
 
 ### Fixed
+
 - **Decryption Failure No Longer Destroys Notes**: A failed decrypt returned the placeholder `[Locked Note]`, which was loaded into the editor and then re-encrypted over the note's real ciphertext by autosave — permanent, silent data loss. Decryption now throws, and any note that cannot be decrypted is shown read-only so its stored content is never overwritten.
 - **Atomic Vault Writes**: The store was written in place with `writeFileSync`, so a crash, container stop, or full disk mid-write could truncate the entire vault. Writes now go to a temp file, are fsynced, then atomically renamed.
 - **Save Failures No Longer Reported as Success**: Write errors were swallowed while the API still returned `ok`, so the UI showed "Synced" when nothing had been saved. Failed writes now return HTTP 500 and surface as a sync error.
@@ -364,10 +410,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Motion respects `prefers-reduced-motion`**: the update-available pulse and the new sync pulse stop animating when the operating system asks for reduced motion. The colour and glyph changes remain, so no state information is lost.
 
 ### Branding
+
 - **New logo and favicon.** The pristine 1024x1024 master artwork ships as `logo-source.png` (bit-identical to the supplied original), with `logo.png` (512x512) and `favicon.png` (48x48) derived from it by Lanczos resampling into lossless PNG. Alpha transparency is preserved throughout.
 - **Favicon size reduced by 99.7%, from 857 KB to 2.5 KB.** `logo.png` and `favicon.png` were previously the *same* 1024x1024 file duplicated under two names, so every page load fetched 857 KB purely for the browser tab icon. `logo.png` also drops from 857 KB to 123 KB; nothing in the UI renders it above 144 px.
 
 ### Build & Packaging
+
 - **Single source of truth for the seed vault**: `data/store.json` was committed to git *and* listed in `.gitignore` — an inert rule, since ignore patterns do not apply to already-tracked files. The repo therefore shipped a stale v1 seed while `server.js` generated a v2 one, so which seed a build used depended on whether a volume mount shadowed it. The tracked file is removed (kept on disk, now genuinely ignored) and `initialData` in `server.js` is the only seed: identical on every branch, every build, and every fresh install. Existing vaults are untouched — the server writes a seed only when no store file exists.
 - **Added `.dockerignore`**: `data/`, `.git/`, and `node_modules/` no longer enter the build context, so a vault can never be baked into a published image.
 - **Reproducible builds**: base image pinned to `node:22-alpine` (was the floating `node:alpine`, which could jump Node majors between identical builds); `package-lock.json` is now committed and the image builds with `npm ci --omit=dev` (was `npm install`, which silently resolved new versions).
@@ -383,6 +431,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - **Installer can deploy any branch, not only `main`**: `install.sh` hardcoded `main` in five places (the `git clone` had no `--branch`, all three curl fallbacks, and the image pull), so a self-hoster had no way to install anything else. Consequently the loopback port bindings added in this release could not reach a user at all, since the installer always fetched `main`'s compose file. It now accepts `--dev`, `--main`, and `--branch NAME`, pins the compose `image:` line to the matching tag (`main` to `:latest`, any other branch to its own name), and `--purge` removes the tag that was actually installed rather than only `:latest`. Argument parsing was rewritten so flags can appear in any order, with `--help`.
 - **Installation section documents the channels**: the README now carries a channel table (`main` to `:latest`, `--dev` to `:dev`, `--branch NAME` to its own tag), the one-line command for installing dev, an explanation that the compose file and Caddyfile are fetched from the same branch as the image (so mixing a dev image with main's compose runs new code against old deployment settings), and a warning that the dev channel is untested pre-release code with no guaranteed vault migration.
 ### Documentation
+
 - **Added `SECURITY.md`**: private vulnerability reporting via GitHub advisories, supported-version policy, full cryptographic parameters, and an explicit threat model stating what LucID does *and does not* protect against — including that the implementation has not been independently audited and that a lost passphrase is unrecoverable.
 - **Documented why the Caddy admin API stays disabled**: `SECURITY.md` now explains that the admin endpoint is a control plane rather than a status page, that its default `localhost:2019` binding is reachable by anything sharing the container network namespace, and that the deliberate cost of disabling it is the loss of a clean Docker liveness probe for the reverse proxy.
 - **README rewritten for 2.0.0**: corrected every stale fact (PBKDF2 iteration count, what is actually encrypted, loopback port bindings, `npm ci`), removed marketing for mobile use that the UI does not support, added a **Dependencies** section stating the always-prefer-latest policy and how it is enforced, added a **Configuration** table for `PORT` / `DATA_DIR` / `CORS_ORIGIN` / `VERSION` which were previously undocumented, restructured the roadmap around the completed 2.0.0 security work, and credited DOMPurify, marked, highlight.js and Blade Iconsax properly. Decorative emoji removed throughout.
@@ -391,17 +440,20 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 ## [1.4.1] - 2026-07-31
 ### Added
+
 - Idle Auto-Lock: Automatic vault lock on inactivity — user-selectable timeout (Off / 5 / 15 / 30 min, default 5) with a fixed 60-minute hard ceiling; footer timer picker persisted to localStorage. Reuses the existing lock flow (no new cryptography).
 - Show/Hide Passphrase Toggle: Iconsax Linear eye / eye-slash control to reveal or mask the master passphrase on the unlock screen.
 - Caps Lock Indicator & "Vault Locked" Cue: Live "Caps Lock is on" heads-up while typing, plus a padlock status pill so the unlock screen reads as a security gate.
 - UI State Persistence: Tree folder/tag open-collapse state saved across sessions; first-run default view set to top/bottom split with preview on.
 - Symmetrical Panel Toggles & Keyboard Navigation: Right inspector collapse/expand now mirrors the left sidebar; full roving-tabindex tree navigation with tree/treeitem ARIA roles.
 ### Changed
+
 - OKLCH Tokenized Design System: All colors moved to hsl/oklch tokens with every hardcoded hex/rgba and `!important` removed, relational rem sizing throughout, and unified spacing / type / radius / motion / z-index scales; both Dusk Ember and Warm Linen themes brought to WCAG AA contrast.
 - Rendered Markdown Preview: Full element styling (headings, lists, code, tables, blockquotes, task lists) with theme-aware highlight.js code blocks.
 - GitHub Version/Update Indicator: Moved from the inspector into the left sidebar footer and switched from the custom cursor tooltip to a native browser tooltip.
 - Fit-and-Finish: Center top-bar blended into one continuous surface; inspector metrics grid reflows responsively instead of clipping; header glyphs optically aligned; modals, context menu, and lock screen snapped onto the token scales.
 ### Fixed and Refined
+
 - Confirm-Passphrase Field Hiding: The confirm field now correctly hides on the unlock screen for returning users (added the missing `.lock-input.hidden` rule).
 - Lock-Screen Init Regression: Removed a duplicate `updateLockScreenUI` and hoisted a single top-level definition, fixing a `fetchStore` ReferenceError that surfaced as a footer "Sync error".
 - Theme-Aware State Feedback: Passphrase match/mismatch glow and the E2EE status dot now derive from theme tokens (gold success / red danger) instead of off-theme fixed colors.
@@ -411,6 +463,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [1.1.0] - 2026-07-31
 
 ### Added
+
 - Real-Time Passphrase Input Match Validation: Dynamic Emerald Green (#10b981) border and background glow when master passphrases match 100%.
 - Prefix-Aware Instant Red Mismatch Detection: Immediate Red (#ff6b6b) border glow and error text notification ("Passphrases do not match. Please try again.") if character mismatch occurs.
 - JetBrains Mono Password Dot Font: Password input fields styled with crisp, centered JetBrains Mono font for dots and placeholders.
@@ -418,6 +471,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 - Dynamic Button Transitions: Lock screen button transitions from Next (disabled by default) to Continue (enabled + green glow upon 100% passphrase match).
 
 ### Fixed and Refined
+
 - Anchored Header Toolbar Pills: Left sidebar header pills (Folders | Tags and + Note | + Folder | Search) anchored side-by-side from the left with 0.5rem gap spacing, eliminating floating to the far right.
 - Enforced 284px Sidebar Floor: Resizer drag handler and CSS enforce 284px (17.75rem) minimum sidebar width, preventing toolbar element clipping.
 - Clean Footer Lines: Removed top border lines above left sidebar footer and right inspector footer for seamless visual flow.
@@ -428,6 +482,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [1.0.1] - 2026-07-30
 
 ### Security and Core E2EE
+
 - Strict Cryptographic Passphrase Sentinel (authVerifier): Lock screen validates master key against PBKDF2 AES-256-GCM sentinel, rejecting incorrect passphrases with access denied errors.
 - In-Browser Note Editor & E2EE Storage: Full client-side encryption before reaching server storage.
 
@@ -436,4 +491,5 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [1.0.0] - 2026-07-29
 
 ### Initial Release
+
 - Initial release of LucID web note-taking application.
