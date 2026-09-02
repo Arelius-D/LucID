@@ -1556,7 +1556,14 @@ select:focus-visible,
 }
 
 /* ─── SIDEBAR FOOTER, E2EE, SYNC BADGE & LOCK ACTION ─── */
+/* The footer is a size container so the import button can shed its label
+   when the row no longer fits. Measured: the comfort cluster plus the
+   labelled import button need 14.25rem of card; at the sidebar's 15rem
+   floor the card is 13.5rem, which used to push the button 0.75rem into
+   the card's border. Below the threshold the button goes icon-only — the
+   same posture that keeps Lock immune at every width. */
 .sidebar-footer {
+  container-type: inline-size;
   padding: var(--space-md);
   margin-top: auto;
   border-top: none;
@@ -1593,6 +1600,11 @@ select:focus-visible,
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+}
+@container (max-width: 14.5rem) {
+  #import-row-label {
+    display: none;
+  }
 }
 /* Comfort controls — theme, font, auto-lock. One family, one glyph scale
    (INC-42: the old 0.9375rem override died with the text line it balanced). */
