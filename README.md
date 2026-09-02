@@ -116,7 +116,7 @@ LucID combines zero-trust client cryptography with transport-layer security:
 - **Client-side E2EE.** Native Web Crypto API (`crypto.subtle`) encrypts your data locally before anything is transmitted.
 - **Multi-format in-browser document import engine.** 100% client-side RAM parsing and Markdown conversion for 10 document formats (`.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, `.json`) prior to zero-trust AES-256-GCM vault encryption. A post-import summary on the import glyph shows every file's outcome and can file the whole batch into any folder, or a new one, in one click.
 - **Eight standalone OKLCH themes.** Dusk Ember (dark), Amber Hour (twilight), Warm Linen (light), Dracula, and four Catppuccin palette flavors (Latte, Frappé, Macchiato, Mocha) grouped in a flyout menu with theme-adaptive scrollbars.
-- **Eight locally-served font sets.** Geist (default), IBM Plex, Source Code Pro, Inter, Monospace Terminal, Cascadia Code, Nunito, and Roboto Slab — 12 `@fontsource` packages served from host origin, zero external CDN requests.
+- **Eight locally-served font sets.** Geist (default), IBM Plex, Source Code Pro, Inter, Monospace Terminal, Cascadia Code, Nunito, and Roboto Slab: 12 `@fontsource` packages served from host origin, zero external CDN requests.
 - **Full-text decrypted search.** Typing searches note titles, tags, and decrypted note contents simultaneously, with a flat-list dedicated search view.
 - **Print & PDF export.** Integrated print button renders note preview into a clean, un-styled printable layout for native browser Save-as-PDF without app chrome.
 - **Markdown & batch ZIP export.** Single-note `.md` Markdown download with UTF-8 BOM and zero-dependency folder batch `.zip` export.
@@ -234,7 +234,7 @@ While unlocked, the non-extractable key is held in IndexedDB and gated by a per-
 
 ### What the server logs
 
-One line per API request on stdout (`docker logs lucid-app`): timestamp, method, path, status and duration. A vault write additionally records how many notes, folders and tags it carried and the newest `updatedAt` among them. Nothing else is read from the body, and no note title, body, tag or folder name can appear in the log — they are ciphertext by the time they reach the server. The log exists so that "I came back and my changes were gone" can be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it.
+One line per API request on stdout (`docker logs lucid-app`): timestamp, method, path, status and duration. A vault write additionally records how many notes, folders and tags it carried and the newest `updatedAt` among them. Nothing else is read from the body, and no note title, body, tag or folder name can appear in the log, because they are ciphertext by the time they reach the server. The log exists so that "I came back and my changes were gone" can be traced to a client that never wrote, a server that refused, or a write that carried older content than the one before it.
 
 > **Recovery:** there is no backdoor and no reset. If you lose your master passphrase your notes are unrecoverable. That is the direct consequence of true zero-knowledge encryption.
 
