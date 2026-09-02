@@ -15,17 +15,17 @@ LucID is maintained by one person as an open-source project. There is no paid su
 | Version | Supported |
 | :--- | :--- |
 | 2.x | Yes |
-| 1.x | No — superseded by 2.0.0, which changed the vault format and key derivation |
+| 1.x | No; superseded by 2.0.0, which changed the vault format and key derivation |
 
 Fixes land on the latest release. Older versions are not patched.
 
 ## Important: the cryptography has not been independently audited
 
-LucID implements client-side end-to-end encryption using the browser's native Web Crypto API (`crypto.subtle`) — AES-256-GCM for content, PBKDF2-HMAC-SHA256 for key derivation. These are standard, well-reviewed primitives, and LucID does not implement its own cryptography.
+LucID implements client-side end-to-end encryption using the browser's native Web Crypto API (`crypto.subtle`): AES-256-GCM for content, PBKDF2-HMAC-SHA256 for key derivation. These are standard, well-reviewed primitives, and LucID does not implement its own cryptography.
 
 However, **the implementation as a whole has not been reviewed by an independent security auditor.** Treat it accordingly: it is built carefully and in the open, but it has not been externally verified. If you are protecting information where compromise would cause serious harm, weigh that honestly.
 
-## Threat model — what LucID does and does not protect against
+## Threat model: what LucID does and does not protect against
 
 **Protected:**
 
@@ -40,7 +40,7 @@ However, **the implementation as a whole has not been reviewed by an independent
 
 - **A compromised endpoint.** If your device has malware, a keylogger, or a hostile browser extension, the passphrase can be captured as you type it. No client-side encryption survives a compromised client.
 - **A weak passphrase.** Key strength derives from your passphrase. 600,000 PBKDF2 iterations raise the cost per guess, but a short or common passphrase remains brute-forceable.
-- **Metadata.** Record identifiers, timestamps, and the count and structure of notes and folders are stored in plaintext. Identifiers are deliberately non-descriptive — randomly generated — so they reveal nothing about content, but they are readable. An observer with server access can see *that* you have 40 notes across 5 folders and when they were modified, never *what* they contain.
+- **Metadata.** Record identifiers, timestamps, and the count and structure of notes and folders are stored in plaintext. Identifiers are deliberately non-descriptive (randomly generated) so they reveal nothing about content, but they are readable. An observer with server access can see *that* you have 40 notes across 5 folders and when they were modified, never *what* they contain.
 - **Lost passphrases.** There is no backdoor, no recovery key, no reset. If you lose your passphrase your notes are permanently unreadable. This is a deliberate consequence of zero-knowledge encryption, not an oversight.
 - **An attacker who already controls the server binary.** A modified server could serve modified client JavaScript. Verify the image you deploy, and prefer published tags over unverified builds.
 
@@ -57,7 +57,7 @@ However, **the implementation as a whole has not been reviewed by an independent
 | Passphrase storage | Never persisted, in any form, anywhere |
 | Session handling | Non-extractable key held in IndexedDB, gated by a per-tab session token; destroyed on lock and on idle auto-lock |
 
-The salt is stored unencrypted by necessity — it must be readable to derive the key. A salt is not a secret; its purpose is to make every vault's derivation unique so that one precomputed attack cannot be reused across vaults.
+The salt is stored unencrypted by necessity: it must be readable to derive the key. A salt is not a secret; its purpose is to make every vault's derivation unique so that one precomputed attack cannot be reused across vaults.
 
 ## The Caddy admin API is disabled
 
@@ -73,7 +73,7 @@ If you run a monitored fleet and want the endpoint, enable it explicitly in your
 
 ## Keeping your deployment secure
 
-- Run behind the bundled Caddy reverse proxy so traffic is TLS-encrypted. **Web Crypto requires a secure context** — over plain HTTP to a bare IP, the browser disables encryption entirely and LucID will refuse to unlock.
+- Run behind the bundled Caddy reverse proxy so traffic is TLS-encrypted. **Web Crypto requires a secure context**, over plain HTTP to a bare IP, the browser disables encryption entirely and LucID will refuse to unlock.
 - Leave the Caddy admin API disabled unless you have a specific need for it, and never publish port 2019.
 - Do not publish the application port directly to the internet. The bundled `docker-compose.yml` binds it to `127.0.0.1` for this reason.
 - Keep the image current. Dependencies are updated automatically via Dependabot and the build fails on known high-severity vulnerabilities, but that only reaches you when you pull.

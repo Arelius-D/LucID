@@ -134,7 +134,7 @@ LucID combines zero-trust client cryptography with transport-layer security:
 
 ## Empirical Production System Footprint
 
-Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running stack every 5 seconds for 20 minutes — **240 samples**. Values are run averages with observed peaks, not a single-moment snapshot.
+Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running stack every 5 seconds for 20 minutes: **240 samples**. Values are run averages with observed peaks, not a single-moment snapshot.
 
 **These are at-rest figures.** No browser session was open and no notes were read or written for the duration of the run, so the stack is doing what a self-hosted notes app does for the overwhelming majority of its uptime: sitting deployed, holding a TLS certificate, keeping a DNS record current, and waiting. That is the number that matters for a service you leave running on a VPS or a home server all year. Encryption and decryption happen in your browser, not on the server, so opening a vault costs your device CPU and costs the host almost nothing beyond serving a few static files.
 
@@ -145,7 +145,7 @@ Measured on the live production host (Ubuntu 26.04 LTS) by sampling the running 
 | Application Backend (`assarelius/lucid:latest`) | **0.00%** | **0.00%** | **14.10 MiB** | **15.19 MiB** | **65.02 MB** | `Up (healthy)` |
 | Caddy Reverse Proxy (`caddy:latest`) | **0.00%** | **0.12%** | **11.68 MiB** | **12.15 MiB** | **47.35 MB** | `Up` (no healthcheck) |
 | Dynamic DNS Updater (`qmcgaw/ddns-updater:latest`) | **0.11%** | **5.51%** | **5.48 MiB** | **8.81 MiB** | **16.44 MB** | `Up (healthy)` |
-| **Total Active Container Stack** | **0.11%** | — | **31.26 MiB** | — | **128.81 MB** | **All Running** |
+| **Total Active Container Stack** | **0.11%** | | **31.26 MiB** | | **128.81 MB** | **All Running** |
 
 The application backend registered **0.00% CPU across every one of the 240 samples**, at rest and while serving.
 
@@ -159,7 +159,7 @@ The application backend registered **0.00% CPU across every one of the 240 sampl
 | `containerd` | **45.13 MB** | 48.87 MB | Container Runtime Daemon |
 | `containerd-shim-runc-v2` | **35.39 MB** | 36.31 MB | Container Process Shims (one per container) |
 | `docker-proxy` | **31.12 MB** | 31.12 MB | Network Port Forwarding Proxy |
-| **Total Infrastructure Overhead** | **214.21 MB** | — | Docker Engine Baseline |
+| **Total Infrastructure Overhead** | **214.21 MB** | | Docker Engine Baseline |
 
 **Grand total, application stack plus Docker engine: 343.02 MB Host RSS.**
 
@@ -477,7 +477,7 @@ DOMPurify, marked, turndown, mammoth, and highlight.js are vendored into `public
 
 ## License
 
-Distributed under the GNU Affero General Public License v3.0. Run it, self-host it, modify it freely — but if you offer a modified LucID to others over a network, you must publish your modifications under the same license. See [`LICENSE`](LICENSE) for the full text. Releases up to and including v2.2.0 were published under MIT and remain so.
+Distributed under the GNU Affero General Public License v3.0. Run it, self-host it, modify it freely, but if you offer a modified LucID to others over a network, you must publish your modifications under the same license. See [`LICENSE`](LICENSE) for the full text. Releases up to and including v2.2.0 were published under MIT and remain so.
 
 License compliance of every dependency is continuously verified by FOSSA on each push:
 
