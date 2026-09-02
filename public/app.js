@@ -4081,6 +4081,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       unreadable: "unreadable file",
     };
     let summaryTimer = null;
+    // Reading is not dismissing: once the pointer enters the popover, the
+    // full-success fade is off — an engaged user closes it by acting, or by
+    // clicking anywhere else, never by a timer mid-read.
+    const summaryMenuEl = document.getElementById("tree-context-menu");
+    if (summaryMenuEl) {
+      summaryMenuEl.addEventListener("mouseenter", () => {
+        if (!summaryMenuEl.classList.contains("import-summary")) return;
+        if (summaryTimer) {
+          clearTimeout(summaryTimer);
+          summaryTimer = null;
+        }
+      });
+    }
 
     const moveImportedBatch = async (destId, importedIds) => {
       // The destination can be gone by click time (another device, whole-vault
