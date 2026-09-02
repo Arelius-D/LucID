@@ -1460,6 +1460,11 @@ select:focus-visible,
 .server-panel {
   width: min(90vw, 45rem);
 }
+.server-panel .server-sync-corner {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+}
 .server-panel .server-log {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: var(--text-xs);
@@ -1580,6 +1585,14 @@ select:focus-visible,
   margin-left: auto;
   display: flex;
   align-items: center;
+}
+/* Left cluster of the comfort row — the same two-cluster shape as the actions
+   row below, so resizing the sidebar stretches only the void between clusters
+   and never the spacing inside one (the glyphs used to drift on drag). */
+.footer-comfort-cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
 }
 /* Comfort controls — theme, font, auto-lock. One family, one glyph scale
    (INC-42: the old 0.9375rem override died with the text line it balanced). */

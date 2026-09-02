@@ -71,6 +71,7 @@ const ICONS = {
   tickCircle: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   slash: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM18.9 5l-14 14"/></svg>`,
   refresh: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c0 5.52-4.48 10-10 10s-8.89-5.56-8.89-5.56m0 0h4.52m-4.52 0v5M2 12C2 6.48 6.44 2 12 2c6.67 0 10 5.56 10 5.56m0 0v-5m0 5h-4.44"/></svg>`,
+  cloudChange: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M8.11 11.85c-2.82.2-2.81 4.3 0 4.5h6.67c.81.01 1.59-.3 2.19-.84 1.98-1.73.92-5.2-1.68-5.53-.93-5.64-9.08-3.5-7.15 1.87"/><path d="M2 15c0 3.87 3.13 7 7 7l-1.05-1.75M22 9c0-3.87-3.13-7-7-7l1.05 1.75"/></svg>`,
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
   box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
   computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.97 15V9c0-5-2-7-7-7h-6c-5 0-7 2-7 7v6c0 5 2 7 7 7h6c5 0 7-2 7-7zM19.72 3.25L3.27 19.7"/><path d="M16.06 18v-5M18.5 15.5h-5M10.5 7.5h-5"/></svg>`,
@@ -4795,10 +4796,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   // other floating panel: no backdrop, no title, no close control. The next
   // click anywhere else dismisses it, and any real menu replaces it. While
   // open, the log polls every 2 s (the server excludes those polls from the
-  // log itself). Manual sync is an ordinary item at the bottom: as a flush
-  // it is nearly obsolete (typing debounces, structural ops save instantly,
-  // lock and unload drain, Ctrl+S remains), but it is the only retry lever
-  // after a failed write, since this design has no automatic retry.
+  // log itself). Force sync sits in the panel's top corner and leaves the
+  // panel open, so the write it forces appears in the log being watched: as
+  // a flush it is nearly obsolete (typing debounces, structural ops save
+  // instantly, lock and unload drain, Ctrl+S remains), but it is the only
+  // retry lever after a failed write — this design has no automatic retry.
   const syncBadge = document.getElementById("save-indicator");
   const serverPanel = document.getElementById("server-panel");
   if (syncBadge && serverPanel) {
@@ -4832,26 +4834,23 @@ document.addEventListener("DOMContentLoaded", async () => {
     const openServerPanel = async () => {
       closeContextMenu(); // one floating panel at a time, like the menus
       serverPanel.innerHTML = "";
-      const logEl = document.createElement("pre");
-      logEl.className = "server-log";
-      serverPanel.appendChild(logEl);
-      const divider = document.createElement("div");
-      divider.className = "context-menu-divider";
-      serverPanel.appendChild(divider);
-      const syncItem = document.createElement("button");
-      syncItem.className = "context-menu-item";
-      syncItem.style.display = "flex";
-      syncItem.style.alignItems = "center";
-      syncItem.style.gap = "0.5rem";
-      syncItem.innerHTML =
-        ICONS.cloudConnection +
-        `<span style="flex:1;text-align:left;">Sync now</span>`;
-      syncItem.addEventListener("click", () => {
-        closeServerPanel();
+      const syncCorner = document.createElement("div");
+      syncCorner.className = "server-sync-corner";
+      const forceSyncBtn = document.createElement("button");
+      forceSyncBtn.className = "icon-btn";
+      forceSyncBtn.type = "button";
+      forceSyncBtn.title = "Force sync";
+      forceSyncBtn.setAttribute("aria-label", "Force sync");
+      forceSyncBtn.innerHTML = ICONS.cloudChange;
+      forceSyncBtn.addEventListener("click", () => {
         flushPendingSave();
         requestSave();
       });
-      serverPanel.appendChild(syncItem);
+      syncCorner.appendChild(forceSyncBtn);
+      serverPanel.appendChild(syncCorner);
+      const logEl = document.createElement("pre");
+      logEl.className = "server-log";
+      serverPanel.appendChild(logEl);
       serverPanel.classList.remove("hidden");
       await renderServerLog();
       logEl.scrollTop = logEl.scrollHeight;
