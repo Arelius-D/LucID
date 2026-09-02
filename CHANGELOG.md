@@ -6,8 +6,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ---
 
-## [2.18.0-dev] - unreleased
-
+## [2.18.0] - 2026-09-02
 ### Added
 
 - **Import summary popover**: the moment an import finishes, a popover on the footer's import glyph lists every file with its outcome: imported, or skipped with the reason on hover (unsupported file type, empty, unreadable; skipped files were previously counted but never shown). From the same popover the whole batch can be moved to any live folder or into a folder created on the spot, for the case where the right destination was noticed one drop too late. It obeys the same rule as every menu: the next click anywhere else dismisses it, and a fully successful import fades on its own after 8 seconds unless the pointer is over it (reading is not dismissing), so the user who was already standing in the right folder pays nothing. Each row carries its outcome glyph: authentic Iconsax `lin-tick-circle` for imported, `lin-slash` for skipped, a circle family kept distinct from the app's square control glyphs. When anything was skipped, a `lin-refresh-2` "Choose files again…" action reopens the file chooser for a fresh pick.
