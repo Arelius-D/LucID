@@ -1549,6 +1549,7 @@ select:focus-visible,
   border-top: var(--hairline) solid var(--border);
   max-height: 14rem;
   overflow-y: auto;
+  overflow-x: hidden; /* clip long names like .sidebar-body does; never a horizontal bar */
   padding: var(--space-sm) var(--space-md);
 }
 .trash-panel[hidden] {

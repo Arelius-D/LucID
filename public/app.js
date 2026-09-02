@@ -123,6 +123,12 @@ const state = {
   explorerMode: "folders", // a key of EXPLORER_MODES: 'folders' | 'tags' | 'pinned'
   decryptedTitleCache: new Map(),
   storeLoaded: false, // false until GET /api/store succeeds — gates the lock screen mode (J-10)
+  // True only while folders/notes/tags in memory are PLAINTEXT. Set false the
+  // moment ciphertext lands in state (load, unlock re-read, lock) and true
+  // only after decryption completes. saveStore refuses otherwise: encrypting
+  // ciphertext a second time produced ENC:-prefixed "tags" that the library
+  // then kept forever (the union never forgets).
+  vaultPlain: false,
 };
 
 // --- API PATH ---
@@ -472,6 +478,7 @@ async function restoreKeyFromSession() {
         state.folders = plain.folders;
         state.notes = plain.notes;
         state.tagLibrary = plain.tags;
+        state.vaultPlain = true;
         return true;
       }
     }
@@ -648,6 +655,9 @@ async function loadRawStore() {
   if (data.notes && data.notes.length) state.notes = data.notes;
   state.authVerifier = data.authVerifier || null;
   state.storeLoaded = true;
+  // A vault with no verifier is the plaintext seed; anything else is
+  // ciphertext until decryptVaultIntoState says otherwise.
+  state.vaultPlain = !data.authVerifier;
   return data;
 }
 
@@ -865,7 +875,17 @@ function saveTreeState() {
 }
 
 async function saveStore() {
-  // Fail closed: never write the in-memory PLAINTEXT vault to the server.
+  // Fail closed, twice: never write without a key, and never re-encrypt a
+  // vault that is not plaintext in memory (a save inside the derive→decrypt
+  // window did exactly that). Loud on purpose: the stack names the trigger.
+  if (!state.vaultPlain) {
+    console.error(
+      "saveStore refused: in-memory vault is not plaintext",
+      new Error().stack,
+    );
+    showSave("Sync skipped: vault not ready", "error");
+    return false;
+  }
   if (!state.encryptionKey || !state.kdf) {
     console.warn("saveStore aborted: vault is locked.");
     showSave("Locked before changes could sync", "error"); // never silent (J-02)
@@ -952,9 +972,35 @@ async function drainSaves() {
 // Runs on both entry paths, after decryption: complete the library, repair
 // strandings, then select.
 async function settleVaultOnEntry() {
+  const purged = purgeCiphertextTags();
   absorbInUseTags();
-  if (adoptOrphanNotes()) await saveStore();
+  if (adoptOrphanNotes() || purged) await saveStore();
   selectFirstLiveNote();
+}
+
+// Repair for vaults already carrying the damage the vaultPlain guard now
+// prevents: a tag that still reads ENC:… after decryption is a doubly
+// encrypted remnant, never something a user typed. Drop it from the library
+// and from every note; the caller saves if anything went.
+function purgeCiphertextTags() {
+  const isCipher = (t) => typeof t === "string" && t.startsWith("ENC:");
+  let changed = false;
+  const lib = state.tagLibrary || [];
+  const cleanLib = lib.filter((t) => !isCipher(t));
+  if (cleanLib.length !== lib.length) {
+    state.tagLibrary = cleanLib;
+    changed = true;
+  }
+  for (const n of state.notes) {
+    const tags = n.tags || [];
+    const clean = tags.filter((t) => !isCipher(t));
+    if (clean.length !== tags.length) {
+      n.tags = clean;
+      changed = true;
+    }
+  }
+  if (changed) console.warn("Purged doubly encrypted tag remnants from the vault.");
+  return changed;
 }
 
 // Every tag found on a note joins the in-memory library. Without this, a tag
@@ -2395,15 +2441,17 @@ async function permaDeleteNote(note) {
   requestSave();
 }
 
+// Returns true when the trash was actually emptied, so the caller can retire
+// the panel: once it is empty there is nothing left to act on in it.
 async function emptyTrash() {
   const nf = state.folders.filter((f) => f.trashed).length;
   const nn = state.notes.filter((n) => n.trashed).length;
-  if (!nf && !nn) return;
+  if (!nf && !nn) return false;
   const ok = await showConfirmModal(
     "Empty Trash",
     `Permanently delete ${nn} note(s) and ${nf} folder(s)? This cannot be undone.`,
   );
-  if (!ok) return;
+  if (!ok) return false;
   state.notes
     .filter((n) => n.trashed)
     .forEach((n) => state.decryptedTitleCache.delete(n.id));
@@ -2411,6 +2459,7 @@ async function emptyTrash() {
   state.folders = state.folders.filter((f) => !f.trashed);
   renderAll();
   requestSave();
+  return true;
 }
 
 // The panel above the trash row: trashed folders first, then notes. Rows join the
@@ -3919,6 +3968,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         trashBtn.classList.contains("drop-target");
       if (trashIcon) trashIcon.innerHTML = open ? ICONS.trashOpen : ICONS.trash;
     };
+    // Retire the panel: hidden, lid closed, any trashed-note preview ended.
+    const closeTrashPanel = () => {
+      if (trashPanel.hasAttribute("hidden")) return;
+      trashPanel.setAttribute("hidden", "");
+      trashBtn.classList.remove("open");
+      trashBtn.setAttribute("aria-expanded", "false");
+      if (state.trashPreviewId) {
+        state.trashPreviewId = null;
+        renderAll();
+      }
+      syncTrashIcon();
+    };
     trashBtn.addEventListener("click", () => {
       const opening = trashPanel.hasAttribute("hidden");
       if (opening) trashPanel.removeAttribute("hidden");
@@ -3945,7 +4006,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           label: "Empty Trash",
           icon: ICONS.trash,
           danger: true,
-          action: () => emptyTrash(),
+          // An emptied trash has nothing left to show or act on: close it.
+          action: async () => {
+            if (await emptyTrash()) closeTrashPanel();
+          },
         },
       ]);
     });
@@ -4608,6 +4672,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // so mint the sentinel and write the whole vault out encrypted.
         state.authVerifier = await encryptText(AUTH_MAGIC_SENTINEL, derived);
         state.encryptionKey = derived;
+        state.vaultPlain = true; // the seed is plaintext by construction
         await saveStore();
       } else {
         // Returning user: decrypt the stored vault into memory as plaintext.
@@ -4620,6 +4685,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         state.folders = plain.folders;
         state.notes = plain.notes;
         state.tagLibrary = plain.tags;
+        state.vaultPlain = true;
         // J-12: refresh the title cache from the now-PLAINTEXT notes. fetchStore
         // primed it before unlock, when every title was still ciphertext, and
         // nothing re-primed it here — so the cache held ENC: strings for the whole
@@ -4706,6 +4772,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await drainSaves(); // J-02 + coalescer: neither a debounced edit nor a flying write may outrun the lock
     clearSessionKey(); // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
+    state.vaultPlain = false; // nothing may be written until the next decrypt
     // The snapshot is stale from here on; unlock re-reads it from the server.
     // Nulled so nothing can decrypt an old copy by accident.
     state.rawStore = null;
