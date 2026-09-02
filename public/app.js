@@ -4869,6 +4869,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       serverPanel.style.top = "auto";
       serverPanel.style.bottom = window.innerHeight - r.top + 8 + "px";
       serverPanel.style.maxHeight = r.top - 16 + "px";
+      // Terminal viewport: freeze the panel at its opening size (content,
+      // clamped by the cap above). New lines scroll within — the window
+      // never grows in any direction, and the scrollback stays reachable.
+      serverPanel.style.height = "";
+      serverPanel.style.height = serverPanel.offsetHeight + "px";
       logPollTimer = setInterval(renderServerLog, 2000);
     };
     const toggleServerPanel = () => {
