@@ -1442,6 +1442,14 @@ select:focus-visible,
   background: var(--danger-subtle);
   color: var(--danger);
 }
+/* Static rows (import summary outcomes): information, not actions. No hover
+   affordance, no pointer — the row states a fact and offers nothing. */
+.context-menu-item.is-static,
+.context-menu-item.is-static:hover {
+  background: none;
+  color: var(--text-primary);
+  cursor: default;
+}
 /* Membership toggles in a menu (tag picker): the accent means applied, muted
    means available. Colour carries the state, the knob position carries it too —
    never colour alone (WCAG 1.4.1). */

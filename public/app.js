@@ -1725,12 +1725,18 @@ function showTreeContextMenu(x, y, items) {
       menu.appendChild(div);
       return;
     }
-    const btn = document.createElement("button");
+    // No action, no submenu = a statement, not a control. Rendered as a div
+    // so keyboard and screen-reader users are never offered a button that
+    // does nothing (clicks still bubble to the document-level dismiss).
+    const isStatic = !item.action && !item.submenuItems;
+    const btn = document.createElement(isStatic ? "div" : "button");
     btn.className =
       "context-menu-item" +
+      (isStatic ? " is-static" : "") +
       (item.danger ? " danger" : "") +
       (item.active ? " active" : "") +
       (item.submenuItems ? " has-submenu" : "");
+    if (item.title) btn.title = item.title;
     btn.style.display = "flex";
     btn.style.alignItems = "center";
     btn.style.gap = "0.5rem";
@@ -1763,15 +1769,17 @@ function showTreeContextMenu(x, y, items) {
       });
     }
 
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (item.submenuItems) {
-        openSubmenuForItem(btn, item.submenuItems);
-        return;
-      }
-      if (!item.keepOpen) closeContextMenu();
-      if (item.action) item.action();
-    });
+    if (!isStatic) {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (item.submenuItems) {
+          openSubmenuForItem(btn, item.submenuItems);
+          return;
+        }
+        if (!item.keepOpen) closeContextMenu();
+        if (item.action) item.action();
+      });
+    }
     menu.appendChild(btn);
   });
 
@@ -4065,12 +4073,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // where — and can move the whole batch if the destination was wrong. A
     // full-success summary also fades on its own; anything skipped or unsynced
     // stays until the user moves on.
-    // The glyph carries the outcome; the text repeats none of it. An imported
-    // row is just the filename, a skipped row adds the terse reason.
+    // The glyph carries the outcome, the tooltip carries the detail — the
+    // same split the footer badges use. Row text is the filename, nothing else.
     const IMPORT_STATUS_LABELS = {
-      unsupported: "unsupported type",
+      unsupported: "unsupported file type",
       empty: "empty file",
-      unreadable: "unreadable",
+      unreadable: "unreadable file",
     };
     let summaryTimer = null;
 
@@ -4114,12 +4122,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         { divider: true },
         ...outcomes.map((o) => ({
-          label:
-            o.status === "imported"
-              ? o.name
-              : `${o.name} — ${IMPORT_STATUS_LABELS[o.status] || o.status}`,
+          label: o.name,
           icon: o.status === "imported" ? ICONS.tickCircle : ICONS.slash,
           iconTrailing: true,
+          title:
+            o.status === "imported"
+              ? ""
+              : IMPORT_STATUS_LABELS[o.status] || o.status,
           action: null,
         })),
       ];
