@@ -4854,17 +4854,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       serverPanel.classList.remove("hidden");
       await renderServerLog();
       logEl.scrollTop = logEl.scrollHeight;
-      // Anchored to its control and clamped on screen, same as every menu.
+      // Anchored to its control and clamped on screen like every menu — but
+      // BOTTOM-anchored: the badge sits at the screen's foot, and the log
+      // grows while the panel is open. With the bottom edge pinned just
+      // above the badge, growth goes upward; the height cap is the space
+      // between badge and viewport top, past which the log pane scrolls
+      // instead of the panel leaving the window.
       const r = syncBadge.getBoundingClientRect();
       const w = serverPanel.offsetWidth;
-      const h = serverPanel.offsetHeight;
       let posX = r.left;
-      let posY = r.top - 8;
       if (posX + w > window.innerWidth - 8)
         posX = Math.max(8, window.innerWidth - w - 8);
-      if (posY + h > window.innerHeight - 8) posY = Math.max(8, posY - h);
       serverPanel.style.left = posX + "px";
-      serverPanel.style.top = posY + "px";
+      serverPanel.style.top = "auto";
+      serverPanel.style.bottom = window.innerHeight - r.top + 8 + "px";
+      serverPanel.style.maxHeight = r.top - 16 + "px";
       logPollTimer = setInterval(renderServerLog, 2000);
     };
     const toggleServerPanel = () => {
