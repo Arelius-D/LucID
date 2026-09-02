@@ -64,6 +64,12 @@ const ICONS = {
   documentCloud: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H9C4 2 2 4 2 9v6c0 5 2 7 7 7M22 10v3M22 10h-4c-3 0-4-1-4-4V2l8 8z"/><path stroke-miterlimit="10" d="M13.76 18.26c-2.35.17-2.35 3.57 0 3.74h5.56c.67 0 1.33-.25 1.82-.7 1.65-1.44.77-4.32-1.4-4.59-.78-4.69-7.56-2.91-5.96 1.56"/></svg>`,
   documentDone: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/><path d="M7 13l2.5 2.5L15 10"/></svg>`,
   documentSketch: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 10v5c0 5-2 7-7 7H9c-5 0-7-2-7-7V9c0-5 2-7 7-7h5"/><path d="M22 10h-4c-3 0-4-1-4-4V2l8 8z"/><path stroke-miterlimit="10" d="M8.32 12h2.65c.27 0 .61.18.75.4l1.13 1.7c.23.34.18.85-.11 1.14l-2.46 2.46c-.35.35-.93.35-1.28 0l-2.46-2.46a.935.935 0 01-.11-1.14l1.13-1.7c.16-.22.5-.4.76-.4z" clip-rule="evenodd"/></svg>`,
+  // Import outcomes are a CIRCLE family (tick-circle, slash), distinct from the
+  // square family that marks controls (tick-square, toggles, grids) — one
+  // family per meaning, the same rule the cloud and shield glyphs follow.
+  tickCircle: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
+  slash: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM18.9 5l-14 14"/></svg>`,
+  refresh: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c0 5.52-4.48 10-10 10s-8.89-5.56-8.89-5.56m0 0h4.52m-4.52 0v5M2 12C2 6.48 6.44 2 12 2c6.67 0 10 5.56 10 5.56m0 0v-5m0 5h-4.44"/></svg>`,
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
   box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
   computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.97 15V9c0-5-2-7-7-7h-6c-5 0-7 2-7 7v6c0 5 2 7 7 7h6c5 0 7-2 7-7zM19.72 3.25L3.27 19.7"/><path d="M16.06 18v-5M18.5 15.5h-5M10.5 7.5h-5"/></svg>`,
@@ -4103,11 +4109,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         { divider: true },
         ...outcomes.map((o) => ({
           label: `${o.name} — ${IMPORT_STATUS_LABELS[o.status] || o.status}`,
+          icon: o.status === "imported" ? ICONS.tickCircle : ICONS.slash,
           action: null,
         })),
       ];
-      if (importedCount > 0) {
+      if (importedCount > 0 || skippedCount > 0) {
         items.push({ divider: true });
+      }
+      if (skippedCount > 0) {
+        // Retry = a fresh pick. A skipped file fails for a deterministic
+        // reason, so the only honest retry is the OS chooser the import
+        // button already opens.
+        items.push({
+          label: "Choose files again…",
+          icon: ICONS.refresh,
+          action: () => fileInput.click(),
+        });
+      }
+      if (importedCount > 0) {
         const destinations = state.folders.filter(
           (f) => !f.trashed && f.id !== targetFolderId,
         );
