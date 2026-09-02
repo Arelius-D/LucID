@@ -71,6 +71,7 @@ const ICONS = {
   tickCircle: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/><path d="M7.75 12l2.83 2.83 5.67-5.66"/></svg>`,
   slash: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10"><path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zM18.9 5l-14 14"/></svg>`,
   refresh: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12c0 5.52-4.48 10-10 10s-8.89-5.56-8.89-5.56m0 0h4.52m-4.52 0v5M2 12C2 6.48 6.44 2 12 2c6.67 0 10 5.56 10 5.56m0 0v-5m0 5h-4.44"/></svg>`,
+  closeSquare: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.17 14.83l5.66-5.66M14.83 14.83L9.17 9.17M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7z"/></svg>`,
   printer: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2zM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8z"/><path d="M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3zM17 15H7M7 11h3"/></svg>`,
   box: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3.17 7.44L12 12.55l8.77-5.08M12 21.61v-9.07"/><path d="M9.93 2.48L4.59 5.45c-1.21.67-2.2 2.35-2.2 3.73v5.65c0 1.38.99 3.06 2.2 3.73l5.34 2.97c1.14.63 3.01.63 4.15 0l5.34-2.97c1.21-.67 2.2-2.35 2.2-3.73V9.18c0-1.38-.99-3.06-2.2-3.73l-5.34-2.97c-1.15-.64-3.01-.64-4.15 0z"/><path d="M17 13.24V9.58L7.51 4.1"/></svg>`,
   computing: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.97 15V9c0-5-2-7-7-7h-6c-5 0-7 2-7 7v6c0 5 2 7 7 7h6c5 0 7-2 7-7zM19.72 3.25L3.27 19.7"/><path d="M16.06 18v-5M18.5 15.5h-5M10.5 7.5h-5"/></svg>`,
@@ -4787,18 +4788,74 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // INC-43b: the status badges earn their hover — sync now / recheck health.
+  // INC-43b: the badge still earns its hover, but the click now opens the
+  // server window — live request log, polled while open. The manual sync
+  // moved into the window's corner: as a flush it is nearly obsolete (typing
+  // debounces, structural ops save instantly, lock and unload drain, Ctrl+S
+  // exists), but it remains the only retry lever after a failed write, since
+  // this design has no automatic retry.
   const syncBadge = document.getElementById("save-indicator");
-  if (syncBadge) {
-    const syncNow = () => {
-      flushPendingSave();
-      saveStore();
+  const serverModal = document.getElementById("modal-server");
+  if (syncBadge && serverModal) {
+    const logEl = document.getElementById("server-log");
+    const serverSyncBtn = document.getElementById("server-sync-btn");
+    const serverCloseBtn = document.getElementById("server-close-btn");
+    serverSyncBtn.innerHTML = ICONS.cloudConnection;
+    serverCloseBtn.innerHTML = ICONS.closeSquare;
+    let logPollTimer = null;
+    let releaseServerFocus = null;
+    const renderServerLog = async () => {
+      try {
+        const res = await fetch(apiPath("api/log"), { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        // Follow the tail only while the user is already at the bottom.
+        const atBottom =
+          logEl.scrollHeight - logEl.scrollTop - logEl.clientHeight < 8;
+        logEl.textContent =
+          (data.lines || []).join("\n") ||
+          "No requests logged since the server started.";
+        if (atBottom) logEl.scrollTop = logEl.scrollHeight;
+      } catch (e) {
+        logEl.textContent = "Log unavailable: server unreachable.";
+      }
     };
-    syncBadge.addEventListener("click", syncNow);
+    const closeServerWindow = () => {
+      if (logPollTimer) {
+        clearInterval(logPollTimer);
+        logPollTimer = null;
+      }
+      serverModal.classList.add("hidden");
+      if (releaseServerFocus) {
+        releaseServerFocus();
+        releaseServerFocus = null;
+      }
+    };
+    const openServerWindow = async () => {
+      serverModal.classList.remove("hidden");
+      releaseServerFocus = trapFocus(serverModal);
+      serverCloseBtn.focus();
+      await renderServerLog();
+      logEl.scrollTop = logEl.scrollHeight;
+      logPollTimer = setInterval(renderServerLog, 2000);
+    };
+    syncBadge.addEventListener("click", openServerWindow);
     syncBadge.addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        syncNow();
+        openServerWindow();
+      }
+    });
+    serverSyncBtn.addEventListener("click", () => {
+      flushPendingSave();
+      requestSave();
+    });
+    serverCloseBtn.addEventListener("click", closeServerWindow);
+    serverModal.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        closeServerWindow();
       }
     });
   }

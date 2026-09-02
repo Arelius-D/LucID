@@ -54,7 +54,17 @@ app.use((req, res, next) => {
 // updatedAt are read from the body, and both are plaintext on disk already
 // (ids and timestamps are the fields the vault deliberately leaves in clear).
 // Registered before the body parser so a rejected body still leaves a line.
+// The last few hundred lines are also held in memory so the in-app server
+// window can show them (GET /api/log): the on-disk log belongs to Docker on
+// the host, and mounting the Docker socket into this internet-facing process
+// to read it back is not a trade this project will make. A restart clears the
+// window; `docker logs` keeps the durable copy. /api/log requests themselves
+// are excluded from stdout AND the buffer — a window polling every 2 s must
+// never flood the log it is reading.
+const RECENT_LOG_MAX = 300;
+const recentLog = [];
 app.use('/api', (req, res, next) => {
+  if (req.path === '/log') return next();
   const started = process.hrtime.bigint();
   res.on('finish', () => {
     const ms = Number(process.hrtime.bigint() - started) / 1e6;
@@ -71,7 +81,10 @@ app.use('/api', (req, res, next) => {
         ` newest=${newest || '-'}` +
         ` bytes=${req.get('content-length') || '?'}`;
     }
-    console.log(`${new Date().toISOString()} ${req.method} ${req.originalUrl} ${res.statusCode} ${ms.toFixed(0)}ms${detail}`);
+    const line = `${new Date().toISOString()} ${req.method} ${req.originalUrl} ${res.statusCode} ${ms.toFixed(0)}ms${detail}`;
+    console.log(line);
+    recentLog.push(line);
+    if (recentLog.length > RECENT_LOG_MAX) recentLog.shift();
   });
   next();
 });
@@ -109,7 +122,7 @@ function buildInitialData() {
         id: newId('n'),
         folderId: startedId,
         title: 'Start here',
-        content: "# Start here\n\nA tour of what isn't obvious.\n\n## Layout\n\n**Editor**, **Split** and **Preview** sit above the centre pane. Click **Split** again while it is already active and the layout flips between side-by-side and top-and-bottom. In side-by-side mode, scrolling or navigating with cursor keys in either pane automatically synchronizes the counterpart pane.\n\nThe arrows in the top corners collapse either side pane, and any divider can be dragged to resize. The inspector on the right carries the note's outline, its tags and its metrics. Click an outline entry to jump to that heading.\n\n## The three explorer views\n\nThe pills above your folders switch the left pane between **folders**, **tags** and **pinned**. Search covers titles and tags, filtering as you type.\n\nThis note is pinned, which is why it has a view of its own. Right-click any note for pin, tags, rename and delete.\n\n## Tags are a library, not labels\n\nRight-click a note and choose **Tags…**. Every tag in the vault is listed with a toggle: on where this note carries it, off where it is yours to apply. The menu stays open, so tagging several notes takes a few clicks instead of a few dialogs.\n\n`#ideas` is here, attached to nothing. Switch it on for this note, then switch it off. It stays in the list, because a tag belongs to the vault rather than to one note. It will still be there when you want it back months from now. **New tag…** is the only place you type a name, which is what keeps `#meeting` and `#meetings` from both existing. Renaming a tag renames it everywhere at once.\n\n## Delete is reversible until you say otherwise\n\nNotes and folders move to **Trash** at the bottom left with no confirmation, because nothing is lost yet. Click a trashed note to read it: it opens read-only, so you can identify something before deciding its fate. Drag a note onto the trash to delete it, drag it out onto a folder to restore it there, or use the right-click menu. The trash empties only when you empty it.\n\n## Footer\n\n- **Brush** — 8 OKLCH themes: Dusk Ember, Amber Hour, Warm Linen, Dracula, Catppuccin (Latte, Frappé, Macchiato, Mocha).\n- **Aa** — 8 locally-served font sets (Geist, IBM Plex, Source Code Pro, Inter, Monospace Terminal, Cascadia Code, Nunito, Roboto Slab), all self-hosted with zero external CDNs.\n- **Font size stepper** — diagonal button: click top-left (-) to decrease text size or bottom-right (+) to increase across 4 relational `rem` presets.\n- **Watch** — idle auto-lock timeout (5 minutes by default, 60 minutes hard ceiling).\n- **Octocat** — repository link; breathes when a newer release exists.\n- **Cloud** — automatic debounced auto-save & sync status badge (click to flush and sync now).\n- **Pulse** — server health status, re-checked every minute or on click.\n- **Shield** — Web Crypto E2EE encryption status (turns red when browser has no Secure Context).\n- **Lock** — locks the vault instantly.\n\n## The one irreversible thing\n\nYour passphrase derives the key that encrypts every title, body, tag and folder name before any of it is sent. The key never leaves the browser and is stored nowhere, so there is no reset and no recovery. Root access to the machine running this does not help either: the vault on disk is ciphertext, and the passphrase is not in it. Back the passphrase up the way you would back up a key to a safe.\n\n## Worth trying now\n\n- [ ] Click **Split** twice to flip the orientation\n- [ ] Adjust text size with the diagonal font size stepper\n- [ ] Switch `#ideas` on for this note, then off\n- [ ] Delete this note and restore it from the trash\n- [ ] Change theme and typeface in the footer\n",
+        content: "# Start here\n\nA tour of what isn't obvious.\n\n## Layout\n\n**Editor**, **Split** and **Preview** sit above the centre pane. Click **Split** again while it is already active and the layout flips between side-by-side and top-and-bottom. In side-by-side mode, scrolling or navigating with cursor keys in either pane automatically synchronizes the counterpart pane.\n\nThe arrows in the top corners collapse either side pane, and any divider can be dragged to resize. The inspector on the right carries the note's outline, its tags and its metrics. Click an outline entry to jump to that heading.\n\n## The three explorer views\n\nThe pills above your folders switch the left pane between **folders**, **tags** and **pinned**. Search covers titles and tags, filtering as you type.\n\nThis note is pinned, which is why it has a view of its own. Right-click any note for pin, tags, rename and delete.\n\n## Tags are a library, not labels\n\nRight-click a note and choose **Tags…**. Every tag in the vault is listed with a toggle: on where this note carries it, off where it is yours to apply. The menu stays open, so tagging several notes takes a few clicks instead of a few dialogs.\n\n`#ideas` is here, attached to nothing. Switch it on for this note, then switch it off. It stays in the list, because a tag belongs to the vault rather than to one note. It will still be there when you want it back months from now. **New tag…** is the only place you type a name, which is what keeps `#meeting` and `#meetings` from both existing. Renaming a tag renames it everywhere at once.\n\n## Delete is reversible until you say otherwise\n\nNotes and folders move to **Trash** at the bottom left with no confirmation, because nothing is lost yet. Click a trashed note to read it: it opens read-only, so you can identify something before deciding its fate. Drag a note onto the trash to delete it, drag it out onto a folder to restore it there, or use the right-click menu. The trash empties only when you empty it.\n\n## Footer\n\n- **Brush** — 8 OKLCH themes: Dusk Ember, Amber Hour, Warm Linen, Dracula, Catppuccin (Latte, Frappé, Macchiato, Mocha).\n- **Aa** — 8 locally-served font sets (Geist, IBM Plex, Source Code Pro, Inter, Monospace Terminal, Cascadia Code, Nunito, Roboto Slab), all self-hosted with zero external CDNs.\n- **Font size stepper** — diagonal button: click top-left (-) to decrease text size or bottom-right (+) to increase across 4 relational `rem` presets.\n- **Watch** — idle auto-lock timeout (5 minutes by default, 60 minutes hard ceiling).\n- **Octocat** — repository link; breathes when a newer release exists.\n- **Cloud** — automatic debounced auto-save & sync status badge (click for the server window: live request log and manual sync).\n- **Pulse** — server health status, re-checked every minute or on click.\n- **Shield** — Web Crypto E2EE encryption status (turns red when browser has no Secure Context).\n- **Lock** — locks the vault instantly.\n\n## The one irreversible thing\n\nYour passphrase derives the key that encrypts every title, body, tag and folder name before any of it is sent. The key never leaves the browser and is stored nowhere, so there is no reset and no recovery. Root access to the machine running this does not help either: the vault on disk is ciphertext, and the passphrase is not in it. Back the passphrase up the way you would back up a key to a safe.\n\n## Worth trying now\n\n- [ ] Click **Split** twice to flip the orientation\n- [ ] Adjust text size with the diagonal font size stepper\n- [ ] Switch `#ideas` on for this note, then off\n- [ ] Delete this note and restore it from the trash\n- [ ] Change theme and typeface in the footer\n",
         isEncrypted: false,
         tags: ['guide'],
         pinned: true,
@@ -185,6 +198,12 @@ const APP_VERSION = process.env.VERSION || pkg.version || '2.18.0-dev';
 // REST Endpoints
 app.get('/api/version', (req, res) => {
   res.json({ version: APP_VERSION });
+});
+
+// The in-memory tail of the request log, for the in-app server window.
+// Metadata only by construction — see the logging middleware above.
+app.get('/api/log', (req, res) => {
+  res.json({ lines: recentLog });
 });
 
 app.get('/api/store', (req, res) => {
