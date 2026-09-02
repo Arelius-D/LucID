@@ -9,8 +9,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [2.18.0-dev] - unreleased
 
 ### Added
+- **Import summary popover**: the moment an import finishes, a popover on the footer's import glyph lists every file with its outcome — imported, or skipped and why (unsupported type, empty, unreadable; skipped files were previously counted but never shown) — and which folder the batch landed in. From the same popover the whole batch can be moved to any live folder or into a folder created on the spot, for the case where the right destination was noticed one drop too late. It obeys the same rule as every menu: the next click anywhere else dismisses it, and a fully successful import fades on its own after 8 seconds, so the user who was already standing in the right folder pays nothing.
 
 ### Fixed
+- **Import no longer reports success when the vault write failed**: the batch save's outcome was swallowed, so the glyph could announce "Imported 3 Notes" while the sync badge showed the write had failed and the notes existed only in memory. The save now reports its result; a failed write shows an error state and the summary popover says "NOT synced" instead of pretending.
 
 ---
 

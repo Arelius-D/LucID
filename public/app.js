@@ -861,7 +861,7 @@ async function saveStore() {
   if (!state.encryptionKey || !state.kdf) {
     console.warn("saveStore aborted: vault is locked.");
     showSave("Locked before changes could sync", "error"); // never silent (J-02)
-    return;
+    return false;
   }
   try {
     showSave("Syncing changes to vault", "saving");
@@ -892,9 +892,11 @@ async function saveStore() {
       authVerifier: state.authVerifier,
     };
     showSave("Synced to vault", "");
+    return true;
   } catch (err) {
     console.error("saveStore failed:", err);
     showSave("Sync error: changes were not saved to the vault", "error");
+    return false;
   }
 }
 
@@ -1705,6 +1707,7 @@ function showTreeContextMenu(x, y, items) {
   lastMenuY = y;
   const menu = document.getElementById("tree-context-menu");
   if (!menu) return;
+  menu.classList.remove("import-summary"); // any real menu replaces a lingering summary
   menu.innerHTML = "";
   closeSubmenu();
 
@@ -1831,7 +1834,10 @@ function closeSubmenu() {
 function closeContextMenu() {
   closeSubmenu();
   const menu = document.getElementById("tree-context-menu");
-  if (menu) menu.classList.add("hidden");
+  if (menu) {
+    menu.classList.add("hidden");
+    menu.classList.remove("import-summary");
+  }
 }
 
 document.addEventListener("click", closeContextMenu);
@@ -3920,6 +3926,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const importLabel = document.getElementById("import-row-label");
 
     let importStateTimer = null;
+    // One clock for the whole aftermath: the glyph label and the summary
+    // popover reset together, so the two can never disagree about being done.
+    const IMPORT_SUMMARY_DISMISS_MS = 8000;
     const setImportState = (mode, count = 0, msg = "") => {
       if (importStateTimer) {
         clearTimeout(importStateTimer);
@@ -3938,7 +3947,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (importIcon) importIcon.innerHTML = ICONS.documentDone;
         if (importLabel)
           importLabel.textContent = `Imported ${count} Note${count === 1 ? "" : "s"}`;
-        importStateTimer = setTimeout(() => setImportState("idle"), 3500);
+        importStateTimer = setTimeout(
+          () => setImportState("idle"),
+          IMPORT_SUMMARY_DISMISS_MS,
+        );
       } else {
         if (importIcon) importIcon.innerHTML = ICONS.documentUpload;
         if (importLabel) importLabel.textContent = "Import";
@@ -3965,7 +3977,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "json",
       ];
       if (ext && !supported.includes(ext)) {
-        return null;
+        return { skipped: "unsupported" };
       }
 
       try {
@@ -4021,10 +4033,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       } catch (fileErr) {
         console.warn("Error converting file:", file.name, fileErr);
-        return null;
+        return { skipped: "unreadable" };
       }
 
-      if (!rawMd || !rawMd.trim()) return null;
+      if (!rawMd || !rawMd.trim()) return { skipped: "empty" };
 
       // Extract H1 title if present in Markdown
       const h1Match = rawMd.match(/^#\s+(.+)$/m);
@@ -4035,13 +4047,116 @@ document.addEventListener("DOMContentLoaded", async () => {
       return { title, markdown: rawMd };
     };
 
+    // ── Post-import summary popover ──
+    // Built from the context-menu family so it inherits the one dismissal rule
+    // every menu already obeys: the next click anywhere else closes it. It
+    // answers, at the moment the batch lands, what got in, what did not, and
+    // where — and can move the whole batch if the destination was wrong. A
+    // full-success summary also fades on its own; anything skipped or unsynced
+    // stays until the user moves on.
+    const IMPORT_STATUS_LABELS = {
+      imported: "OK",
+      unsupported: "Skipped: unsupported type",
+      empty: "Skipped: empty file",
+      unreadable: "Skipped: unreadable",
+    };
+    let summaryTimer = null;
+
+    const moveImportedBatch = async (destId, importedIds) => {
+      // The destination can be gone by click time (another device, whole-vault
+      // replace) — same guard idiom as createNoteInFolder.
+      const live = new Set(
+        state.folders.filter((f) => !f.trashed).map((f) => f.id),
+      );
+      if (!live.has(destId)) destId = ensureLiveFolderId();
+      const ids = new Set(importedIds);
+      state.notes.forEach((n) => {
+        if (ids.has(n.id) && !n.trashed) n.folderId = destId;
+      });
+      state.activeFolderId = destId;
+      state.openFolderIds.add(destId);
+      saveTreeState();
+      await saveStore();
+      renderAll();
+    };
+
+    const showImportSummary = (outcomes, importedIds, targetFolderId, saveOk) => {
+      if (summaryTimer) {
+        clearTimeout(summaryTimer);
+        summaryTimer = null;
+      }
+      const importedCount = importedIds.length;
+      const skippedCount = outcomes.length - importedCount;
+      const targetFolder = state.folders.find((f) => f.id === targetFolderId);
+      const header = !saveOk
+        ? `Imported ${importedCount} - NOT synced`
+        : `Imported ${importedCount}` +
+          (skippedCount ? ` - Skipped ${skippedCount}` : "") +
+          (importedCount && targetFolder ? ` in ${targetFolder.name}` : "");
+      const items = [
+        {
+          label: header,
+          icon: saveOk ? ICONS.documentDone : ICONS.documentUpload,
+          danger: !saveOk,
+          action: null,
+        },
+        { divider: true },
+        ...outcomes.map((o) => ({
+          label: `${o.name} — ${IMPORT_STATUS_LABELS[o.status] || o.status}`,
+          action: null,
+        })),
+      ];
+      if (importedCount > 0) {
+        items.push({ divider: true });
+        const destinations = state.folders.filter(
+          (f) => !f.trashed && f.id !== targetFolderId,
+        );
+        if (destinations.length) {
+          items.push({
+            label: "Move all to",
+            icon: ICONS.folder,
+            submenuItems: destinations.map((f) => ({
+              label: f.name,
+              action: () => moveImportedBatch(f.id, importedIds),
+            })),
+          });
+        }
+        items.push({
+          label: "New folder…",
+          icon: ICONS.folder,
+          action: async () => {
+            const name = await showPromptModal(
+              "New Folder",
+              "Enter a name for the new folder:",
+              "",
+              { placeholder: "Folder name" },
+            );
+            if (!name || !name.trim()) return; // cancelled: nothing was created
+            const folder = { id: newId("f"), name: name.trim(), parentId: null };
+            state.folders.push(folder);
+            await moveImportedBatch(folder.id, importedIds);
+          },
+        });
+      }
+      const r = importBtn.getBoundingClientRect();
+      showTreeContextMenu(r.left, r.top - 8, items);
+      const menu = document.getElementById("tree-context-menu");
+      if (menu) menu.classList.add("import-summary");
+      if (saveOk && skippedCount === 0 && importedCount > 0) {
+        summaryTimer = setTimeout(() => {
+          const m = document.getElementById("tree-context-menu");
+          if (m && m.classList.contains("import-summary")) closeContextMenu();
+        }, IMPORT_SUMMARY_DISMISS_MS);
+      }
+    };
+
     let isImportingInProgress = false;
     const processImportFiles = async (files) => {
       if (!files || !files.length || isImportingInProgress) return;
       isImportingInProgress = true;
       setImportState("importing");
-      let importedCount = 0;
-      let skippedCount = 0;
+      const outcomes = []; // { name, status } per file, in drop order
+      const importedIds = [];
       const targetFolderId = ensureLiveFolderId();
       try {
         for (const file of files) {
@@ -4064,31 +4179,39 @@ document.addEventListener("DOMContentLoaded", async () => {
               };
               state.notes.unshift(noteRecord);
               state.decryptedTitleCache.set(noteId, res.title);
-              if (importedCount === 0) {
+              if (importedIds.length === 0) {
                 state.activeNoteId = noteId;
                 state.activeFolderId = targetFolderId;
               }
-              importedCount++;
+              importedIds.push(noteId);
+              outcomes.push({ name: file.name, status: "imported" });
             } else {
-              skippedCount++;
+              outcomes.push({
+                name: file.name,
+                status: (res && res.skipped) || "empty",
+              });
             }
           } catch (itemErr) {
             console.warn("Skipped file:", file.name, itemErr);
-            skippedCount++;
+            outcomes.push({ name: file.name, status: "unreadable" });
           }
         }
-        if (importedCount > 0) {
-          try {
-            await saveStore();
-          } catch (sErr) {}
+        let saveOk = true;
+        if (importedIds.length > 0) {
+          saveOk = await saveStore(); // false = parsed fine, vault write failed
           try {
             renderAll();
           } catch (rErr) {}
-          setImportState("success", importedCount);
+          setImportState(
+            saveOk ? "success" : "error",
+            importedIds.length,
+            saveOk ? "" : "Import not synced: the vault write failed",
+          );
         } else {
           showSave("Empty or unparseable import file", "error");
           setImportState("idle");
         }
+        showImportSummary(outcomes, importedIds, targetFolderId, saveOk);
       } catch (err) {
         console.error("Import error:", err);
         showSave("Import error: could not parse file", "error");
