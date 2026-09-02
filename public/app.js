@@ -907,6 +907,43 @@ async function saveStore() {
   }
 }
 
+// ─── COALESCED PERSISTENCE ─────────────────────────
+// Mutations render first and persist behind. One vault write in flight, at
+// most one queued: a burst of N operations costs at most two writes — the one
+// already flying plus one final write carrying the end state. Callers that
+// need the outcome (import) await the returned promise; mutation handlers
+// fire and forget, because the cloud badge is the truth of persistence.
+let saveInFlight = null;
+let saveQueued = null;
+
+function requestSave() {
+  if (saveInFlight) {
+    if (!saveQueued) {
+      saveQueued = saveInFlight.then(() => {
+        saveQueued = null;
+        return requestSave();
+      });
+    }
+    return saveQueued;
+  }
+  saveInFlight = saveStore().finally(() => {
+    saveInFlight = null;
+  });
+  return saveInFlight;
+}
+
+function pendingSave() {
+  return saveQueued || saveInFlight || null;
+}
+
+// Locking wipes the key and unload ends the page: neither may outrun a
+// debounced edit nor a write already flying or queued.
+async function drainSaves() {
+  await flushPendingSave();
+  const p = pendingSave();
+  if (p) await p;
+}
+
 // Selection lives here, AFTER decryption, because "is this note trashed" is an
 // encrypted flag: a deleted note must never become the editable active note
 // (that rendered a trashed note in an editable pane with an empty tree, and
@@ -981,9 +1018,9 @@ function triggerAutoSave() {
     state.saveTimeout = null;
     commitEditorToNote(targetId);
     state.pendingNoteId = null;
-    await saveStore();
     renderExplorer();
     renderTOC();
+    requestSave();
   }, 500);
 }
 
@@ -997,7 +1034,7 @@ async function flushPendingSave() {
   state.pendingNoteId = null;
   if (!state.encryptionKey) return;
   commitEditorToNote(targetId);
-  await saveStore();
+  await requestSave();
 }
 
 // The visible label is gone: three distinct glyphs carry the state, and the
@@ -1303,7 +1340,7 @@ function renderTree() {
         state.openFolderIds.add(folder.id); // reveal where it landed
         saveTreeState();
         renderAll();
-        await saveStore();
+        requestSave();
       });
 
       // Right-click context menu for Folder
@@ -1929,8 +1966,8 @@ async function createNoteInFolder(folderId) {
   state.openFolderIds.add(folderId);
   saveTreeState();
   state.decryptedTitleCache.set(newNote.id, "New Note");
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function renameFolder(folder) {
@@ -1942,8 +1979,8 @@ async function renameFolder(folder) {
   );
   if (!name || name === folder.name) return;
   folder.name = name;
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 // ─── TRASH ─────────────────────────────────────────
@@ -1980,14 +2017,14 @@ async function trashFolder(folder) {
     }
   });
   retargetActiveAfterTrash();
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function restoreFolder(folder) {
   folder.trashed = false; // back to the root tree; its notes stay in the trash until restored themselves
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function permaDeleteFolder(folder) {
@@ -1997,8 +2034,8 @@ async function permaDeleteFolder(folder) {
   );
   if (!ok) return;
   state.folders = state.folders.filter((f) => f.id !== folder.id);
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function renameNote(note) {
@@ -2024,8 +2061,8 @@ async function renameNote(note) {
   note.title = newTitle;
   note.content = updatedContent;
   state.decryptedTitleCache.set(note.id, newTitle);
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 // The right-click menu for a note, identical in every view. Items reflect state
@@ -2249,9 +2286,9 @@ async function toggleTagOnNote(note, tag) {
     ? note.tags.filter((t) => t !== clean)
     : [...note.tags, clean];
   note.updatedAt = new Date().toISOString();
-  await saveStore();
   renderTags();
   renderExplorer();
+  requestSave();
 }
 
 // The picker: vocabulary with ticks on the note's own tags, click to toggle,
@@ -2288,7 +2325,7 @@ function openTagMenu(note, x, y) {
       if (!(state.tagLibrary || []).includes(clean))
         state.tagLibrary.push(clean);
       if ((note.tags || []).includes(clean)) {
-        await saveStore();
+        requestSave();
         return;
       }
       await toggleTagOnNote(note, clean);
@@ -2301,7 +2338,7 @@ async function togglePin(note) {
   note.pinned = !note.pinned;
   note.updatedAt = new Date().toISOString();
   renderAll();
-  await saveStore();
+  requestSave();
 }
 
 async function trashNote(note) {
@@ -2309,8 +2346,8 @@ async function trashNote(note) {
   note.trashed = true;
   note.updatedAt = new Date().toISOString();
   retargetActiveAfterTrash();
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function restoreNote(note) {
@@ -2338,8 +2375,8 @@ async function restoreNote(note) {
   state.activeFolderId = note.folderId;
   state.openFolderIds.add(note.folderId);
   saveTreeState();
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function permaDeleteNote(note) {
@@ -2350,8 +2387,8 @@ async function permaDeleteNote(note) {
   if (!ok) return;
   state.notes = state.notes.filter((n) => n.id !== note.id);
   state.decryptedTitleCache.delete(note.id); // J-08: don't retain a decrypted title after delete
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 async function emptyTrash() {
@@ -2368,8 +2405,8 @@ async function emptyTrash() {
     .forEach((n) => state.decryptedTitleCache.delete(n.id));
   state.notes = state.notes.filter((n) => !n.trashed);
   state.folders = state.folders.filter((f) => !f.trashed);
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 // The panel above the trash row: trashed folders first, then notes. Rows join the
@@ -2486,8 +2523,8 @@ async function renameTagGlobal(oldTag) {
   state.tagLibrary = [
     ...new Set((state.tagLibrary || []).map((t) => (t === oldTag ? clean : t))),
   ];
-  await saveStore(); // immediate, like every other tag mutation (one idiom)
   renderAll();
+  requestSave(); // immediate render; the write coalesces behind (one idiom)
 }
 
 async function removeTagGlobal(tag) {
@@ -2501,8 +2538,8 @@ async function removeTagGlobal(tag) {
   });
   // This is the one action that destroys a tag: it leaves the library too.
   state.tagLibrary = (state.tagLibrary || []).filter((t) => t !== tag);
-  await saveStore();
   renderAll();
+  requestSave();
 }
 
 // Not async: the vault is decrypted into memory on unlock, so this reads plaintext
@@ -3775,16 +3812,16 @@ window.addEventListener("unhandledrejection", (e) =>
 // Tab hidden / navigating away: run the pending save now rather than losing it
 // to the debounce window. visibilitychange still permits async work.
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "hidden") flushPendingSave();
+  if (document.visibilityState === "hidden") drainSaves();
 });
 window.addEventListener("pagehide", () => {
-  flushPendingSave();
+  drainSaves();
 });
 
 // Encryption + upload cannot complete synchronously in beforeunload, so if a
 // save is still pending we ask the browser to confirm rather than lose the text.
 window.addEventListener("beforeunload", (e) => {
-  if (state.saveTimeout) {
+  if (state.saveTimeout || pendingSave()) {
     e.preventDefault();
     e.returnValue = "";
     return "";
@@ -4109,8 +4146,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       state.activeFolderId = destId;
       state.openFolderIds.add(destId);
       saveTreeState();
-      await saveStore();
       renderAll();
+      requestSave();
     };
 
     const showImportSummary = (outcomes, importedIds, targetFolderId, saveOk) => {
@@ -4239,7 +4276,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         let saveOk = true;
         if (importedIds.length > 0) {
-          saveOk = await saveStore(); // false = parsed fine, vault write failed
+          saveOk = await requestSave(); // false = parsed fine, vault write failed
           try {
             renderAll();
           } catch (rErr) {}
@@ -4462,9 +4499,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       state.activeFolderId = folder.id;
       state.openFolderIds.add(folder.id);
       saveTreeState();
-      await saveStore();
       renderAll();
       focusTreeItem("folder:" + folder.id);
+      requestSave();
     });
 
   // MANDATORY E2EE LOCK SCREEN & CRYPTOGRAPHIC PASSPHRASE VALIDATION
@@ -4662,7 +4699,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
   async function lockVault() {
-    await flushPendingSave(); // J-02's last gap: a lock inside the debounce window must not drop the edit
+    await drainSaves(); // J-02 + coalescer: neither a debounced edit nor a flying write may outrun the lock
     clearSessionKey(); // wipes the stored CryptoKey + session token
     state.encryptionKey = null;
     // The snapshot is stale from here on; unlock re-reads it from the server.
