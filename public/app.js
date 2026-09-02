@@ -4060,11 +4060,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // where — and can move the whole batch if the destination was wrong. A
     // full-success summary also fades on its own; anything skipped or unsynced
     // stays until the user moves on.
+    // The glyph carries the outcome; the text repeats none of it. An imported
+    // row is just the filename, a skipped row adds the terse reason.
     const IMPORT_STATUS_LABELS = {
-      imported: "OK",
-      unsupported: "Skipped: unsupported type",
-      empty: "Skipped: empty file",
-      unreadable: "Skipped: unreadable",
+      unsupported: "unsupported type",
+      empty: "empty file",
+      unreadable: "unreadable",
     };
     let summaryTimer = null;
 
@@ -4108,7 +4109,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         },
         { divider: true },
         ...outcomes.map((o) => ({
-          label: `${o.name} — ${IMPORT_STATUS_LABELS[o.status] || o.status}`,
+          label:
+            o.status === "imported"
+              ? o.name
+              : `${o.name} — ${IMPORT_STATUS_LABELS[o.status] || o.status}`,
           icon: o.status === "imported" ? ICONS.tickCircle : ICONS.slash,
           action: null,
         })),
