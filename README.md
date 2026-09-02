@@ -244,8 +244,6 @@ One line per API request on stdout (`docker logs lucid-app`): timestamp, method,
 
 ## Dependencies
 
-> This section states the maintainer's dependency policy. Draft wording, to be finalised.
-
 LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and 17 vendored browser packages (5 runtime libraries and 12 font packages across 8 font sets). Everything else is written in-house.
 
 **Policy: always prefer the latest version.** An out-of-date dependency is treated as a standing vulnerability. When a new version ships it is usually because a bug, an issue, or a security flaw was fixed, and staying behind means knowingly serving that flaw to users. Major versions are therefore not held back. If a major upgrade breaks the build, that breakage is caught by CI and fixed. A broken build is a problem for the maintainer. An outdated dependency is a problem for every user.
