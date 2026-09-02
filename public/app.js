@@ -4107,20 +4107,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       const importedCount = importedIds.length;
       const skippedCount = outcomes.length - importedCount;
-      const targetFolder = state.folders.find((f) => f.id === targetFolderId);
-      const header = !saveOk
-        ? `Imported ${importedCount} - NOT synced`
-        : `Imported ${importedCount}` +
-          (skippedCount ? ` - Skipped ${skippedCount}` : "") +
-          (importedCount && targetFolder ? ` in ${targetFolder.name}` : "");
+      // No header, no counts, no folder name: the user picked the files, each
+      // row shows its own outcome, the actions below handle "where", and a
+      // failed vault write is the sync badge's story to tell.
       const items = [
-        {
-          label: header,
-          icon: saveOk ? ICONS.documentDone : ICONS.documentUpload,
-          danger: !saveOk,
-          action: null,
-        },
-        { divider: true },
         ...outcomes.map((o) => ({
           label: o.name,
           icon: o.status === "imported" ? ICONS.tickCircle : ICONS.slash,
