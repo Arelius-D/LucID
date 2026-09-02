@@ -1451,37 +1451,27 @@ select:focus-visible,
   cursor: default;
 }
 
-/* ─── SERVER WINDOW (opened from the cloud badge) ── */
-.server-card {
-  width: min(680px, 92vw);
-  text-align: left;
+/* ─── SERVER PANEL (anchored on the cloud badge) ───
+   A context-menu family member: elevation, radius, spacing and the
+   max-height viewport clamp all come from .context-menu itself. Width
+   follows the card idiom (min(90vw, Xrem)); 45rem holds one full log line
+   (~100ch at --text-xs mono) without wrapping on desktop. The log pane
+   flexes inside the clamped panel (min-height: 0) and scrolls itself. */
+.server-panel {
+  width: min(90vw, 45rem);
 }
-.server-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-sm);
-}
-.server-head h3 {
-  margin: 0;
-}
-.server-head-actions {
-  display: flex;
-  gap: var(--space-xs);
-}
-.server-log {
+.server-panel .server-log {
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: var(--text-xs);
-  line-height: 1.6;
-  background: var(--bg-base);
   color: var(--text-secondary);
+  background: var(--bg-base);
   border-radius: var(--radius-sm);
   padding: var(--space-sm);
   margin: 0;
-  max-height: 55vh;
-  min-height: 8rem;
-  overflow: auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
   white-space: pre-wrap;
   word-break: break-all;
 }
