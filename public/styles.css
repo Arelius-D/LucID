@@ -956,7 +956,7 @@ body {
   white-space: nowrap;
 }
 .view-tab:hover {
-  color: var(--text-primary);
+  color: var(--accent);
   background: var(--bg-hover);
 }
 .view-tab.active {
@@ -1309,6 +1309,13 @@ body {
   color: var(--text-muted);
   flex-shrink: 0;
 }
+/* The caret follows its row's state: muted at rest like the count badge, the
+   row's own colour once the row is hovered, active or a drop target. */
+.tree-folder-header:hover .tree-caret,
+.tree-folder-header.active .tree-caret,
+.tree-folder-header.drop-target .tree-caret {
+  color: inherit;
+}
 .tree-folder-header .count-badge {
   margin-left: auto;
   font-size: var(--text-2xs);
@@ -1525,7 +1532,6 @@ select:focus-visible,
   color: var(--text-primary);
 }
 .trash-row:hover .icon-svg {
-  color: var(--accent);
   transform: scale(1.15);
   transition: transform var(--motion-fast) var(--ease-standard);
 }
@@ -1536,7 +1542,6 @@ select:focus-visible,
   color: var(--text-primary);
 }
 .trash-row.drop-target .icon-svg {
-  color: var(--accent);
   transform: scale(1.15);
 }
 .trash-panel {
@@ -1772,8 +1777,10 @@ select:focus-visible,
   border-color: var(--accent);
   box-shadow: 0 0 0 0.125rem var(--accent-subtle);
 }
-.import-action-btn.is-importing .icon-svg {
+.import-action-btn.is-importing {
   color: var(--accent);
+}
+.import-action-btn.is-importing .icon-svg {
   animation: logo-breathe-glow 2s var(--ease-standard) infinite;
 }
 .import-action-btn.is-error {
