@@ -12,6 +12,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Fixed
 
+- **Vendored browser libraries updated**: DOMPurify 3.4.14 → 3.4.16, marked 18.0.11 → 18.0.14, mammoth 1.12.2 → 1.12.3.
+
 ---
 
 ## [2.18.0] - 2026-09-02
