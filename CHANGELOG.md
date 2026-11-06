@@ -12,6 +12,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Fixed
 
+- **Vendored browser libraries updated**: DOMPurify 3.4.16 → 3.4.17, marked 18.0.14 → 18.1.3, mammoth 1.12.3 → 1.13.0, turndown 7.2.4 → 7.2.5; @fontsource/source-sans-3 and @fontsource/source-code-pro 5.3.0 → 5.3.1 (font files unchanged).
+- **Server dependency updated**: express 5.2.1 → 5.3.0, which carries body-parser 2.4.0 and qs 6.17.1 and clears the three advisories `npm audit` reported against 2.18.1.
+
 ---
 
 ## [2.18.1] - 2026-09-24
