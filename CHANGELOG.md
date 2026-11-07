@@ -8,13 +8,21 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.20.0-dev] - unreleased
 
+### Security
+
+- **Writing to a vault now requires its passphrase**: `POST /api/store` replaces the whole vault, and it accepted any well-formed request from anything that could reach the URL. The same-origin check stops browsers on other sites, not a script, which sends no `Origin` header, so one request carrying two empty lists through the reverse proxy emptied every note and folder; reproduced on a dev instance before the fix. The browser now derives a second key from the passphrase (PBKDF2 over the vault salt plus a fixed label, unrelated to the encryption key, non-extractable) and every write carries an HMAC-SHA256 token made with it. The server stores only the token's SHA-256 as `writeAuth`, answers any other write with 401 and leaves the file untouched, and no longer returns `writeAuth` when the vault is read. A new vault records its token on its first save. A vault from an earlier version records it on the first save after upgrading, from whoever makes that save, so open it and save once right away. If your own saves are then refused, delete `writeAuth` from `data/store.json` and save again; running an older image against the vault drops it the same way. A tab opened before the upgrade cannot save until it is reloaded, and a session saved by an older version asks for the passphrase once. Unlocking runs one extra PBKDF2 pass. Reading the encrypted vault is still not authenticated.
+
 ### Added
 
 ### Fixed
 
+- **The Start here note described a footer badge that no longer exists**: its Shield line said the shield reports Web Crypto E2EE status and turns red without a Secure Context. That badge was removed in 2.6.0, when the shield moved into the Lock button to show the auto-lock state; the line was written after the removal, shipped in 2.12.0, and has been wrong in every release since. It now describes the shield as it is: armed, off with only the 60-minute ceiling, or red when the vault will lock within a minute. The seed note is written only into a new vault, so existing vaults keep their own copy.
+- **A new vault keeps the `#ideas` tag the Start here note points to**: the starter vault ships `#guide`, `#markdown` and `#ideas`, the last attached to no note so the tag picker shows a switched-off tag from the first minute, and the Start here note tells the user to switch it on. Setting up the vault dropped it: the starter tag library was never carried into the app before the first save, which rebuilt the library from tags on notes alone. The library is now carried over, so a new vault keeps all three. Vaults created before this keep the tags they have.
+
 ---
 
 ## [2.19.0] - 2026-11-06
+
 ### Added
 
 ### Fixed
@@ -25,6 +33,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.18.1] - 2026-09-24
+
 ### Added
 
 ### Fixed
@@ -34,6 +43,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ---
 
 ## [2.18.0] - 2026-09-02
+
 ### Added
 
 - **Import summary popover**: the moment an import finishes, a popover on the footer's import glyph lists every file with its outcome: imported, or skipped with the reason on hover (unsupported file type, empty, unreadable; skipped files were previously counted but never shown). From the same popover the whole batch can be moved to any live folder or into a folder created on the spot, for the case where the right destination was noticed one drop too late. It obeys the same rule as every menu: the next click anywhere else dismisses it, and a fully successful import fades on its own after 8 seconds unless the pointer is over it (reading is not dismissing), so the user who was already standing in the right folder pays nothing. Each row carries its outcome glyph: authentic Iconsax `lin-tick-circle` for imported, `lin-slash` for skipped, a circle family kept distinct from the app's square control glyphs. When anything was skipped, a `lin-refresh-2` "Choose files again…" action reopens the file chooser for a fresh pick.
