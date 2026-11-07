@@ -4670,6 +4670,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (isSetup) {
         // First setup: state.folders/notes currently hold the plaintext seed data,
         // so mint the sentinel and write the whole vault out encrypted.
+        // The seed's tag library is plaintext as well, but loadRawStore never
+        // moves it into state, so the first save rebuilt the library from tags on
+        // notes alone and dropped #ideas, which the seed attaches to nothing.
+        state.tagLibrary =
+          state.rawStore && Array.isArray(state.rawStore.tags)
+            ? [...state.rawStore.tags]
+            : [];
         state.authVerifier = await encryptText(AUTH_MAGIC_SENTINEL, derived);
         state.encryptionKey = derived;
         state.vaultPlain = true; // the seed is plaintext by construction
