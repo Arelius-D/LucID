@@ -197,9 +197,11 @@ sequenceDiagram
     User->>Crypto: Master passphrase (never leaves the browser, never stored)
     Crypto->>Crypto: PBKDF2-SHA256, 600,000 iterations, random per-vault salt
     Crypto->>Crypto: AES-256-GCM encrypt titles, bodies, tags, folder names, pinned flags
+    Crypto->>Crypto: HMAC-SHA256 write token from a second key derived from the passphrase
     Crypto->>Caddy: HTTPS request carrying ciphertext only
     Caddy->>Caddy: Automatic Let's Encrypt TLS provisioning
     Caddy->>Server: Reverse proxy to app:3000 on the compose network (sole ingress)
+    Server->>Server: Write refused (401) unless the token's SHA-256 matches the vault's
     Server->>Storage: Atomic write, temp file then fsync then rename
     Storage-->>User: On unlock, ciphertext is returned and decrypted in-browser
 ```
@@ -216,20 +218,23 @@ sequenceDiagram
 | Master passphrase | Never transmitted and never stored, anywhere |
 | Record IDs and timestamps | Plaintext. Randomly generated or timestamp-derived, so they describe nothing |
 | KDF parameters (salt, iterations) | Plaintext by design. A salt is not a secret and must be readable to derive your key |
+| Write-token hash | Plaintext SHA-256 of a passphrase-derived token. It authorises writes and cannot decrypt anything |
 
 ### Key derivation
 
 Your key is derived with PBKDF2-HMAC-SHA256 at 600,000 iterations, using a random 16-byte salt generated uniquely for your vault and stored inside it. Because the salt is per-vault, the same passphrase produces a different key on every installation, so one precomputed table cannot be reused against multiple vaults. The derived key is non-extractable: the browser will not surrender its raw bytes to any script, including LucID's own.
 
+A second key is derived the same way from the same passphrase, with a fixed label added to the salt. It never encrypts anything; it only produces the token that authorises vault writes.
+
 ### Session handling
 
-While unlocked, the non-extractable key is held in IndexedDB and gated by a per-tab session token. The passphrase itself is never persisted in any form. Locking the vault, or the idle auto-lock firing, destroys both.
+While unlocked, the two non-extractable keys, one for encryption and one for write authorization, are held in IndexedDB and gated by a per-tab session token. The passphrase itself is never persisted in any form. Locking the vault, or the idle auto-lock firing, destroys both.
 
 ### Hardening
 
 - Rendered Markdown is sanitised with DOMPurify before display, and a strict Content-Security-Policy (`script-src 'self'`) blocks inline execution, so note content can never run code that could reach your key.
 - No third-party CDNs. All runtime libraries are vendored and version-pinned, so no external host can inject code into the app origin.
-- Same-origin writes only. The API rejects cross-origin writes, and services bind to loopback so Caddy is the only route in.
+- Authenticated writes. Every vault write must carry the token derived from your passphrase; the server stores only its hash and refuses anything else, so knowing the address is not enough to change or empty a vault. Cross-origin writes are rejected as well, and services bind to loopback so Caddy is the only route in. Reading the encrypted vault is not authenticated.
 - Writes are atomic. The vault is written to a temporary file, fsynced, then renamed, so an interrupted write cannot truncate it. A vault file that cannot be parsed is preserved rather than replaced.
 
 ### What the server logs
@@ -361,7 +366,7 @@ docker run -d \
   assarelius/lucid:latest
 ```
 
-Bound to loopback so the unauthenticated API is not exposed. Put a TLS reverse proxy in front of it, and remember that Web Crypto requires HTTPS.
+Bound to loopback so the API is reachable only through the TLS reverse proxy you put in front of it. Vault writes require the passphrase-derived write token; reading the encrypted vault does not. Remember that Web Crypto requires HTTPS.
 
 ---
 

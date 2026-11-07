@@ -143,7 +143,8 @@ function buildInitialData() {
     // The tag library ships with one tag applied to nothing, so a fresh vault
     // shows the off state of the tag toggles without the user creating anything.
     tags: ['guide', 'ideas', 'markdown'],
-    authVerifier: null
+    authVerifier: null,
+    writeAuth: null
   };
 }
 
@@ -208,7 +209,9 @@ app.get('/api/log', (req, res) => {
 
 app.get('/api/store', (req, res) => {
   try {
-    res.json(readData());
+    // writeAuth is the server's own check value for writes; no client needs it.
+    const { writeAuth, ...store } = readData();
+    res.json(store);
   } catch (err) {
     res.status(500).json({
       error: 'STORE_CORRUPT',
@@ -229,7 +232,39 @@ function sameOriginOnly(req, res, next) {
   return res.status(403).json({ error: 'Cross-origin write rejected' });
 }
 
+// Write authorization (CWE-306). POST /api/store replaces the whole vault, and
+// the same-origin guard above only stops browsers on other sites: a script sends
+// no Origin header, so before this anything that could reach the URL could empty
+// the vault with one request. Every write now carries a bearer token the browser
+// derives from the passphrase through a key separate from the encryption key
+// (app.js deriveWriteAuthKey), so the server can check it without being able to
+// decrypt anything. Only the token's SHA-256 is stored, as writeAuth. A vault that
+// has none yet (a fresh seed, or one written before 2.20.0) records the hash of
+// the first token it receives.
+function bearerToken(req) {
+  // The token is the base64 of a 32-byte HMAC-SHA256: 43 characters and one '='.
+  const m = /^Bearer ([A-Za-z0-9+/]{43}=)$/.exec(req.get('Authorization') || '');
+  return m ? m[1] : null;
+}
+
+function tokenHash(token) {
+  return crypto.createHash('sha256').update(token, 'utf8').digest();
+}
+
+function writeAuthMatches(stored, presented) {
+  const want = Buffer.from(String(stored), 'base64');
+  return want.length === presented.length && crypto.timingSafeEqual(want, presented);
+}
+
 app.post('/api/store', sameOriginOnly, (req, res) => {
+  const token = bearerToken(req);
+  if (!token) {
+    return res.status(401).json({
+      error: 'WRITE_UNAUTHORIZED',
+      message: 'Vault writes require the write token derived from the passphrase.'
+    });
+  }
+
   const { folders, notes, tags, authVerifier, kdf, schemaVersion } = req.body || {};
   if (!Array.isArray(folders) || !Array.isArray(notes)) {
     return res.status(400).json({ error: 'Invalid payload structure' });
@@ -256,6 +291,14 @@ app.post('/api/store', sameOriginOnly, (req, res) => {
     });
   }
 
+  const presented = tokenHash(token);
+  if (existing.writeAuth && !writeAuthMatches(existing.writeAuth, presented)) {
+    return res.status(401).json({
+      error: 'WRITE_UNAUTHORIZED',
+      message: 'The write token does not match this vault.'
+    });
+  }
+
   try {
     writeData({
       schemaVersion: schemaVersion !== undefined ? schemaVersion : (existing.schemaVersion || 1),
@@ -267,7 +310,10 @@ app.post('/api/store', sameOriginOnly, (req, res) => {
       // from the payload (an older client) means keep what is stored, exactly
       // like kdf and authVerifier — an old app can never silently drop it.
       tags: Array.isArray(tags) ? tags : (existing.tags || []),
-      authVerifier: authVerifier !== undefined ? authVerifier : (existing.authVerifier || null)
+      authVerifier: authVerifier !== undefined ? authVerifier : (existing.authVerifier || null),
+      // Never taken from the payload. Kept once recorded; recorded from this
+      // request's token when the vault had none.
+      writeAuth: existing.writeAuth || presented.toString('base64')
     });
   } catch (err) {
     // B-05: never report success for a write that failed.

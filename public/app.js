@@ -108,6 +108,7 @@ const state = {
   activeFolderId: null,
   searchQuery: "",
   encryptionKey: null,
+  writeToken: null, // bearer token for vault writes; derived on unlock, cleared on lock
   saveTimeout: null,
   pendingNoteId: null, // note the debounced save is bound to (J-02)
   rawStore: null, // encrypted store exactly as received from the server
@@ -366,6 +367,56 @@ async function deriveKey(passphrase, kdf) {
   );
 }
 
+// ─── WRITE AUTHORIZATION (CWE-306) ─────────────────
+// The server replaces the whole vault on every write, so it has to know the
+// writer holds the passphrase, without ever being able to decrypt. A second key
+// is derived from the same passphrase with a fixed label appended to the salt,
+// so it is unrelated to the encryption key, and it is used for one thing only:
+// signing that label. The signature is the bearer token every write carries; the
+// server keeps only its SHA-256 (server.js writeAuth). The encryption key above is
+// derived exactly as before, so every existing vault still opens.
+const WRITE_AUTH_LABEL = "lucid-write-auth-v1";
+
+async function deriveWriteAuthKey(passphrase, kdf) {
+  if (!window.crypto || !window.crypto.subtle) {
+    throw new Error("SECURE_CONTEXT_REQUIRED");
+  }
+  if (!kdf || !kdf.salt) throw new Error("KDF_PARAMS_MISSING");
+  const enc = new TextEncoder();
+  const km = await crypto.subtle.importKey(
+    "raw",
+    enc.encode(passphrase),
+    "PBKDF2",
+    false,
+    ["deriveKey"],
+  );
+  const salt = new Uint8Array([
+    ...b64ToBytes(kdf.salt),
+    ...enc.encode(WRITE_AUTH_LABEL),
+  ]);
+  return crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt,
+      iterations: kdf.iterations || KDF_DEFAULTS.iterations,
+      hash: KDF_DEFAULTS.hash,
+    },
+    km,
+    { name: "HMAC", hash: "SHA-256", length: 256 },
+    false,
+    ["sign"],
+  );
+}
+
+async function writeAuthToken(writeAuthKey) {
+  const sig = await crypto.subtle.sign(
+    "HMAC",
+    writeAuthKey,
+    new TextEncoder().encode(WRITE_AUTH_LABEL),
+  );
+  return bytesToB64(new Uint8Array(sig));
+}
+
 // ─── SESSION KEY STORAGE (S-03) ────────────────────
 // The master passphrase is NEVER persisted. We keep the derived, non-extractable
 // CryptoKey in IndexedDB — its bytes cannot be read back by any script (unlike a
@@ -425,12 +476,12 @@ function idbGet() {
   );
 }
 
-async function persistSessionKey(key) {
+async function persistSessionKey(key, writeAuthKey) {
   try {
     const token =
       (crypto.randomUUID && crypto.randomUUID()) ||
       String(Date.now()) + Math.random().toString(36).slice(2);
-    await idbPut({ key, token });
+    await idbPut({ key, writeAuthKey, token });
     sessionStorage.setItem(SESSION_TOKEN, token);
   } catch (e) {
     console.warn(
@@ -466,10 +517,19 @@ async function restoreKeyFromSession() {
   if (!token) return false;
   try {
     const rec = await idbGet();
-    if (rec && rec.key && rec.token === token && state.authVerifier) {
+    // A record saved by a version before 2.20.0 has no writeAuthKey, and nothing
+    // could save with it, so it is not restored: the passphrase is asked once.
+    if (
+      rec &&
+      rec.key &&
+      rec.writeAuthKey &&
+      rec.token === token &&
+      state.authVerifier
+    ) {
       const check = await tryDecryptText(state.authVerifier, rec.key);
       if (check === AUTH_MAGIC_SENTINEL) {
         state.encryptionKey = rec.key;
+        state.writeToken = await writeAuthToken(rec.writeAuthKey);
         const src = state.rawStore || {
           folders: state.folders,
           notes: state.notes,
@@ -886,7 +946,7 @@ async function saveStore() {
     showSave("Sync skipped: vault not ready", "error");
     return false;
   }
-  if (!state.encryptionKey || !state.kdf) {
+  if (!state.encryptionKey || !state.kdf || !state.writeToken) {
     console.warn("saveStore aborted: vault is locked.");
     showSave("Locked before changes could sync", "error"); // never silent (J-02)
     return false;
@@ -898,7 +958,10 @@ async function saveStore() {
     );
     const res = await fetch(apiPath("api/store"), {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + state.writeToken,
+      },
       body: JSON.stringify({
         schemaVersion: SCHEMA_VERSION,
         kdf: state.kdf,
@@ -908,6 +971,16 @@ async function saveStore() {
         authVerifier: state.authVerifier,
       }),
     });
+    if (res.status === 401) {
+      // The vault on the server has a different write token recorded. Retrying
+      // cannot change that, so it gets its own message instead of "sync error".
+      console.error("saveStore refused: write token does not match the vault");
+      showSave(
+        "Sync refused: the server holds a different write key for this vault",
+        "error",
+      );
+      return false;
+    }
     if (!res.ok) throw new Error("HTTP " + res.status);
     // Mirror what the server now holds. rawStore is what an unlock decrypts,
     // so it must never fall behind this tab's last successful save.
@@ -4622,7 +4695,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
       if (isSetup && !state.kdf) state.kdf = newKdfParams();
-      const derived = await deriveKey(pass, state.kdf);
+      // Two full PBKDF2 passes, started together.
+      const [derived, writeAuthKey] = await Promise.all([
+        deriveKey(pass, state.kdf),
+        deriveWriteAuthKey(pass, state.kdf),
+      ]);
 
       if (state.authVerifier) {
         // STRICT PASSPHRASE VERIFICATION: must decrypt the sentinel exactly.
@@ -4667,6 +4744,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
+      // Past the passphrase check (or minting a new vault): every save from here
+      // on carries this token.
+      state.writeToken = await writeAuthToken(writeAuthKey);
+
       if (isSetup) {
         // First setup: state.folders/notes currently hold the plaintext seed data,
         // so mint the sentinel and write the whole vault out encrypted.
@@ -4702,7 +4783,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       await settleVaultOnEntry();
 
-      await persistSessionKey(derived); // stores the non-extractable key, not the passphrase
+      await persistSessionKey(derived, writeAuthKey); // non-extractable keys, never the passphrase
       lockScreen.classList.add("hidden");
       document.getElementById("app").classList.remove("hidden");
       updateVaultShield();
@@ -4777,8 +4858,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ── Vault lock: shared routine for the manual button AND idle auto-lock ──
   async function lockVault() {
     await drainSaves(); // J-02 + coalescer: neither a debounced edit nor a flying write may outrun the lock
-    clearSessionKey(); // wipes the stored CryptoKey + session token
+    clearSessionKey(); // wipes the stored CryptoKeys + session token
     state.encryptionKey = null;
+    state.writeToken = null;
     state.vaultPlain = false; // nothing may be written until the next decrypt
     // The snapshot is stale from here on; unlock re-reads it from the server.
     // Nulled so nothing can decrypt an old copy by accident.

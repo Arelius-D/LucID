@@ -35,6 +35,7 @@ However, **the implementation as a whole has not been reviewed by an independent
 - **Malicious note content.** Rendered markdown is sanitised (DOMPurify) and a strict Content-Security-Policy blocks script execution, so note content cannot run code.
 - **Third-party code injection.** All runtime libraries are vendored and version-pinned; the app loads no executable code from external CDNs.
 - **Cross-site access to the vault.** The API rejects cross-origin writes, and services bind to loopback with the reverse proxy as sole ingress.
+- **Writes by anyone without the passphrase.** Every vault write carries a token derived from the passphrase, and the server keeps only its SHA-256. A write without the matching token is refused, so knowing the address of a LucID server is not enough to change or empty its vault.
 
 **Not protected:**
 
@@ -43,6 +44,8 @@ However, **the implementation as a whole has not been reviewed by an independent
 - **Metadata.** Record identifiers, timestamps, and the count and structure of notes and folders are stored in plaintext. Identifiers are deliberately non-descriptive (randomly generated) so they reveal nothing about content, but they are readable. An observer with server access can see *that* you have 40 notes across 5 folders and when they were modified, never *what* they contain.
 - **Lost passphrases.** There is no backdoor, no recovery key, no reset. If you lose your passphrase your notes are permanently unreadable. This is a deliberate consequence of zero-knowledge encryption, not an oversight.
 - **An attacker who already controls the server binary.** A modified server could serve modified client JavaScript. Verify the image you deploy, and prefer published tags over unverified builds.
+- **Reading the encrypted vault.** `GET /api/store` is not authenticated. Anyone who can reach the server can download the ciphertext and the salt and test passphrase guesses offline, which is why the passphrase has to be strong.
+- **A vault from before 2.20.0, until its first save.** Such a vault has no write token recorded, and the first authenticated save after upgrading records one, from whoever makes it. Open the app and save once right after upgrading. If your own saves are then refused, another token was recorded first: delete the `writeAuth` field from `data/store.json` and save again. Running an image older than 2.20.0 against the vault drops the field the same way.
 
 ## Cryptographic details
 
@@ -54,8 +57,9 @@ However, **the implementation as a whole has not been reviewed by an independent
 | Iterations | 600,000 |
 | Salt | 16 random bytes, generated per vault, stored in the vault |
 | Key handling | Non-extractable `CryptoKey`; raw key material is never exposed to JavaScript |
+| Write authorization | HMAC-SHA256 token from a second PBKDF2 derivation (vault salt plus a fixed label, same iterations) under a non-extractable key; the server stores only the token's SHA-256 |
 | Passphrase storage | Never persisted, in any form, anywhere |
-| Session handling | Non-extractable key held in IndexedDB, gated by a per-tab session token; destroyed on lock and on idle auto-lock |
+| Session handling | Non-extractable keys (encryption and write authorization) held in IndexedDB, gated by a per-tab session token; destroyed on lock and on idle auto-lock |
 
 The salt is stored unencrypted by necessity: it must be readable to derive the key. A salt is not a secret; its purpose is to make every vault's derivation unique so that one precomputed attack cannot be reused across vaults.
 
