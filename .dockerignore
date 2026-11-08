@@ -7,3 +7,4 @@ data
 !README.md
 .DS_Store
 .dockerignore
+fossa

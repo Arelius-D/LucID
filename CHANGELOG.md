@@ -12,6 +12,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ### Fixed
 
+- The release image no longer ships the FOSSA CLI. The FOSSA step runs only on `main` and downloads its 148 MB binary into the build folder; `.dockerignore` did not exclude it, so `COPY . .` put it into every `latest` and version-tagged image. Those images were 721 MB on disk and 205 MB compressed, against 287 MB and 74 MB for `dev`.
+
 ---
 
 ## [2.21.0] - 2026-11-08
