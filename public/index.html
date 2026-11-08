@@ -22,7 +22,7 @@
        (S-12), so clickjacking protection comes from the header alone. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'sha256-ZMl5Q4bsZIF4pDz2yEQ03V8J2tcYWAFBcZl4acDp6Yw='; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-ZMl5Q4bsZIF4pDz2yEQ03V8J2tcYWAFBcZl4acDp6Yw='; style-src 'self'; font-src 'self'; img-src 'self' data: blob:; connect-src 'self' https://api.github.com; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
     />
     <!-- Theme before first paint: reads the stored choice and stamps <html> so no
        frame renders in the wrong theme. Hashed in the CSP (header + meta). -->
@@ -354,7 +354,7 @@
                 <button
                   id="btn-import-drop"
                   class="icon-btn lock-action-btn import-action-btn"
-                  title="Import notes & documents (.md, .txt, .docx, .doc, .html, .xml, .csv)"
+                  title="Import notes & documents (.md, .txt, .docx, .doc, .pptx, .pdf, .html, .xml, .csv, .json)"
                   aria-label="Import notes and documents"
                 >
                   <span id="import-row-icon" class="import-glyph"
@@ -372,7 +372,7 @@
                   ></span>
                   <span id="import-row-label">Import</span>
                 </button>
-                <input type="file" id="file-import-input" class="hidden" hidden multiple accept=".md,.txt,.markdown,.docx,.doc,.html,.htm,.xml,.csv,.json" />
+                <input type="file" id="file-import-input" class="hidden" hidden multiple accept=".md,.txt,.markdown,.docx,.doc,.pptx,.pdf,.html,.htm,.xml,.csv,.json" />
               </div>
             </div>
             <div class="footer-actions-row">
@@ -919,7 +919,7 @@
     </div>
 
     <script src="vendor/turndown.js"></script>
-    <script src="vendor/mammoth.browser.min.js"></script>
+    <script src="vendor/turndown-plugin-gfm.js"></script>
     <script src="app.js?v=2.21.0-dev"></script>
   </body>
 </html>

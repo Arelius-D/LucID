@@ -4115,6 +4115,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Set by the import engine below; called once the vault is open, to report
+  // an import that the tab did not survive.
+  let reportInterruptedImport = () => {};
+
   // ── Import Engine: Multi-format client-side conversion & import ──
   const importBtn = document.getElementById("btn-import-drop");
   const fileInput = document.getElementById("file-import-input");
@@ -4154,6 +4158,137 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     };
 
+    // ── Document converter: anydoc (WebAssembly) ──
+    // Word, PowerPoint, PDF and CSV. Each file is converted in its own worker
+    // (anydoc-worker.js), terminated as soon as it answers, so no conversion's
+    // memory outlives its file and the page stays responsive meanwhile. The
+    // 6.7 MB converter is only fetched when such a file is imported, never
+    // with the page, and comes unchanged from the npm package via
+    // scripts/vendor.js. CSV gets the separator and the text encoding detected
+    // from the file itself, not from the browser's locale.
+    const ANYDOC_FORMAT = {
+      doc: "doc",
+      docx: "docx",
+      pptx: "pptx",
+      pdf: "pdf",
+      csv: "csv",
+    };
+    // anydoc's error codes, mapped to the reason the import summary shows.
+    const ANYDOC_SKIP = {
+      encrypted: "encrypted",
+      needsOcr: "needsOcr",
+      malformed: "damaged",
+      missingPart: "damaged",
+      resourceLimit: "tooLarge",
+      unsupported: "unsupported",
+    };
+    // Resolves with the Markdown, or rejects with anydoc's error code on
+    // `code`, or with `load: true` when the worker itself could not start.
+    const convertWithAnydoc = (bytes, format) =>
+      new Promise((resolve, reject) => {
+        let worker;
+        try {
+          worker = new Worker("anydoc-worker.js", { type: "module" });
+        } catch (e) {
+          reject(Object.assign(new Error(String(e)), { load: true }));
+          return;
+        }
+        worker.onmessage = ({ data }) => {
+          worker.terminate();
+          if (data.error) {
+            reject(Object.assign(new Error(data.error.message), { code: data.error.code }));
+          } else {
+            resolve(data.markdown);
+          }
+        };
+        worker.onerror = (e) => {
+          worker.terminate();
+          reject(Object.assign(new Error(e.message || "worker failed"), { load: true }));
+        };
+        worker.postMessage({ bytes: bytes.buffer, format }, [bytes.buffer]);
+      });
+
+    // ── HTML: inert parse, strip, then turndown + GFM ──
+    // An HTML file is untrusted: it can point at images, stylesheets,
+    // scripts, frames and trackers on any server. DOMParser builds an inert
+    // document (no script runs, nothing is fetched). Everything that never
+    // shows as text, or that could load something when the note is opened,
+    // is removed, and every attribute except a few that carry no address is
+    // dropped. Links survive only as absolute http(s) or mailto addresses,
+    // which the browser follows on a click and never by itself.
+    const HTML_DROP = [
+      "head", "title", "script", "style", "noscript", "template",
+      "img", "picture", "source", "track", "video", "audio",
+      "iframe", "frame", "frameset", "object", "embed", "applet",
+      "link", "meta", "base", "svg", "canvas", "map", "area",
+      "form", "input", "button", "select", "option", "textarea",
+    ].join(",");
+    // The encoding the way a browser picks it, with no locale guess: a BOM,
+    // else the charset a <meta> declares in the first 1024 bytes, else UTF-8
+    // when the bytes are valid UTF-8, else windows-1252.
+    const decodeHtmlBytes = (bytes) => {
+      if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf)
+        return new TextDecoder("utf-8").decode(bytes);
+      if (bytes[0] === 0xff && bytes[1] === 0xfe)
+        return new TextDecoder("utf-16le").decode(bytes);
+      if (bytes[0] === 0xfe && bytes[1] === 0xff)
+        return new TextDecoder("utf-16be").decode(bytes);
+      const head = new TextDecoder("windows-1252").decode(bytes.subarray(0, 1024));
+      const declared = head.match(/<meta[^>]*charset\s*=\s*["']?\s*([\w.:-]+)/i);
+      if (declared) {
+        try {
+          return new TextDecoder(declared[1]).decode(bytes);
+        } catch (e) {
+          // an unknown label counts as no declaration
+        }
+      }
+      try {
+        return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+      } catch (e) {
+        return new TextDecoder("windows-1252").decode(bytes);
+      }
+    };
+    const htmlToMarkdown = (bytes) => {
+      const doc = new DOMParser().parseFromString(decodeHtmlBytes(bytes), "text/html");
+      doc.querySelectorAll(HTML_DROP).forEach((el) => el.remove());
+      doc.body.querySelectorAll("*").forEach((el) => {
+        for (const attr of [...el.attributes]) {
+          if (attr.name === "class" && el.tagName === "CODE") {
+            // A code block keeps only its language, which the highlighter reads.
+            const lang = attr.value.match(/\blanguage-[\w+#-]+/);
+            if (lang) el.setAttribute("class", lang[0]);
+            else el.removeAttribute("class");
+            continue;
+          }
+          const keep =
+            attr.name === "colspan" ||
+            attr.name === "rowspan" ||
+            attr.name === "align" ||
+            (attr.name === "href" &&
+              el.tagName === "A" &&
+              /^(https?:|mailto:)/i.test(attr.value.trim()));
+          if (!keep) el.removeAttribute(attr.name);
+        }
+      });
+      // turndown writes a code block only for <pre><code>. A bare <pre> (mail
+      // archives, plain-text reports, ASCII tables) would come out as normal
+      // text, its aligned columns collapsed, so its content is wrapped in a
+      // plain-text <code> first.
+      doc.body.querySelectorAll("pre").forEach((pre) => {
+        if (pre.firstChild && pre.firstChild.nodeName === "CODE") return;
+        const code = doc.createElement("code");
+        code.className = "language-plaintext";
+        while (pre.firstChild) code.appendChild(pre.firstChild);
+        pre.appendChild(code);
+      });
+      const service = new window.TurndownService({
+        headingStyle: "atx",
+        codeBlockStyle: "fenced",
+      });
+      service.use(window.turndownPluginGfm.gfm);
+      return service.turndown(doc.body);
+    };
+
     const convertFileToMarkdown = async (file) => {
       const ext = file.name.includes(".")
         ? file.name.split(".").pop().toLowerCase()
@@ -4167,6 +4302,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         "markdown",
         "docx",
         "doc",
+        "pptx",
+        "pdf",
         "html",
         "htm",
         "xml",
@@ -4178,21 +4315,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       try {
-        if (["docx", "doc"].includes(ext)) {
-          const arrayBuffer = await file.arrayBuffer();
-          if (window.mammoth) {
-            try {
-              const result = await window.mammoth.convertToMarkdown({
-                arrayBuffer,
-              });
-              rawMd = result.value || "";
-            } catch (e) {
-              rawMd = await file.text();
+        if (ANYDOC_FORMAT[ext]) {
+          const bytes = new Uint8Array(await file.arrayBuffer());
+          try {
+            rawMd = await convertWithAnydoc(bytes, ANYDOC_FORMAT[ext]);
+          } catch (convErr) {
+            if (convErr && convErr.load) {
+              console.warn("Document converter failed to load:", convErr);
+              return { skipped: "converterUnavailable" };
             }
-          } else {
-            rawMd = await file.text();
+            console.warn("Document conversion failed:", file.name, convErr);
+            return { skipped: ANYDOC_SKIP[convErr && convErr.code] || "unreadable" };
           }
-        } else if (["html", "htm", "xml"].includes(ext)) {
+        } else if (["html", "htm"].includes(ext)) {
+          if (!window.TurndownService || !window.turndownPluginGfm) {
+            return { skipped: "converterUnavailable" };
+          }
+          rawMd = htmlToMarkdown(new Uint8Array(await file.arrayBuffer()));
+        } else if (ext === "xml") {
           const htmlText = await file.text();
           if (window.TurndownService) {
             const turndownService = new window.TurndownService({
@@ -4201,21 +4341,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             rawMd = turndownService.turndown(htmlText);
           } else {
             rawMd = htmlText;
-          }
-        } else if (ext === "csv") {
-          const csvText = await file.text();
-          const lines = csvText.split(/\r?\n/).filter((l) => l.trim());
-          if (lines.length > 0) {
-            const headers = lines[0].split(",").map((h) => h.trim());
-            const separator = headers.map(() => "---");
-            const rows = lines
-              .slice(1)
-              .map((line) => line.split(",").map((cell) => cell.trim()));
-            rawMd = [
-              `| ${headers.join(" | ")} |`,
-              `| ${separator.join(" | ")} |`,
-              ...rows.map((r) => `| ${r.join(" | ")} |`),
-            ].join("\n");
           }
         } else if (ext === "json") {
           const jsonText = await file.text();
@@ -4235,10 +4360,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!rawMd || !rawMd.trim()) return { skipped: "empty" };
 
-      // Extract H1 title if present in Markdown
+      // Extract H1 title if present in Markdown. The title is shown as text
+      // in the tree, so Markdown inside the heading is unwrapped: a heading
+      // written as **Title** used to appear with its asterisks.
       const h1Match = rawMd.match(/^#\s+(.+)$/m);
       if (h1Match && h1Match[1].trim()) {
-        title = h1Match[1].trim();
+        const plain = h1Match[1]
+          .replace(/(\*\*|__)(?=\S)(.+?)(?<=\S)\1/g, "$2")
+          .replace(/(^|\W)([*_])(?=\S)(.+?)(?<=\S)\2(?=\W|$)/g, "$1$3")
+          .replace(/\\([!-/:-@[-`{-~])/g, "$1")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (plain) title = plain;
       }
 
       return { title, markdown: rawMd };
@@ -4257,6 +4390,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       unsupported: "unsupported file type",
       empty: "empty file",
       unreadable: "unreadable file",
+      encrypted: "password-protected file",
+      needsOcr: "scanned pages with no text to extract",
+      damaged: "damaged or incomplete file",
+      tooLarge: "file too large or complex to convert",
+      converterUnavailable: "the document converter could not load",
+      tabStopped:
+        "the browser tab stopped while converting this file; the files imported before it were saved",
     };
     let summaryTimer = null;
     // Reading is not dismissing: once the pointer enters the popover, the
@@ -4369,6 +4509,35 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     };
 
+    // A conversion that takes the whole tab down (the browser kills a page
+    // that runs out of memory) leaves no error behind to catch. So the file's
+    // name and size are written to this tab's session before conversion and
+    // removed after it. sessionStorage lives in the browser, not the page, so
+    // it survives the crash; if the tab is reloaded with the mark still there,
+    // the import summary names the file once the vault is open again.
+    const IMPORT_MARK = "lucid-import-in-progress";
+    const markImportInProgress = (file) => {
+      try {
+        sessionStorage.setItem(IMPORT_MARK, JSON.stringify({ name: file.name, size: file.size }));
+      } catch (e) {
+        // storage unavailable: the import still runs, only the report is lost
+      }
+    };
+    const clearImportInProgress = () => {
+      try {
+        sessionStorage.removeItem(IMPORT_MARK);
+      } catch (e) {}
+    };
+    reportInterruptedImport = () => {
+      let mark = null;
+      try {
+        mark = JSON.parse(sessionStorage.getItem(IMPORT_MARK) || "null");
+      } catch (e) {}
+      clearImportInProgress();
+      if (!mark || !mark.name) return;
+      showImportSummary([{ name: mark.name, status: "tabStopped" }], [], null, true);
+    };
+
     let isImportingInProgress = false;
     const processImportFiles = async (files) => {
       if (!files || !files.length || isImportingInProgress) return;
@@ -4377,8 +4546,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const outcomes = []; // { name, status } per file, in drop order
       const importedIds = [];
       const targetFolderId = ensureLiveFolderId();
+      let saveOk = true;
       try {
         for (const file of files) {
+          markImportInProgress(file);
           try {
             const res = await convertFileToMarkdown(file);
             if (res && res.markdown) {
@@ -4404,6 +4575,10 @@ document.addEventListener("DOMContentLoaded", async () => {
               }
               importedIds.push(noteId);
               outcomes.push({ name: file.name, status: "imported" });
+              // Saved file by file rather than once per batch: if a later file
+              // takes the tab down, every note converted before it is already
+              // in the vault. false = converted fine, vault write failed.
+              if (!(await requestSave())) saveOk = false;
             } else {
               outcomes.push({
                 name: file.name,
@@ -4414,10 +4589,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.warn("Skipped file:", file.name, itemErr);
             outcomes.push({ name: file.name, status: "unreadable" });
           }
+          clearImportInProgress();
         }
-        let saveOk = true;
         if (importedIds.length > 0) {
-          saveOk = await requestSave(); // false = parsed fine, vault write failed
           try {
             renderAll();
           } catch (rErr) {}
@@ -4788,6 +4962,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("app").classList.remove("hidden");
       updateVaultShield();
       renderAll();
+      reportInterruptedImport();
     } catch (err) {
       if (err && err.message === "SECURE_CONTEXT_REQUIRED") {
         lockError.textContent =
@@ -5069,6 +5244,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("app").classList.remove("hidden");
     updateVaultShield();
     renderAll();
+    reportInterruptedImport();
   } else {
     lockScreen.classList.remove("hidden");
     updateLockScreenUI();

@@ -31,7 +31,9 @@ if (CORS_ORIGIN) {
 // strips style attributes from rendered markdown, and CSSOM writes are not CSP-gated.
 const CSP_HEADER = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-ZMl5Q4bsZIF4pDz2yEQ03V8J2tcYWAFBcZl4acDp6Yw='",
+  // 'wasm-unsafe-eval' lets the page compile WebAssembly (the document
+  // converter in vendor/anydoc). It does not allow eval() or new Function().
+  "script-src 'self' 'wasm-unsafe-eval' 'sha256-ZMl5Q4bsZIF4pDz2yEQ03V8J2tcYWAFBcZl4acDp6Yw='",
   "style-src 'self'",
   "font-src 'self'",
   "img-src 'self' data: blob:",

@@ -28,7 +28,19 @@ const COPY = [
   ['@highlightjs/cdn-assets/styles/github-dark.min.css',  'hljs-styles/github-dark.min.css'],
   ['@highlightjs/cdn-assets/styles/github.min.css',       'hljs-styles/github.min.css'],
   ['turndown/dist/turndown.js',                           'turndown.js'],
-  ['mammoth/mammoth.browser.min.js',                      'mammoth.browser.min.js'],
+  // Document converter (doc, docx, pptx, pdf, csv). An ES module that loads
+  // the .wasm next to it, so both keep their package names in one folder.
+  ['@firecrawl/anydoc-wasm/anydoc_wasm.js',               'anydoc/anydoc_wasm.js'],
+  ['@firecrawl/anydoc-wasm/anydoc_wasm_bg.wasm',          'anydoc/anydoc_wasm_bg.wasm'],
+  ['@firecrawl/anydoc-wasm/LICENSE',                      'anydoc/LICENSE'],
+];
+
+// Packages that publish only a CommonJS build, which a browser cannot load.
+// The file is copied unchanged inside a wrapper that hands it an `exports`
+// object and publishes that object as the named global. Regenerated from
+// node_modules on every run, so package updates flow through like any other.
+const WRAP = [
+  ['@joplin/turndown-plugin-gfm/lib/turndown-plugin-gfm.cjs.js', 'turndown-plugin-gfm.js', 'turndownPluginGfm'],
 ];
 
 // [package, weights] — file naming inside every @fontsource package is
@@ -64,9 +76,28 @@ for (const [src, dest] of COPY) {
     failed = true;
     continue;
   }
+  fs.mkdirSync(path.dirname(to), { recursive: true });
   fs.copyFileSync(from, to);
   const owner = path.join(__dirname, '..', 'node_modules', src.split('/').slice(0, src.startsWith('@') ? 2 : 1).join('/'));
   console.log(`vendored ${dest.padEnd(34)} v${pkgVersion(owner)}`);
+}
+
+for (const [src, dest, globalName] of WRAP) {
+  const from = path.join(__dirname, '..', 'node_modules', src);
+  if (!fs.existsSync(from)) {
+    console.error(`MISSING ${src} — run "npm install" first.`);
+    failed = true;
+    continue;
+  }
+  const owner = path.join(__dirname, '..', 'node_modules', src.split('/').slice(0, 2).join('/'));
+  const header = `/* ${src} v${pkgVersion(owner)}, unchanged, wrapped by scripts/vendor.js: its exports become window.${globalName}. */\n`;
+  fs.writeFileSync(
+    path.join(OUT, dest),
+    `${header}(function (exports) {\n${fs.readFileSync(from, 'utf8')}\n})(window.${globalName} = {});\n`,
+  );
+  const lic = path.join(owner, 'LICENSE');
+  if (fs.existsSync(lic)) fs.copyFileSync(lic, path.join(OUT, dest.replace(/\.js$/, '.LICENSE')));
+  console.log(`vendored ${dest.padEnd(34)} v${pkgVersion(owner)} (CommonJS, wrapped)`);
 }
 
 for (const [pkg, weights] of FONTS) {
