@@ -114,7 +114,7 @@ LucID combines zero-trust client cryptography with transport-layer security:
 
 - **100% free and open source.** No paid tiers, no locked features, no tracking, no telemetry.
 - **Client-side E2EE.** Native Web Crypto API (`crypto.subtle`) encrypts your data locally before anything is transmitted.
-- **Multi-format in-browser document import engine.** 100% client-side RAM parsing and Markdown conversion for 10 document formats (`.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.html`, `.htm`, `.xml`, `.csv`, `.json`) prior to zero-trust AES-256-GCM vault encryption. A post-import summary on the import glyph shows every file's outcome and can file the whole batch into any folder, or a new one, in one click.
+- **Multi-format in-browser document import engine.** 100% client-side RAM parsing and Markdown conversion for 12 document formats (`.md`, `.txt`, `.markdown`, `.docx`, `.doc`, `.pptx`, `.pdf`, `.html`, `.htm`, `.xml`, `.csv`, `.json`) prior to zero-trust AES-256-GCM vault encryption. Word, PowerPoint, PDF and CSV are converted by anydoc (WebAssembly, fetched from your own host only the first time it is needed), with the CSV separator and text encoding detected from the file itself. HTML is stripped of everything that could load something before it becomes a note, so opening an imported page fetches nothing. A post-import summary on the import glyph shows every file's outcome and can file the whole batch into any folder, or a new one, in one click.
 - **Eight standalone OKLCH themes.** Dusk Ember (dark), Amber Hour (twilight), Warm Linen (light), Dracula, and four Catppuccin palette flavors (Latte, Frappé, Macchiato, Mocha) grouped in a flyout menu with theme-adaptive scrollbars.
 - **Eight locally-served font sets.** Geist (default), IBM Plex, Source Code Pro, Inter, Monospace Terminal, Cascadia Code, Nunito, and Roboto Slab: 12 `@fontsource` packages served from host origin, zero external CDN requests.
 - **Full-text decrypted search.** Typing searches note titles, tags, and decrypted note contents simultaneously, with a flat-list dedicated search view.
@@ -232,7 +232,8 @@ While unlocked, the two non-extractable keys, one for encryption and one for wri
 
 ### Hardening
 
-- Rendered Markdown is sanitised with DOMPurify before display, and a strict Content-Security-Policy (`script-src 'self'`) blocks inline execution, so note content can never run code that could reach your key.
+- Rendered Markdown is sanitised with DOMPurify before display, and a strict Content-Security-Policy (`script-src 'self' 'wasm-unsafe-eval'`) blocks inline execution, so note content can never run code that could reach your key. `'wasm-unsafe-eval'` only lets the document converter's WebAssembly compile; `eval()` stays blocked.
+- Imported documents are converted in the browser. An HTML page is parsed inertly and stripped of images, media, frames, embeds, stylesheets, forms and every attribute that carries an address before it becomes a note, so opening an imported page makes the browser fetch nothing.
 - No third-party CDNs. All runtime libraries are vendored and version-pinned, so no external host can inject code into the app origin.
 - Authenticated writes. Every vault write must carry the token derived from your passphrase; the server stores only its hash and refuses anything else, so knowing the address is not enough to change or empty a vault. Cross-origin writes are rejected as well, and services bind to loopback so Caddy is the only route in. Reading the encrypted vault is not authenticated.
 - Writes are atomic. The vault is written to a temporary file, fsynced, then renamed, so an interrupted write cannot truncate it. A vault file that cannot be parsed is preserved rather than replaced.
@@ -248,7 +249,7 @@ One line per API request on stdout (`docker logs lucid-app`): timestamp, method,
 
 ## Dependencies
 
-LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and 17 vendored browser packages (5 runtime libraries and 12 font packages across 8 font sets). Everything else is written in-house.
+LucID deliberately runs on a very small dependency surface: two runtime packages on the server, and 18 vendored browser packages (6 runtime libraries and 12 font packages across 8 font sets). Everything else is written in-house.
 
 **Policy: always prefer the latest version.** An out-of-date dependency is treated as a standing vulnerability. When a new version ships it is usually because a bug, an issue, or a security flaw was fixed, and staying behind means knowingly serving that flaw to users. Major versions are therefore not held back. If a major upgrade breaks the build, that breakage is caught by CI and fixed. A broken build is a problem for the maintainer. An outdated dependency is a problem for every user.
 
@@ -265,8 +266,9 @@ LucID deliberately runs on a very small dependency surface: two runtime packages
 | :--- | :--- |
 | `dompurify` | Sanitises rendered Markdown before it reaches the DOM |
 | `marked` | Markdown parsing |
-| `turndown` | HTML-to-Markdown client-side conversion engine for document imports |
-| `mammoth` | Word document (`.docx`) client-side raw text and formatting parser |
+| `turndown` | HTML-to-Markdown conversion for HTML imports |
+| `@joplin/turndown-plugin-gfm` | Table, strikethrough and task-list rules for turndown |
+| `@firecrawl/anydoc-wasm` | Word (`.doc`, `.docx`), PowerPoint (`.pptx`), PDF and CSV to Markdown, in WebAssembly; loaded only when such a file is imported |
 | `@highlightjs/cdn-assets` | Syntax highlighting for code blocks and its themes |
 | `@fontsource/*` (12 packages) | The eight user-selectable UI/editor font sets, served from your origin |
 
@@ -439,7 +441,7 @@ Set `DATA_DIR` to keep the vault outside the repository, for example `DATA_DIR=/
 
 - [ ] **Encrypted vault backup and restore (`.lucid`).** Export full encrypted vault backups for personal cloud storage such as Nextcloud, S3, Dropbox, or a NAS, with in-browser restore.
 - [ ] **Word Document Export (`.doc` / `.docx`).** In-browser Markdown-to-Word conversion using `marked.js` HTML output wrapped in Microsoft Office MIME headers for direct `.doc` download, preserving LucID's zero-trust E2EE boundary.
-- [x] **In-Browser Document & Migration Import Engine (`.docx`, `.html`, `.xml`, `.csv`, `.json`).** 100% client-side conversion of Word documents (`mammoth.js`), HTML (`turndown.js`), XML, CSV, and JSON into Markdown before client-side encryption (`v2.15.0`).
+- [x] **In-Browser Document & Migration Import Engine (`.doc`, `.docx`, `.pptx`, `.pdf`, `.html`, `.xml`, `.csv`, `.json`).** 100% client-side conversion into Markdown before client-side encryption: Word, PowerPoint, PDF and CSV by anydoc, HTML by turndown, XML and JSON in-house (`v2.15.0`, rebuilt in `v2.21.0`).
 - [ ] **Zero-Trust Ephemeral Note Sharing.** Encrypt individual notes in-browser using temporary fragment keys (`#key`) for secure public sharing without giving the server decryption access.
 
 ---
@@ -469,13 +471,14 @@ LucID is built on excellent open-source work:
 - [DOMPurify](https://github.com/cure53/DOMPurify) by [Cure53](https://cure53.de/) for HTML sanitisation.
 - [marked](https://github.com/markedjs/marked) for Markdown parsing.
 - [turndown](https://github.com/mixmark-io/turndown) by [@mixmark-io](https://github.com/mixmark-io) for HTML-to-Markdown conversion.
-- [mammoth](https://github.com/mwilliamson/mammoth.js) by [@mwilliamson](https://github.com/mwilliamson) for client-side Word document parsing.
+- [turndown-plugin-gfm](https://github.com/laurent22/joplin-turndown-plugin-gfm) by [@laurent22](https://github.com/laurent22) (Joplin) for HTML table conversion.
+- [anydoc](https://github.com/firecrawl/anydoc) by [Firecrawl](https://github.com/firecrawl) for in-browser Word, PowerPoint, PDF and CSV conversion.
 - [highlight.js](https://github.com/highlightjs/highlight.js) for syntax highlighting.
 - [Blade Iconsax](https://github.com/saade/blade-iconsax) by [@saade](https://github.com/saade) for the Iconsax Linear vector UI icons.
 - [Caddy](https://github.com/caddyserver/caddy) for zero-touch Let's Encrypt TLS provisioning.
 - [DDNS Updater](https://github.com/qdm12/ddns-updater) by [@qmcgaw](https://github.com/qmcgaw) for automated multi-provider dynamic DNS syncing.
 
-DOMPurify, marked, turndown, mammoth, and highlight.js are vendored into `public/vendor/` and served from your own host rather than a CDN.
+DOMPurify, marked, turndown and its GFM plugin, anydoc, and highlight.js are vendored into `public/vendor/` and served from your own host rather than a CDN.
 
 ---
 

@@ -8,9 +8,34 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [2.21.0-dev] - unreleased
 
+### Security
+
+- **Imported HTML no longer makes the browser fetch anything**: an imported page kept its images as Markdown images, and opening the note made the browser request their addresses. The Content-Security-Policy stopped requests to other hosts, but paths on the LucID host itself were requested. An imported page is now parsed inertly (`DOMParser`: no script runs, nothing loads) and everything that could load something when the note is opened is removed before conversion: images, picture sources, video, audio, frames, objects, embeds, stylesheet links, SVG, canvas, image maps and forms. Every attribute is dropped except table spans and alignment, and links survive only as absolute `http(s)` or `mailto` addresses, which the browser follows on a click and never by itself.
+
 ### Added
 
+- **PDF and PowerPoint import**: `.pdf` and `.pptx` files now import, converted to Markdown in the browser by [anydoc](https://github.com/firecrawl/anydoc) (WebAssembly, MIT) before the note is encrypted, like every import. The converter is 6.7 MB, served from your own host, and fetched only the first time a file that needs it is imported, never with the page. A PDF made of scanned pages has no text to extract and is skipped with that reason. Some PDFs need far more browser memory to convert than their size suggests: of six test PDFs, five peaked at about 0.3 GB for the whole browser and one, 508 KB, at about 1.7 GB. That memory is spent by the browser's JavaScript engine optimizing the converter's code, which a web page cannot switch off, and a browser short of it closes the tab; the next entry covers what LucID does then.
+- **An import the browser tab did not survive is reported**: before each file is converted, its name and size are noted in the tab's session, and removed once it is done. If the browser closes the tab mid-conversion, reloading the tab reopens the vault and the import summary names the file, with **Choose files again…** for the rest. The conversion is not retried by itself, since the same file stops the tab the same way.
+
+### Changed
+
+- **Word and CSV import rebuilt on anydoc**, measured against real documents from the Govdocs1 corpus and European open-data portals:
+  - `.doc` was never parsed: mammoth reads only `.docx`, so a `.doc` file fell through to its raw bytes and became a note of binary garbage, thousands of broken characters per file. It now converts like any Word document.
+  - `.docx` tables were flattened into one paragraph per cell (a document with 11 tables and 69 rows imported with none), and images were inlined as base64, so a 2.5 MB file with 20 images became a 57 MB note. Tables now import as tables, and images are not embedded.
+  - `.csv` was split on every comma and decoded as UTF-8 only, so semicolon-separated files, the usual format wherever the decimal separator is a comma, became a single column, and ISO-8859 text lost its accents. The separator and the encoding are now detected from the file itself, not from the browser's language.
+- **Imports are saved file by file**: an import used to write the vault once, after the last file, so a tab that stopped on file 7 of 10 lost files 1 to 6 as well. Each note is now saved as soon as its file is converted.
+- **Documents convert in a background worker**: Word, PowerPoint, PDF and CSV are converted in a Web Worker started for each file and closed when it answers, so the page stays responsive during an import and no file's conversion memory outlives that file. Converted in the page itself, the memory of one file's conversion stayed behind for the next.
+- **HTML import keeps the page's text and nothing else**: the page title, all CSS and all JavaScript landed in the note as text, 76% and 81% of two test pages. They are removed now, with everything listed under Security, and tables convert through Joplin's GFM plugin for turndown. Preformatted text (`<pre>`) becomes a code block, so aligned columns stay aligned, and a code block keeps its language. The encoding is read the way a browser reads it: a byte-order mark, else the page's declared charset, else UTF-8, else windows-1252.
+- **The import summary says why a file was skipped**: password-protected, scanned pages with no text, damaged or incomplete, too large or complex to convert, or the converter could not load. A Word file mammoth could not read used to be imported as its raw bytes instead.
+- **Content-Security-Policy**: `script-src` adds `'wasm-unsafe-eval'`, which lets the page compile the converter's WebAssembly. It does not allow `eval()` or `new Function()`, and the allowed script sources are unchanged.
+
+### Removed
+
+- **mammoth**: replaced by anydoc for `.docx` and `.doc`. The page no longer loads its 405 KB on every visit.
+
 ### Fixed
+
+- **Imported note titles no longer show Markdown**: a note's title comes from its first heading, and a heading written as `**Title**` appeared in the tree with its asterisks. Emphasis markers and escape backslashes are now left out of the title; the note itself is unchanged.
 
 ---
 
