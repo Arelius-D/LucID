@@ -33,7 +33,7 @@
     "@highlightjs/cdn-assets": "^11.11.1",
     "@joplin/turndown-plugin-gfm": "^1.0.68",
     "dompurify": "^3.4.13",
-    "marked": "^18.0.9",
+    "marked": "^18.2.0",
     "turndown": "^7.2.4"
   }
 }
