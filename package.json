@@ -17,7 +17,7 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
-    "@firecrawl/anydoc-wasm": "^0.2.4",
+    "@firecrawl/anydoc-wasm": "^0.2.5",
     "@fontsource/cascadia-code": "^5.3.0",
     "@fontsource/geist": "^5.3.0",
     "@fontsource/geist-mono": "^5.3.0",
